@@ -1,0 +1,514 @@
+#!/usr/bin/with-contenv bash
+
+## Gluetun API variables
+## Per https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/control-server.md
+## Global API variables
+gluetun_host="${GLUETUN_IPV4//[$'\r\n']/'':-localhost}"  ### See '${parameter//pattern/string}': https://www.gnu.org/software/bash/manual/bash.html
+gluetun_address="http://${gluetun_host}"
+gluetun_control_server_port="${GLUETUN_HTTP_CONTROL_SERVER_PORT:-9001}"
+gluetun_uri="${gluetun_address}:${gluetun_control_server_port}"
+gluetun_forwarded_port_file="${TMPDIR:-/tmp}/gluetun_port"
+gluetun_api_response_file="${TMPDIR:-/tmp}/gluetun_api_response"
+## Function variables
+gluetun_api_path_portforwarded="/v1/openvpn/portforwarded"
+gluetun_api_uri_portforwarded="${gluetun_uri}${gluetun_api_path_portforwarded}"
+
+## qBittorrent API variables
+### Per https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)
+## Global API variables
+qbit_address="http://localhost"
+qbit_api_port="${WEBUI_PORT:-8080}"
+qbit_uri="${qbit_address}:${qbit_api_port}"
+qbit_api_base="/api/v2"
+qbit_api_uri_base="${qbit_uri}${qbit_api_base}"
+qbit_api_cookie_file="${TMPDIR:-/tmp}/qbit_cookie"
+qbit_api_preferences_file="${TMPDIR:-/tmp}/qbit_preferences"
+qbit_api_response_file="${TMPDIR:-/tmp}/qbit_api_response"
+qbit_api_curl_global_opts=(--silent --cookie "${qbit_api_cookie_file}" --cookie-jar "${qbit_api_cookie_file}" --header "Referer: ${qbit_uri}" --write-out "%{response_code}")
+## Function variables
+### qbit_cookie_test
+qbit_api_path_version='/app/version'  # Per https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)
+qbit_api_uri_version="${qbit_api_uri_base}${qbit_api_path_version}"
+### qbit_login
+qbit_api_path_login='/auth/login'  # Per https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)
+qbit_api_uri_login="${qbit_api_uri_base}${qbit_api_path_login}"
+### qbit_logout
+qbit_api_path_logout='/auth/logout'
+qbit_api_uri_logout="${qbit_api_uri_base}${qbit_api_path_logout}"
+### qbit_get_listen_port
+qbit_api_path_preferences='/app/preferences'
+qbit_api_uri_preferences="${qbit_api_uri_base}${qbit_api_path_preferences}"
+### qbit_update_listen_port
+qbit_api_path_setpreferences='/app/setPreferences'
+qbit_api_uri_setpreferences="${qbit_api_uri_base}${qbit_api_path_setpreferences}"
+
+## Defined using Docker env variables or secrets
+## Constant definition strips '\r' and '\n' from variables
+### See '${parameter//pattern/string}': https://www.gnu.org/software/bash/manual/bash.html
+qbit_api_username="${QBITTORRENT_USERNAME//[$'\r\n']/''}"
+qbit_api_username="${qbit_api_username:-admin}"
+qbit_api_password="${QBITTORRENT_PASSWORD//[$'\r\n']/''}"
+qbit_api_password="${qbit_api_password:-adminadmin}"
+
+## Logging helper variables
+gluetun_get_port_log_prefix='[Gluetun get port]'
+qbit_update_port_log_prefix='[qBit update port]'
+qbit_cookie_test_log_prefix='[qBit cookie test]'
+qbit_login_log_prefix='[qBit login      ]'
+qbit_logout_log_prefix='[qBit logout     ]'
+qbit_get_port_log_prefix='[qBit get port   ]'
+script_init_log_prefix='[Script initalize]'
+
+# Create helper functions for the various log levels
+function log_trace {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE') echo "[TRACE] -- ${log_message}";;
+	esac
+}
+
+function log_debug {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG') echo "[DEBUG] -- ${log_message}";;
+	esac
+}
+
+function log_info {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO') echo "[INFO]  -- ${log_message}";;
+	esac
+}
+
+function log_warn {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN') echo "[WARN]  -- ${log_message}";;
+	esac
+}
+
+function log_error {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR') echo "[ERROR] -- ${log_message}";;
+	esac
+}
+
+function log_fatal {
+    local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL') echo "[FATAL] -- ${log_message}";;
+	esac
+}
+
+function gluetun_get_forwarded_port {
+	# Function is used to get the currently forwarded port from the Gluetun control server API
+
+	log_debug "${gluetun_get_port_log_prefix} Getting the Gluetun forwarded port and saving to '${qbit_api_preferences_file}'"
+
+	# Put curl args in variables to enhance readability
+	curl_args=(--silent --write-out "%{response_code}")
+	curl_args+=(--output "${gluetun_forwarded_port_file}")
+	curl_args+=("${gluetun_api_uri_portforwarded}")
+
+	# Attempt to get the Gluetun forwarded port
+	curl "${curl_args[@]}" 1>"${gluetun_api_response_file}"
+
+	log_trace "${gluetun_get_port_log_prefix} Gluetun portforwarded API response code: $(cat ${gluetun_api_response_file})"
+
+	# Inform the user if unsuccessful
+	if [[ $(cat "${gluetun_api_response_file}") != '200' ]]; then
+		log_error "${gluetun_get_port_log_prefix} Unable to connect to the Gluetun API"
+
+		# Delete the API response file
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_api_response_file}'"
+		rm -f "${gluetun_api_response_file}"
+
+		# Delete the temporary port file
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_forwarded_port_file}'"
+		rm -f "${gluetun_forwarded_port_file}"
+
+		return 1
+	else
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_api_response_file}'"
+		rm -f "${gluetun_api_response_file}"
+	fi
+
+	# Extract the port from the JSON
+	log_trace "${gluetun_get_port_log_prefix} Extracting '.port' from '${gluetun_forwarded_port_file}'"
+	export gluetun_forwarded_port=$(cat "${gluetun_forwarded_port_file}" | jq -r '.port')
+
+	# Delete the temporary port file
+	log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_forwarded_port_file}'"
+	rm -f "${gluetun_forwarded_port_file}"
+
+	# Inform the user
+	if [[ "${gluetun_forwarded_port}" != "0" ]]; then
+		log_info "${gluetun_get_port_log_prefix} Current gluetun forwarded port: ${gluetun_forwarded_port}"
+	else
+		log_error "${gluetun_get_port_log_prefix} Gluetun does not have a forwarded port"
+
+		return 1
+	fi
+
+	return 0
+}
+
+function qbit_cookie_test {
+	# Function is used to test if the existing qBittorrent cookie file exists and if it is valid
+
+	# First test for the existence of a cookie file
+	if [[ -s "${qbit_api_cookie_file}" ]]; then
+		log_trace "${qbit_cookie_test_log_prefix} qBittorrent cookie file '${qbit_api_cookie_file}' exists"
+		log_trace "${qbit_cookie_test_log_prefix} Testing if qBottorrent cookie file '${qbit_api_cookie_file}' is valid"
+
+		# Put curl args in variables to enhance readability
+		local curl_args=("${qbit_api_curl_global_opts[@]}")
+		local curl_args+=(--output /dev/null)
+		local curl_args+=(--request POST)
+		local curl_args+=("${qbit_api_uri_version}")
+
+		# Attempt a trivial API query
+		curl "${curl_args[@]}" 1>"${qbit_api_response_file}"
+
+		log_trace "${qbit_cookie_test_log_prefix} qBittorrent version API response code: $(cat ${qbit_api_response_file})"
+
+		# Inform the user if successful
+		if [[ $(cat "${qbit_api_response_file}") == '200' ]]; then
+			log_debug "${qbit_cookie_test_log_prefix} qBittorrent cookie file '${qbit_api_cookie_file}' is valid"
+
+			# Delete API response file
+			log_trace "${qbit_cookie_test_log_prefix} Deleting '${qbit_api_response_file}'"
+			rm -f "${qbit_api_response_file}"
+		else
+			
+			log_debug "${qbit_cookie_test_log_prefix} qBittorrent cookie file '${qbit_api_cookie_file}' is not valid"
+
+			# Delete cookie file
+			
+			log_trace "${qbit_cookie_test_log_prefix} Deleting '${qbit_api_cookie_file}'"
+			rm -f "${qbit_api_cookie_file}"
+
+			return 1
+		fi
+	# Inform the user if the cookie file doesn't exist
+	else
+		log_debug "${qbit_cookie_test_log_prefix} qBittorrent cookie file '${qbit_api_cookie_file}' does not exists or is empty"
+
+		if [[ -a "${qbit_api_cookie_file}" ]]; then
+			# Remove cookie file
+			log_trace "${qbit_cookie_test_log_prefix} Deleting '${qbit_api_cookie_file}'"
+			rm -f "${qbit_api_cookie_file}"
+		fi
+
+		return 1
+	fi
+
+	return 0
+}
+
+function qbit_login {
+	# Function is used to log into qBittorrent if needed (the function checks to see if existing cookie works first)
+
+	log_debug "${qbit_login_log_prefix} Testing if logged into the qBittorrent API"
+	log_trace "${qbit_login_log_prefix} -> ${qbit_cookie_test_log_prefix}"
+
+	# Test if already logged in
+	qbit_cookie_test; qbit_cookie_test_return=$?
+
+	log_trace "${qbit_cookie_test_log_prefix} -> ${qbit_login_log_prefix}"
+
+	# Skip login if already logged in
+	if [[ "${qbit_cookie_test_return}" == 0 ]]; then
+		log_info "${qbit_login_log_prefix} Already logged into the qBittorrent API"
+
+		return 0
+	else
+		log_debug "${qbit_login_log_prefix} Not already logged into the qBittorrent API"
+	fi
+
+	log_debug "${qbit_login_log_prefix} Attempting to log into the qBittorrent API"
+
+	# Put curl args in variables to enhance readability
+	curl_args=("${qbit_api_curl_global_opts[@]}")
+	curl_args+=(--output /dev/null)
+	curl_args+=(--request POST)
+	curl_args+=(--data-urlencode "username=${qbit_api_username}" --data-urlencode "password=${qbit_api_password}")
+	curl_args+=("${qbit_api_uri_login}")
+
+	# Attempt to log into the qbit API
+	curl "${curl_args[@]}" 1>"${qbit_api_response_file}"
+
+	log_trace "${qbit_login_log_prefix} qBittorrent login response code: $(cat ${qbit_api_response_file})"
+
+	# Delete the cookie if unsuccessful and return
+	if [[ $(cat "${qbit_api_response_file}") != '200' ]]; then
+		log_error "${qbit_login_log_prefix} Unable to log into the qBittorrent API"
+
+		# Delete cookie file
+		log_trace "${qbit_logout_log_prefix} Deleting '${qbit_api_cookie_file}'"
+		rm -f "${qbit_api_cookie_file}"
+
+		# Delete API response file
+		log_trace "${qbit_logout_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+
+		return 1
+	else
+		log_info "${qbit_login_log_prefix} Logged into the qBittorrent API"
+
+		# Delete API response file
+		log_trace "${qbit_logout_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+	fi
+
+	return 0
+}
+
+function qbit_logout {
+	# Function logs out of qBittorrent if necessary / possible (the function checks existing cookie if it exists)
+
+	log_debug "${qbit_logout_log_prefix} Testing if logged into the qBittorrent API"
+	log_trace "${qbit_logout_log_prefix} -> ${qbit_cookie_test_log_prefix}"
+
+	# Check if logged in
+	qbit_cookie_test; qbit_cookie_test_return=$?
+
+	log_trace "${qbit_cookie_test_log_prefix} -> ${qbit_logout_log_prefix}"
+
+	# If not logged in, exit since there is no need to log out
+	if [[ "${qbit_cookie_test_return}" != 0 ]]; then
+		log_info "${qbit_logout_log_prefix} Not logged into the qBittorrent API"
+
+		return 0
+	fi
+
+	log_trace "${qbit_logout_log_prefix} Logged into the qBittorrent API"
+	log_debug "${qbit_logout_log_prefix} Attempting to log out of the qBittorrent API"
+
+	# Put curl args in variables to enhance readability
+	curl_args=("${qbit_api_curl_global_opts[@]}")
+	curl_args+=(--output /dev/null)
+	curl_args+=(--request POST)
+	curl_args+=("${qbit_api_uri_logout}")
+
+	# Attempt to log our of the qbit API
+	curl "${curl_args[@]}" 1>"${qbit_api_response_file}"
+
+	log_trace "${qbit_logout_log_prefix} qBittorrent logout API response code: $(cat ${qbit_api_response_file})"
+
+	# Check the response code
+	if [[ $(cat "${qbit_api_response_file}") == '200' ]]; then
+		log_info "${qbit_logout_log_prefix} Logged out of the qBittorrent API"
+	else
+		log_warn "${qbit_logout_log_prefix} Unable to log out of the qBittorrent API using the cookie in ${qbit_api_cookie_file}"
+	fi
+
+	# Delete cookie file
+	log_trace "${qbit_logout_log_prefix} Deleting '${qbit_api_cookie_file}'"
+	rm -f "${qbit_api_cookie_file}"
+
+	# Delete API response file
+	log_trace "${qbit_logout_log_prefix} Deleting '${qbit_api_response_file}'"
+	rm -f "${qbit_api_response_file}"
+
+	return 0
+}
+
+function qbit_get_listen_port {
+	# Function gets the current qBittorrent listening port
+
+	log_trace "${qbit_get_port_log_prefix} Logging into the qBittorrent API"
+	log_trace "${qbit_get_port_log_prefix} -> ${qbit_login_log_prefix}"
+
+	# Attempt to log into the qbit API
+	qbit_login; qbit_login_return=$?
+
+	log_trace "${qbit_login_log_prefix} -> ${qbit_get_port_log_prefix}"
+
+	# Exit if unsuccessful login
+	if [[ "${qbit_login_return}" != 0 ]]; then
+		return "${qbit_login_return}"
+	fi
+
+	log_debug "${qbit_get_port_log_prefix} Getting the qBittorrent current preferences and saving to '${qbit_api_preferences_file}'"
+
+	# Put curl args in variables to enhance readability
+	curl_args=("${qbit_api_curl_global_opts[@]}")
+	curl_args+=(--output "${qbit_api_preferences_file}")
+	curl_args+=(--request POST)
+	curl_args+=("${qbit_api_uri_preferences}")
+
+	# Attempt to get the current listening port
+	curl "${curl_args[@]}" 1>"${qbit_api_response_file}"
+
+	log_trace "${qbit_get_port_log_prefix} qBittorrent preferences API response code: $(cat ${qbit_api_response_file})"
+
+	# Exit if unsuccessful
+	if [[ $(cat "${qbit_api_response_file}") != 200 ]]; then
+		log_error "${qbit_get_port_log_prefix} Unable to log into the qBittorrent API; cannot get qBittorrent listen port"
+
+		# Delete API response file
+		log_trace "${qbit_get_port_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+
+		# Delete the temporary port file
+		log_trace "${qbit_get_port_log_prefix} Deleting '${qbit_api_preferences_file}'"
+		rm -f "${qbit_api_preferences_file}"
+
+		return 1
+	else
+		# Delete API response file
+		log_trace "${qbit_get_port_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+	fi
+
+	# Extract the port from the JSON
+	log_trace "${qbit_get_port_log_prefix} Using 'jq' to extract '.listen_port' from '${qbit_api_preferences_file}'"
+	export qbit_current_listen_port=$(cat "${qbit_api_preferences_file}" | jq -r '.listen_port')
+
+	log_info "${qbit_get_port_log_prefix} Current qBittorent listen port: ${qbit_current_listen_port}"
+
+	# Delete the temporary port file
+	log_trace "${qbit_get_port_log_prefix} Deleting '${qbit_api_preferences_file}'"
+	rm -f "${qbit_api_preferences_file}"
+
+	return 0
+}
+
+function qbit_update_listen_port {
+	# Function updates the qBittorrent listening port based on the current Gluetun forwarded port
+
+	log_trace "${qbit_update_port_log_prefix} Getting the qBittorrent currently listening port"
+	log_trace "${qbit_update_port_log_prefix} -> ${qbit_get_port_log_prefix}"
+
+	# Attempt to get the qbit listening port
+	qbit_get_listen_port; qbit_get_listen_port_return=$?
+
+	log_trace "${qbit_get_port_log_prefix} -> ${qbit_update_port_log_prefix}"
+
+	# Exit if unsuccessful at getting the qbit port
+	if [[ "${qbit_get_listen_port_return}" != 0 ]]; then
+		return "${qbit_get_listen_port_return}"
+	fi
+
+	log_trace "${qbit_update_port_log_prefix} Getting the Gluetun currently forwarded port"
+	log_trace "${qbit_update_port_log_prefix} -> ${gluetun_get_port_log_prefix}"
+
+	# Attempt to get the Gluetun forwarded port
+	gluetun_get_forwarded_port; gluetun_get_forwarded_port_return=$?
+
+	log_trace "${gluetun_get_port_log_prefix} -> ${qbit_update_port_log_prefix}"
+
+	# Exit if unsuccessful at getting the Gluetun port
+	if [[ "${gluetun_get_forwarded_port_return}" != 0 ]]; then
+		return "${gluetun_get_forwarded_port_return}"
+	fi
+
+	# Exit if the ports are already equivalent
+	if [[ "${qbit_current_listen_port}" == "${gluetun_forwarded_port}" ]]; then
+		log_debug "${qbit_update_port_log_prefix} qBittorrent listening port == gluetun forwarded port"
+		log_trace "${qbit_update_port_log_prefix} ${qbit_current_listen_port} == ${gluetun_forwarded_port}"
+		log_info "${qbit_update_port_log_prefix} No qBittorent listening port update needed"
+
+		return 0
+	fi
+
+	# Inform the user of the current ports
+	log_info "${qbit_update_port_log_prefix} qBittorrent listening port != gluetun forwarded port"
+	log_debug "${qbit_update_port_log_prefix} ${qbit_current_listen_port} != ${gluetun_forwarded_port}"
+	log_info "${qbit_update_port_log_prefix} qBittorrent listening port update required"
+	log_info "${qbit_update_port_log_prefix} Updating qBittorrent listening port to ${gluetun_forwarded_port}"
+
+	# Put curl args in variables to enhance readability
+	curl_args=("${qbit_api_curl_global_opts[@]}")
+	curl_args+=(--output /dev/null)
+	curl_args+=(--request POST)
+	curl_args+=(--data "json={ \"listen_port\":${gluetun_forwarded_port} }")  # MUST use double quotes around `listen_port`
+	curl_args+=("${qbit_api_uri_setpreferences}")
+
+	# Attempt to update the qbit listening port
+	curl "${curl_args[@]}" 1>"${qbit_api_response_file}"
+
+	log_trace "${qbit_update_port_log_prefix} qBittorrent setPreferences API response code: $(cat ${qbit_api_response_file})"
+
+	# Inform the user if unsuccessful
+	if [[ $(cat "${qbit_api_response_file}") != 200 ]]; then
+		log_error "${qbit_update_port_log_prefix} Unable update qBittorrent listen port"
+
+		# Delete API response file
+		log_trace "${qbit_update_port_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+
+		return 1
+	else
+		# Delete API response file
+		log_trace "${qbit_update_port_log_prefix} Deleting '${qbit_api_response_file}'"
+		rm -f "${qbit_api_response_file}"
+	fi
+
+	log_trace "${qbit_update_port_log_prefix} Checking to ensure the qBittorrent listen port was updated"
+	log_trace "${qbit_update_port_log_prefix} -> ${qbit_get_port_log_prefix}"
+
+	# Attempt to check the qbit listening port to ensure it was updated
+	qbit_get_listen_port; qbit_get_listen_port_return=$?
+
+	log_trace "${qbit_get_port_log_prefix} -> ${qbit_update_port_log_prefix}"
+
+	# Exit if unsuccessful at getting the qbit port
+	if [[ "${qbit_get_listen_port_return}" != 0 ]]; then
+		return "${qbit_get_listen_port_return}"
+	fi
+
+	# Inform the user if the port update was somehow unsuccessful
+	if [[ "${qbit_current_listen_port}" -eq "${gluetun_forwarded_port}" ]]; then
+		log_info "${qbit_update_port_log_prefix} qBittorrent listening port updated to: ${qbit_current_listen_port}"
+	else
+		log_error "${qbit_update_port_log_prefix} qBittorent listening port not updated"
+
+		return 1
+	fi
+
+	log_trace "${qbit_update_port_log_prefix} -> ${qbit_logout_log_prefix}"
+
+	# Attempt to logout of qbit
+	qbit_logout; qbit_logout_return=$?
+
+	log_trace "${qbit_logout_log_prefix} -> ${qbit_update_port_log_prefix}"
+
+	# Exit if unsuccessful at logging out
+	if [[ "${qbit_logout_return}" != 0 ]]; then
+		return "${qbit_logout_return}"
+	fi
+
+	return 0
+}
+
+# Capitalize LOG_LEVEL env variable and then set to 'INFO' if not set properly
+LOG_LEVEL="${LOG_LEVEL^^}"
+
+case "${LOG_LEVEL}" in
+	'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL') ;;
+	*) echo "[INFO]  -- ${script_init_log_prefix} LOG_LEVEL '${LOG_LEVEL}' invalid" \
+	   && echo "[INFO]  -- ${script_init_log_prefix} Please use a valid LOG_LEVEL: 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'" \
+	   && echo "[INFO]  -- ${script_init_log_prefix} Defaulting to LOG_LEVEL='INFO'" \
+	   && export LOG_LEVEL='INFO';;
+esac
+
+log_trace "${script_init_log_prefix} Starting the script"
+log_trace "${script_init_log_prefix} -> ${qbit_update_port_log_prefix}"
+
+# Attempt to update the listen port
+qbit_update_listen_port; qbit_update_listen_port_return=$?
+
+log_trace "${qbit_update_port_log_prefix} -> ${script_init_log_prefix}"
+
+# Exit if unsuccessful at updating the qbit port
+if [[ "${qbit_update_listen_port_return}" != 0 ]]; then
+	exit "${qbit_update_listen_port_return}"
+fi
+
+log_trace "${script_init_log_prefix} End of the script"
+
+exit 0

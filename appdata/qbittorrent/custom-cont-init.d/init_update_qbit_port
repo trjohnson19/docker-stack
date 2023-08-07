@@ -1,0 +1,235 @@
+#!/usr/bin/with-contenv bash
+
+## qBittorrent config variables
+qbit_conf_file='/config/qBittorrent/qBittorrent.conf'
+qbit_port_file="${TMPDIR:-/tmp}/qbit_port"
+
+## Gluetun API variables
+## Per https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/control-server.md
+## Global API variables
+gluetun_host="${GLUETUN_IPV4//[$'\r\n']/'':-localhost}"  ### See '${parameter//pattern/string}': https://www.gnu.org/software/bash/manual/bash.html
+gluetun_address="http://${gluetun_host}"
+gluetun_control_server_port="${GLUETUN_HTTP_CONTROL_SERVER_PORT:-9001}"
+gluetun_uri="${gluetun_address}:${gluetun_control_server_port}"
+gluetun_forwarded_port_file="${TMPDIR:-/tmp}/gluetun_port"
+gluetun_api_response_file="${TMPDIR:-/tmp}/gluetun_api_response"
+## Function variables
+gluetun_api_path_portforwarded="/v1/openvpn/portforwarded"
+gluetun_api_uri_portforwarded="${gluetun_uri}${gluetun_api_path_portforwarded}"
+
+## Logging helper variables
+gluetun_get_port_log_prefix='[Gluetun get port]'
+qbit_update_config_log_prefix='[qBit update conf]'
+script_init_log_prefix='[Script initalize]'
+
+# Create helper functions for the various log levels
+function log_trace {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE') echo "[TRACE] -- ${log_message}";;
+	esac
+}
+
+function log_debug {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG') echo "[DEBUG] -- ${log_message}";;
+	esac
+}
+
+function log_info {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO') echo "[INFO]  -- ${log_message}";;
+	esac
+}
+
+function log_warn {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN') echo "[WARN]  -- ${log_message}";;
+	esac
+}
+
+function log_error {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR') echo "[ERROR] -- ${log_message}";;
+	esac
+}
+
+function log_fatal {
+	local log_message="$1"
+	case "${LOG_LEVEL}" in
+		'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL') echo "[FATAL] -- ${log_message}";;
+	esac
+}
+
+function gluetun_get_forwarded_port {
+	# Function is used to get the currently forwarded port from the Gluetun control server API
+
+	log_debug "${gluetun_get_port_log_prefix} Getting the Gluetun forwarded port and saving to '${qbit_api_preferences_file}'"
+
+	# Put curl args in variables to enhance readability
+	curl_args=(--silent --write-out "%{response_code}")
+	curl_args+=(--output "${gluetun_forwarded_port_file}")
+	curl_args+=("${gluetun_api_uri_portforwarded}")
+
+	# Attempt to get the Gluetun forwarded port
+	curl "${curl_args[@]}" 1>"${gluetun_api_response_file}"
+
+	log_trace "${gluetun_get_port_log_prefix} Gluetun portforwarded API response code: $(cat ${gluetun_api_response_file})"
+
+	# Inform the user if unsuccessful
+	if [[ $(cat "${gluetun_api_response_file}") != '200' ]]; then
+		log_error "${gluetun_get_port_log_prefix} Unable to connect to the Gluetun API"
+
+		# Delete the API response file
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_api_response_file}'"
+		rm -f "${gluetun_api_response_file}"
+
+		# Delete the temporary port file
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_forwarded_port_file}'"
+		rm -f "${gluetun_forwarded_port_file}"
+
+		return 1
+	else
+		log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_api_response_file}'"
+		rm -f "${gluetun_api_response_file}"
+	fi
+
+	# Extract the port from the JSON
+	log_trace "${gluetun_get_port_log_prefix} Extracting '.port' from '${gluetun_forwarded_port_file}'"
+	export gluetun_forwarded_port=$(cat "${gluetun_forwarded_port_file}" | jq -r '.port')
+
+	# Delete the temporary port file
+	log_trace "${gluetun_get_port_log_prefix} Deleting '${gluetun_forwarded_port_file}'"
+	rm -f "${gluetun_forwarded_port_file}"
+
+	# Inform the user
+	if [[ "${gluetun_forwarded_port}" != "0" ]]; then
+		log_info "${gluetun_get_port_log_prefix} Current gluetun forwarded port: ${gluetun_forwarded_port}"
+	else
+		log_error "${gluetun_get_port_log_prefix} Gluetun does not have a forwarded port"
+
+		return 1
+	fi
+
+	return 0
+}
+
+function qbit_update_config {
+	log_trace "${qbit_update_config_log_prefix} Getting the Gluetun currently forwarded port"
+	log_trace "${qbit_update_config_log_prefix} -> ${gluetun_get_port_log_prefix}"
+
+	# Attempt to get the Gluetun forwarded port
+	gluetun_get_forwarded_port; gluetun_get_forwarded_port_return=$?
+
+	log_trace "${gluetun_get_port_log_prefix} -> ${qbit_update_config_log_prefix}"
+
+	# Exit if unsuccessful at getting the Gluetun port
+	if [[ "${gluetun_get_forwarded_port_return}" != 0 ]]; then
+		return "${gluetun_get_forwarded_port_return}"
+	fi
+
+	# Create sed print and substitution patterns
+	sed_print_pattern_1='/^Session\\Port=.*/p'  # Capture the entire line 'Session\Port='
+	sed_print_pattern_2='s/^\(Session\\Port=\)\(.*\)/\2/p'  # Capture only the port number
+
+	# Check to see if qBittorrent.conf has 'Session\Port' defined
+	if [[ -z $(sed --silent "${sed_print_pattern_1}" "${qbit_conf_file}") ]]; then
+		log_error "${qbit_update_config_log_prefix} qBittorrent.conf does not have 'Session\Port' defined"
+		log_error "${qbit_update_config_log_prefix} Unable to set port"
+
+		return 1
+	fi
+
+	# Check to see what port is currently set in qBittorrent.conf
+	sed --silent "${sed_print_pattern_2}" "${qbit_conf_file}" >"${qbit_port_file}"
+	qbit_current_listen_port=$(cat "${qbit_port_file}")
+
+	# Delete the temporary port file
+	log_trace "${qbit_update_config_log_prefix} Deleting '${qbit_port_file}'"
+	rm -f "${qbit_port_file}"
+
+	if [[ -n "${qbit_current_listen_port}" ]]; then
+		log_info "${qbit_update_config_log_prefix} Current qBittorent listen port: ${qbit_current_listen_port}"
+	else
+		log_info "${qbit_update_config_log_prefix} Current qBittorent listen port unset"
+	fi
+
+	# Check to see if no update is needed
+	if [[ "${qbit_current_listen_port}" = "${gluetun_forwarded_port}" ]]; then
+		log_debug "${qbit_update_config_log_prefix} qBittorrent listening port == gluetun forwarded port"
+		log_trace "${qbit_update_config_log_prefix} ${qbit_current_listen_port} == ${gluetun_forwarded_port}"
+		log_info "${qbit_update_config_log_prefix} No qBittorent listening port update needed"
+
+		return 0
+	fi
+
+	# Inform the user of the current ports
+	log_info "${qbit_update_config_log_prefix} qBittorrent listening port != gluetun forwarded port"
+	log_debug "${qbit_update_config_log_prefix} ${qbit_current_listen_port} != ${gluetun_forwarded_port}"
+	log_info "${qbit_update_config_log_prefix} qBittorrent listening port update required"
+	log_info "${qbit_update_config_log_prefix} Updating qBittorrent listening port to ${gluetun_forwarded_port}"
+
+	# Find and replace the port with the forwarded port
+	sed_replace_pattern='s/\(Session\\Port\)=.*/\1='"${gluetun_forwarded_port}"'/'
+
+	# Update listening port with Gluetun forwarded port
+	sed --in-place "${sed_replace_pattern}" "${qbit_conf_file}"
+
+	log_debug "${qbit_update_config_log_prefix} Checking to see if qBittorrent port was updated"
+
+	# Check to ensure port was updated
+	sed --silent "${sed_print_pattern_2}" "${qbit_conf_file}" >"${qbit_port_file}"
+	qbit_current_listen_port=$(cat "${qbit_port_file}")
+
+	# Delete the temporary port file
+	log_trace "${qbit_update_config_log_prefix} Deleting '${qbit_port_file}'"
+	rm -f "${qbit_port_file}"
+
+	if [[ -z "${qbit_current_listen_port}" || "${qbit_current_listen_port}" -ne "${gluetun_forwarded_port}" ]]; then
+		log_error "${qbit_update_config_log_prefix} qBittorrent listening port not updated"
+		log_error "${qbit_update_config_log_prefix} ${qbit_current_listen_port} != ${gluetun_forwarded_port}"
+
+		return 1
+	else
+		log_info "${qbit_update_config_log_prefix} qBittorrent listening port successfully updated"
+		log_info "${qbit_update_config_log_prefix} Current qBittorent listen port: ${qbit_current_listen_port}"
+	fi
+
+	return 0
+}
+
+# Capitalize LOG_LEVEL env variable and then set to 'INFO' if not set properly
+LOG_LEVEL="${LOG_LEVEL^^}"
+
+case "${LOG_LEVEL}" in
+	'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL') ;;
+	*) echo "[INFO]  -- ${script_init_log_prefix} LOG_LEVEL '${LOG_LEVEL}' invalid" \
+		&& echo "[INFO]  -- ${script_init_log_prefix} Please use a valid LOG_LEVEL: 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'" \
+		&& echo "[INFO]  -- ${script_init_log_prefix} Defaulting to LOG_LEVEL='INFO'" \
+		&& export LOG_LEVEL='INFO';;
+esac
+
+# Sleep for a short time to allow Gluetun to acquire a port
+log_info "${script_init_log_prefix} Waiting 15 seconds to allow gluetun to start up"
+sleep 15
+
+log_trace "${script_init_log_prefix} Starting the script"
+log_trace "${script_init_log_prefix} -> ${qbit_update_config_log_prefix}"
+
+# Attempt to update the listen port in the config file
+qbit_update_config; qbit_update_config_return=$?
+
+log_trace "${qbit_update_config_log_prefix} -> ${script_init_log_prefix}"
+
+# Exit if unsuccessful at updating the qbit port
+if [[ "${qbit_update_config_return}" != 0 ]]; then
+	exit "${qbit_update_config_return}"
+fi
+
+log_trace "${script_init_log_prefix} End of the script"
+
+exit 0

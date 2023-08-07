@@ -1,0 +1,16 @@
+http:
+  routers:
+    printer-rtr:
+      rule: "Host(`printer.{{env "DOMAINNAME0"}}`)"
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+      service: printer-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    printer-svc:
+      loadBalancer:
+        servers:
+          - url: "http://printer.home.arpa"  # or whatever your external host's IP:port is

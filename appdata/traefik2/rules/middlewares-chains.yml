@@ -1,0 +1,47 @@
+http:
+  middlewares:
+    chain-no-auth:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers
+
+
+    chain-basic-auth:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers
+          - middlewares-basic-auth
+
+
+    chain-authelia0:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers
+          - middlewares-authelia0
+
+
+    chain-authelia1:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers
+          - middlewares-authelia1
+
+
+#    chain-oauth:
+#      chain:
+#        middlewares:
+#          - middlewares-rate-limit
+#          - middlewares-secure-headers
+#          - middlewares-oauth
+    
+    
+    chain-nextcloud:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - nextcloud-middlewares-secure-headers
+          - nextcloud-redirect

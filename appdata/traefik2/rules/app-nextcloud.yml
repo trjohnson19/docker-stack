@@ -1,0 +1,37 @@
+http:
+  middlewares:
+    nextcloud-middlewares-secure-headers:
+      headers:
+        # accessControlAllowMethods:
+          # - GET
+          # - OPTIONS
+          # - PUT
+        accessControlMaxAge: 100
+        # sslRedirect: true
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        ### We will modify this value for Nextcloud to remove the X-Frame-Options error:
+        customFrameOptionsValue: "SAMEORIGIN" #CSP takes care of this but may be needed for organizr.
+        contentTypeNosniff: true
+        browserXssFilter: true
+        # sslForceHost: true # add sslHost to all of the services
+        # sslHost: "example.com"
+        referrerPolicy: "no-referrer"
+        ### While CSP is a good security setting, Nextcloud's Apache server takes care of this for us!
+        # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
+        permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
+        customResponseHeaders:
+        ### Change this to none to remove the Robots error:
+          X-Robots-Tag: "none"
+          server: ""
+
+
+### This section redirects requests for Nextcloud calendar and contacts service discovery
+### source: https://docs.nextcloud.com/server/21/admin_manual/issues/general_troubleshooting.html#service-discovery
+    nextcloud-redirect:
+      redirectRegex:
+        permanent: true
+        regex: "https://(.*)/.well-known/(card|cal)dav"
+        replacement: "https://${1}/remote.php/dav/"

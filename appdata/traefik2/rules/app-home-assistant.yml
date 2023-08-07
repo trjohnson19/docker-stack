@@ -1,0 +1,17 @@
+http:
+  routers:
+    home-assistant-rtr:
+      rule: "Host(`hass.{{env "DOMAINNAME0"}}`)" 
+      entryPoints:
+        - https
+      middlewares:
+        #- chain-authelia0
+        - chain-no-auth
+      service: home-assistant-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    home-assistant-svc:
+      loadBalancer:
+        servers:
+          - url: "http://hass.home.arpa:{{env "HOME_ASSISTANT_PORT"}}"  # or whatever your external host's IP:port is

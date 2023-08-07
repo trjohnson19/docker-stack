@@ -1,0 +1,22 @@
+http:
+  middlewares:
+    nas-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/bypass_cache"
+  routers:
+    nas-rtr:
+      rule: "Host(`nas.{{env "DOMAINNAME0"}}`)"
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+        - nas-stripprefix
+      service: nas-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    nas-svc:
+      loadBalancer:
+        servers:
+          - url: "http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}"  # or whatever your external host's IP:port is

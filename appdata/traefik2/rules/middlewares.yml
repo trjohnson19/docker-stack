@@ -1,0 +1,73 @@
+http:
+  middlewares:
+    middlewares-basic-auth:
+      basicAuth:
+        # users:
+        #   - "user:$
+        usersFile: "/shared/.htpasswd" #be sure to mount the volume through docker-compose.yml
+        realm: "Traefik 2 Basic Auth"
+
+
+    middlewares-rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+
+    middlewares-secure-headers:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+        accessControlMaxAge: 100
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        # frameDeny: true #overwritten by customFrameOptionsValue
+        customFrameOptionsValue: "allow-from https:{{env "DOMAINNAME0"}}" #CSP takes care of this but may be needed for organizr.
+        contentTypeNosniff: true
+        browserXssFilter: true
+        # sslForceHost: true # add sslHost to all of the services
+        # sslHost: "{{env "DOMAINNAME0"}}"
+        referrerPolicy: "same-origin"
+        # Setting contentSecurityPolicy is more secure but it can break things. Proper auth will reduce the risk.
+        # the below line also breaks some apps due to 'none' - sonarr, radarr, etc.
+        # contentSecurityPolicy: "frame-ancestors '*.{{env "DOMAINNAME0"}}:*';object-src 'none';script-src 'none';"
+        permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
+        customResponseHeaders:
+          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
+          server: ""
+
+
+    middlewares-authelia0:
+      forwardAuth:
+        address: "http://authelia0:9091/api/verify?rd=https://auth.{{env "DOMAINNAME0"}}"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"    
+
+
+    middlewares-authelia1:
+      forwardAuth:
+        address: "http://authelia1:9091/api/verify?rd=https://auth.{{env "DOMAINNAME1"}}"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"    
+
+
+#    middlewares-oauth:
+#      forwardAuth:
+#        address: "http://oauth:4181" # Make sure you have the OAuth service in docker-compose.yml
+#        trustForwardHeader: true
+#        authResponseHeaders:
+#          - "X-Forwarded-User"

@@ -1,0 +1,16 @@
+http:
+  routers:
+    qbittorrent-rtr:
+      rule: "Host(`qbit.{{env "DOMAINNAME0"}}`)"
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+      service: qbittorrent-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    qbittorrent-svc:
+      loadBalancer:
+        servers:
+          - url: 'http://mint.home.arpa:{{env "QBITTORRENT_PORT"}}'  # or whatever your external host's IP:port is

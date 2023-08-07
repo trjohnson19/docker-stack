@@ -1,0 +1,16 @@
+http:
+  routers:
+    homebridge-rtr:
+      rule: "Host(`home.{{env "DOMAINNAME0"}}`)"
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+      service: homebridge-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    homebridge-svc:
+      loadBalancer:
+        servers:
+          - url: "http://mint.home.arpa:{{env "HOMEBRIDGE_PORT"}}"  # or whatever your external host's IP:port is

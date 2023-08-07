@@ -1,0 +1,33 @@
+api: https://api.cloudflare.com/client/v4/
+logLevel: warning  # debug, info, notice, warning, error, crit, alert, emerg
+auth:
+  scopedToken: 
+domains:
+  - name: example.com
+    type: A
+    proxied: true
+    create: false
+    zoneId: 
+    # webhook:
+    #   run: https://example.com/webhook/start
+    #   success: https://example.com/webhook/success
+    #   failure: https://example.com/webhook/failure
+ipv4:
+  - type: ini
+    url: https://1.1.1.1/cdn-cgi/trace
+    # trim: false
+    fields:
+      - ip
+  # - type: json
+  #   url: https://api.ipify.org?format=json
+  #   fields:
+  #     - ip
+# ipv6:
+#   - type: json
+#     url: https://v6.ident.me/.json
+#     fields:
+#       - address
+#   - type: json
+#     url: https://api6.ipify.org?format=json
+#     fields:
+#       - ip

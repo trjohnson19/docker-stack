@@ -2492,6 +2492,8 @@ services:
       <<: *default-tz-puid-pgid
     volumes:
       - $APPDIR/overseerr/config:/config
+    healthcheck:
+      test: wget "http://localhost:$OVERSEERR_PORT/api/v1/status" -qO /dev/null || exit 1  # https://github.com/sct/overseerr/issues/411#issuecomment-755083037
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -2503,7 +2505,7 @@ services:
       - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
-      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"
+      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=$OVERSEERR_PORT"
 
   ## Ombi - Request Management System
   ombi:
@@ -2714,3 +2716,23 @@ services:
       ## HTTP Services
       - "traefik.http.routers.handbrake-rtr.service=handbrake-svc"
       - "traefik.http.services.handbrake-svc.loadbalancer.server.port=5800"
+
+
+  ############################## MONITORING
+
+  # New Relic - Infrastructure and container monitoring
+  # https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/linux-installation/container-infrastructure-monitoring/
+  newrelic-infra:
+    image: newrelic/infrastructure:latest
+    container_name: newrelic-infra
+    cap_add:
+      - SYS_PTRACE  # Allows the agent to gather data about processes running on the host
+    network_mode: host  # Allows the agent to collect the network metrics about the host.
+    pid: host  # Required to monitor host processes / performance
+    privileged: true  # Required to monitor host processes / performance
+    restart: unless-stopped
+    volumes:
+      - "/:/host:ro"  # Allows the agent to collect process and storage metrics as well as Inventory data from the host
+      - "/var/run/docker.sock:/var/run/docker.sock"  # Allows the agent to connect to the Engine API via the Docker daemon socket to collect the host's container data
+    environment:
+      NRIA_LICENSE_KEY: $NRIA_LICENSE_KEY

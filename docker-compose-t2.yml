@@ -437,7 +437,8 @@ services:
       - $APPDIR/authelia/configuration0.yml:/config/configuration.yml  # Set the first configuration file
       - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
     environment:
-      # <<: *default-tz-puid-pgid
+      # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
+      TZ: $TZ
       AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
       AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
       AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
@@ -471,7 +472,7 @@ services:
     <<: *common-keys-core
     container_name: authelia1
     # Check this before upgrading: https://github.com/authelia/authelia#breaking-changes
-    image: authelia/authelia:4.37
+    image: ghcr.io/authelia/authelia:4.37
     # depends_on:
     #   - traefik
     # ports:
@@ -481,6 +482,7 @@ services:
       - $APPDIR/authelia/configuration1.yml:/config/configuration.yml  # Set the first configuration file
       - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
     environment:
+      # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
       TZ: $TZ
       AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
       AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
@@ -554,12 +556,12 @@ services:
     # volumes:
     #    - $APPDIR/phpmyadmin:/etc/phpmyadmin
     environment:
-      - PMA_HOST=$MARIADB_HOST
-      - PMA_PORT=$MARIADB_PORT
-      #- PMA_ARBITRARY=1
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
-      #- PMA_USER=pma
-      #- PMA_PASSWORD_FILE=/run/secrets/pma_password
+      PMA_HOST: $MARIADB_HOST
+      PMA_PORT: $MARIADB_PORT
+      # PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      # PMA_USER: pma
+      # PMA_PASSWORD_FILE: /run/secrets/pma_password
     secrets:
       - mysql_root_password
       #- pma_password
@@ -603,8 +605,11 @@ services:
     # ports:
     #   - "$REDISCOMMANDER_PORT:8081"
     environment:
-      - REDIS_HOST=$REDIS_HOST
-      - REDIS_PASSWORD=$REDIS_PASSWORD
+      REDIS_HOST: $REDIS_HOST
+      # REDIS_PASSWORD_FILE: /run/secrets/redis_password  # Not currently working
+      REDIS_PASSWORD: $REDIS_PASSWORD
+    # secrets:
+    #   - redis_password
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -630,13 +635,6 @@ services:
       - $APPDIR/cf-ddns/config.yaml:/app/config.yaml:ro
     environment:  # Environmental variables deprecated
       <<: *default-tz-puid-pgid
-    #   - ZONE=$DOMAINNAME1
-    #   - HOST=$DOMAINNAME1
-    #   - EMAIL=$CLOUDFLARE_EMAIL
-    #   - API=$CLOUDFLARE_DDNS_API_TOKEN
-    #   - PROXY=true  # If the record is being proxied by Cloudflare (orange cloud)
-    #   - FORCE_CREATE=false
-    #   - IPV6=false
       CRON: "@daily"
 
   # DuckDNS - Dynamic DNS service provided by duckdns.org
@@ -668,14 +666,15 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock # Use Docker Socket Proxy instead for improved security
       - $APPDIR/docker-gc/docker-gc-exclude:/etc/docker-gc-exclude  # must create this folder
     environment:
-      - CRON="0 0 0 * * ?" # Everyday at midnight. Previously 0 0 * * *
-      - FORCE_IMAGE_REMOVAL=1
-      - FORCE_CONTAINER_REMOVAL=0
-      - GRACE_PERIOD_SECONDS=604800
-      - DRY_RUN=0
-      - CLEAN_UP_VOLUMES=1
-      - TZ=$TZ
-      - DOCKER_HOST=tcp://socket-proxy:2375
+      <<: *default-tz-puid-pgid
+      CRON: "0 0 0 * * ?"  # Everyday at midnight. Previously 0 0 * * *
+      FORCE_IMAGE_REMOVAL: 1
+      FORCE_CONTAINER_REMOVAL: 0
+      GRACE_PERIOD_SECONDS: 604800
+      DRY_RUN: 0
+      CLEAN_UP_VOLUMES: 1
+      TZ: $TZ
+      DOCKER_HOST: tcp://socket-proxy:2375
 
   # Watchtower - A process for automating Docker container base image updates
   watchtower:
@@ -963,17 +962,17 @@ services:
     #   - /dev/dri/renderD128:/dev/dri/renderD128
     #   - /dev/dri/card0:/dev/dri/card0
     ports:
-      # - 8265:8265 # webUI port
-      - 8266:8266 # server port
+      # - $TDARR_WEBUI_PORT:$TDARR_WEBUI_PORT # webUI port
+      - $TDARR_SERVER_PORT:$TDARR_SERVER_PORT # server port
       # - 8267:8267 # Internal node port
       # - 8268:8268 # Example extra node port
     environment:
-      - UMASK_SET=002
-      - serverIP=tdarr
-      - serverPort=8266
-      - webUIPort=8265
-      - internalNode=false
-      # - nodeID=MyInternalNode
+      UMASK_SET: 002
+      serverIP: tdarr
+      serverPort: $TDARR_SERVER_PORT
+      webUIPort: $TDARR_WEBUI_PORT
+      internalNode: "false"
+      # nodeID: MyInternalNode
     volumes:
       - $APPDIR/tdarr/server:/app/server
       - $APPDIR/tdarr/configs:/app/configs
@@ -997,7 +996,7 @@ services:
       - "traefik.http.routers.tdarr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.tdarr-rtr.service=tdarr-svc"
-      - "traefik.http.services.tdarr-svc.loadbalancer.server.port=8265"
+      - "traefik.http.services.tdarr-svc.loadbalancer.server.port=$TDARR_WEBUI_PORT"
 
   # Tdarr - Distributed transcode automation
   tdarr-node:
@@ -1010,14 +1009,14 @@ services:
       # - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/dri/card0:/dev/dri/card0
     ports:
-      - 9267:9267  # Node port
+      - $TDARR_NODE_PORT:$TDARR_NODE_PORT  # Node port
     environment:
-      - UMASK_SET=002
-      - serverIP=tdarr
-      - serverPort=8266
-      - nodeID=NucNode
-      - nodeIP=tdarr-node  # Container name of the node
-      - nodePort=9267
+      UMASK_SET: 02
+      serverIP: tdarr
+      serverPort: $TDARR_SERVER_PORT
+      nodeID: NucNode
+      nodeIP: tdarr-node  # Container name of the node
+      nodePort: $TDARR_NODE_PORT
     volumes:
       - $APPDIR/tdarr/configs:/app/configs
       - $APPDIR/tdarr/logs:/app/logs
@@ -1556,8 +1555,8 @@ services:
     container_name: whoami
     image: containous/whoami
     environment:
-      - WHOAMI_PORT_NUMBER=$WHOAMI_PORT  # Not currently working on port other than 80
-      - WHOAMI_NAME=WhoAmI
+      WHOAMI_PORT_NUMBER: $WHOAMI_PORT  # Not currently working on port other than 80
+      WHOAMI_NAME: WhoAmI
     labels:
       - "traefik.enable=true"
       ## HTTP Routers  # Set to respond on both `whoami.$DOMAINNAME0` and `whoami.$DOMAINNAME1`
@@ -1594,7 +1593,7 @@ services:
       <<: *default-tz-puid-pgid
       SERVERURL: vpn.$DOMAINNAME1
       SERVERPORT: $WIREGUARD_PORT
-      PEERS: myiPhone,myMacbook,myDesktop,tayiPhone,tayMacbook,misc1,misc2
+      PEERS: $WIREGUARD_PEERS
       PEERDNS: 192.168.1.2
       INTERNAL_SUBNET: 10.13.13.0
     volumes:
@@ -1640,14 +1639,14 @@ services:
       - $APPDIR/gluetun:/gluetun
     environment:
       <<: *default-tz-puid-pgid
-      VPN_SERVICE_PROVIDER: "protonvpn"
+      VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       VPN_TYPE: "openvpn"
       # OpenVPN:
       OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
       OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
       VPN_PORT_FORWARDING: "on"
-      VPN_PORT_FORWARDING_PROVIDER: "protonvpn"
+      VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:
       # WIREGUARD_ADDRESSES:
@@ -1683,14 +1682,14 @@ services:
       - $APPDIR/gluetun:/gluetun
     environment:
       <<: *default-tz-puid-pgid
-      VPN_SERVICE_PROVIDER: "protonvpn"
+      VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       VPN_TYPE: "openvpn"
       # OpenVPN:
       OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
       OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
       VPN_PORT_FORWARDING: "on"
-      VPN_PORT_FORWARDING_PROVIDER: "protonvpn"
+      VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:
       # WIREGUARD_ADDRESSES:
@@ -1716,7 +1715,7 @@ services:
   #   container_name: homebridge
   #   restart: unless-stopped
   #   # ports:
-  #   #   - $HOMEBRIDGE_PORT:8581
+  #   #   - $HOMEBRIDGE_PORT:$HOMEBRIDGE_PORT
   #   network_mode: host
   #   # networks:
   #   #   - t2_proxy  # Does not play nicely with Traefik
@@ -1725,11 +1724,9 @@ services:
   #   volumes:
   #     - $APPDIR/homebridge:/homebridge
   #   environment:
-  #     - TZ=$TZ
-  #     - PGID=$PGID
-  #     - PUID=$PUID
-  #     - HOMEBRIDGE_CONFIG_UI=1
-  #     - HOMEBRIDGE_CONFIG_UI_PORT=$HOMEBRIDGE_PORT
+  #     <<: *default-tz-puid-pgid
+  #     HOMEBRIDGE_CONFIG_UI: 1
+  #     HOMEBRIDGE_CONFIG_UI_PORT: $HOMEBRIDGE_PORT
   #   labels:
   #     - "traefik.enable=true"
   #     ## HTTP Routers
@@ -1740,7 +1737,7 @@ services:
   #     - "traefik.http.routers.homebridge-rtr.middlewares=chain-authelia0@file"
   #     ## HTTP Services
   #     - "traefik.http.routers.homebridge-rtr.service=homebridge-svc"
-  #     - "traefik.http.services.homebridge-svc.loadbalancer.server.port=8581"
+  #     - "traefik.http.services.homebridge-svc.loadbalancer.server.port=$HOMEBRIDGE_PORT"
 
 
   ############################## NETWORK SERVICES
@@ -1819,9 +1816,8 @@ services:
       # - $NTP_PORT:123
       - $NTP_PORT:123/udp
     environment:
-      # - NTP_SERVERS="time.nist.gov,time.cloudflare.com,ntppub.tamu.edu,time1.google.com,time2.google.com,time3.google.com,time4.google.com"
-      - NTP_SERVERS="time.nist.gov,time.cloudflare.com,ntppub.tamu.edu,utcnist.colorado.edu,pool.ntp.org,bonehed.lcs.mit.edu"
-      - LOG_LEVEL=1  # 0 (informational), 1 (warning), 2 (non-fatal error), and 3 (fatal error)
+      NTP_SERVERS: $NTP_SERVERS
+      LOG_LEVEL: 1  # 0 (informational), 1 (warning), 2 (non-fatal error), and 3 (fatal error)
 
 
   ############################## MINECRAFT
@@ -2014,12 +2010,12 @@ services:
   #   # dns:
   #   #   - 1.1.1.1
   #   environment:
-  #     - IMAGE_PATH=/image
-  #     - EXTRA=-display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
-  #     - DISPLAY=:99
-  #     - WIDTH=1920
-  #     - HEIGHT=1080
-  #     - GENERATE_UNIQUE=true
+  #     IMAGE_PATH: /image
+  #     EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
+  #     DISPLAY: ":99"
+  #     WIDTH: 1920
+  #     HEIGHT: 1080
+  #     GENERATE_UNIQUE: true
   #   volumes:
   #     - /tmp/.X11-unix:/tmp/.X11-unix
   #     - $DATADIR/docker/bluebubbles/maindisk.qcow2:/image
@@ -2047,15 +2043,15 @@ services:
   #   # dns:
   #   #   - 1.1.1.1
   #   environment:
-  #     - DISPLAY=${DISPLAY:-:0.0}
-  #     - IMAGE_PATH=/image
-  #     - BOOTDISK=/bootdisk
-  #     - EXTRA=-display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
-  #     - ADDITIONAL_PORTS=hostfwd=tcp::1234-:1234,
-  #     - DISPLAY=:99
-  #     - WIDTH=1920
-  #     - HEIGHT=1080
-  #     - NOPICKER=true
+  #     DISPLAY: ${DISPLAY:-:0.0}
+  #     IMAGE_PATH: /image
+  #     BOOTDISK: /bootdisk
+  #     EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
+  #     ADDITIONAL_PORTS: "hostfwd=tcp::1234-:1234,"
+  #     DISPLAY: ":99"
+  #     WIDTH: 1920
+  #     HEIGHT: 1080
+  #     NOPICKER: true
   #   volumes:
   #     - /tmp/.X11-unix:/tmp/.X11-unix
   #     - $DATADIR/docker/bluebubbles/maindisk.qcow2:/image
@@ -2088,7 +2084,7 @@ services:
       <<: *default-tz-puid-pgid
       WEBUI_PORT: $QBITTORRENT_PORT
       # Custom env variables
-      LOG_LEVEL: "INFO"  # "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+      LOG_LEVEL: "WARN"  # "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
       FILE__QBITTORRENT_USERNAME: /run/secrets/qbittorrent_user
       FILE__QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_pass
       GLUETUN_IPV4: $GLUETUN_IPV4
@@ -2231,7 +2227,7 @@ services:
   #    LOG_LEVEL: info
   #    LOG_HTML: "false"
   #    CAPTCHA_SOLVER: none
-  #    # TEST_URL: "www.cloudflare.com"
+  #    # TEST_URL: "www.eff.org"
   #  ports:
   #   - "$FLARESOLVERR_PORT:8191"
   #  restart: unless-stopped
@@ -2694,10 +2690,10 @@ services:
       - $APPDIR/handbrake/config:/config
       - $APPDIR/handbrake/watch:/watch
     environment:
+      <<: *default-tz-puid-pgid
       USER_ID: $PUID
       GROUP_ID: $PGID
       UMASK: 002
-      TZ: $TZ
       KEEP_APP_RUNNING: 1
       CLEAN_TMP_DIR: 1
       DISPLAY_WIDTH: 1600

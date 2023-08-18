@@ -2128,7 +2128,7 @@ services:
       - $APPDIR/qbittorrent-private/persistent:/persistent  # Space for persistent storage
       - $APPDIR/qbittorrent-private/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
       - $APPDIR/qbittorrent-private/custom-services.d:/custom-services.d:ro
-      - $DATADIR/torrents:/data/torrents  # Final home for data
+      - $DATADIR/torrents-private:/data/torrents-private  # Final home for data
       - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
     secrets:
       - qbittorrent_user

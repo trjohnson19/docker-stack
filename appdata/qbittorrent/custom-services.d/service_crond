@@ -1,3 +1,4 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 
 /usr/sbin/crond -f -S -l 0 -c /etc/crontabs

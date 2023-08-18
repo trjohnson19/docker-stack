@@ -1,6 +1,10 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 
 # Add to root's crontab
-echo '' >> /etc/crontabs/root
-echo '# Add script to auto update qbittorrent port' >> /etc/crontabs/root
-echo '*/5 * * * * sleep $(shuf --random-source='/dev/urandom' --input-range=60-120 --head-count=1); /scripts/update_qbit_port' >> /etc/crontabs/root
+{
+	echo ''
+	echo '# Add script to auto update qbittorrent port'
+	# shellcheck disable=SC2016  # Since this is a command to be run by cron, we wish to copy exactly
+	echo '*/5 * * * * sleep $(shuf --random-source='/dev/urandom' --input-range=60-120 --head-count=1); /scripts/update_qbit_port'
+} >> /etc/crontabs/root

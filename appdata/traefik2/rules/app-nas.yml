@@ -6,7 +6,7 @@ http:
           - "/bypass_cache"
   routers:
     nas-rtr:
-      rule: "Host(`nas.{{env "DOMAINNAME0"}}`)"
+      rule: 'Host(`nas.{{env "DOMAINNAME0"}}`)'
       entryPoints:
         - https
       middlewares:
@@ -19,4 +19,4 @@ http:
     nas-svc:
       loadBalancer:
         servers:
-          - url: "http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}"  # or whatever your external host's IP:port is
+          - url: 'http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}'  # or whatever your external host's IP:port is

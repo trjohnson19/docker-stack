@@ -1,7 +1,7 @@
 http:
   routers:
     printer-rtr:
-      rule: "Host(`printer.{{env "DOMAINNAME0"}}`)"
+      rule: 'Host(`printer.{{env "DOMAINNAME0"}}`)'
       entryPoints:
         - https
       middlewares:

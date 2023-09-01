@@ -1,13 +1,19 @@
+# Required fields
+#   - auth.scopedToken
+#   - domains.name
+#   - domains.zoneId
+# Obtain via https://dash.cloudflare.com
+---
 api: https://api.cloudflare.com/client/v4/
 logLevel: warning  # debug, info, notice, warning, error, crit, alert, emerg
 auth:
-  scopedToken: 
+  scopedToken:
 domains:
   - name: example.com
     type: A
     proxied: true
     create: false
-    zoneId: 
+    zoneId:
     # webhook:
     #   run: https://example.com/webhook/start
     #   success: https://example.com/webhook/success
@@ -31,3 +37,4 @@ ipv4:
 #     url: https://api6.ipify.org?format=json
 #     fields:
 #       - ip
+...

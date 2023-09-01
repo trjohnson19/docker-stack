@@ -46,8 +46,10 @@ qbit_api_uri_setpreferences="${qbit_api_uri_base}${qbit_api_path_setpreferences}
 ## Defined using Docker env variables or secrets
 ## Constant definition strips '\r' and '\n' from variables
 ### See '${parameter//pattern/string}': https://www.gnu.org/software/bash/manual/bash.html
-qbit_api_username="${QBITTORRENT_USERNAME:-admin//[$'\r\n']/''}"
-qbit_api_password="${QBITTORRENT_PASSWORD:-adminadmin//[$'\r\n']/''}"
+qbit_api_username="${QBITTORRENT_USERNAME:-admin}"
+qbit_api_username="${qbit_api_username//[$'\r\n']/''}"
+qbit_api_password="${QBITTORRENT_PASSWORD:-adminadmin}"
+qbit_api_password="${qbit_api_password//[$'\r\n']/''}"
 
 ## Logging helper variables
 gluetun_get_port_log_prefix='[Gluetun get port]'
@@ -508,7 +510,6 @@ case "${LOG_LEVEL}" in
 	   && echo "[INFO]  -- ${script_init_log_prefix} Defaulting to LOG_LEVEL='INFO'" \
 	   && export LOG_LEVEL='INFO';;
 esac
-LOG_LEVEL='TRACE'
 
 log_trace "${script_init_log_prefix} Starting the script"
 log_trace "${script_init_log_prefix} -> ${qbit_update_port_log_prefix}"

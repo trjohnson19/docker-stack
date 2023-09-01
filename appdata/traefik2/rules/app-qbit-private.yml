@@ -1,7 +1,7 @@
 http:
   routers:
     qbittorrent-private-rtr:
-      rule: "Host(`qbit-private.{{env "DOMAINNAME0"}}`)"
+      rule: 'Host(`qbit-private.{{env "DOMAINNAME0"}}`)'
       entryPoints:
         - https
       middlewares:

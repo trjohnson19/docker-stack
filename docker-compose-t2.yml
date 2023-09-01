@@ -182,7 +182,7 @@ services:
   traefik:
     <<: *common-keys-core
     container_name: traefik
-    image: traefik:banon # beaufort=3.0.x; banon=2.9.x; vacherin=2.8.x
+    image: traefik:saintmarcelin # beaufort=3.0.x; saintmarcelin=2.10.x; banon=2.9.x
     command: # CLI arguments
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
@@ -217,8 +217,8 @@ services:
       - --entrypoints.https.http.tls.certresolver=dns-cloudflare
       - --entrypoints.https.http.tls.domains[0].main=$DOMAINNAME0
       - --entrypoints.https.http.tls.domains[0].sans=*.$DOMAINNAME0
-      - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1  # Pulls main cert for second domain
-      - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1  # Pulls wildcard cert for second domain
+      # - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1  # Pulls main cert for second domain
+      # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1  # Pulls wildcard cert for second domain
       - --providers.docker.network=t2_proxy
       - --providers.docker.swarmMode=false
       - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
@@ -281,7 +281,7 @@ services:
       CF_API_KEY_FILE: /run/secrets/cloudflare_api_key
       HTPASSWD_FILE: /run/secrets/htpassword  # HTPASSWD_FILE can be whatever as it is not used/called anywhere.
       DOMAINNAME0: $DOMAINNAME0   # So DOMAINNAME0 can be used in Traefik rules
-      DOMAINNAME1: $DOMAINNAME1   # So DOMAINNAME1 can be used in Traefik rules
+      # DOMAINNAME1: $DOMAINNAME1   # So DOMAINNAME1 can be used in Traefik rules
       HOMEBRIDGE_PORT: $HOMEBRIDGE_PORT   # So HOMEBRIDGE_PORT can be used in Traefik rules
       HOME_ASSISTANT_PORT: $HOME_ASSISTANT_PORT
       SYNOLOGY_PORT: $SYNOLOGY_PORT
@@ -305,12 +305,12 @@ services:
       - "traefik.http.routers.traefik0-rtr.entrypoints=https"  # An example of a service available on both `abcxyz.$DOMAINNAME0` and `abcxyz.$DOMAINNAME1`
       - "traefik.http.routers.traefik0-rtr.tls=true"
       - "traefik.http.routers.traefik0-rtr.rule=Host(`traefik.$DOMAINNAME0`)"
-      - "traefik.http.routers.traefik1-rtr.entrypoints=https"
-      - "traefik.http.routers.traefik1-rtr.tls=true"
-      - "traefik.http.routers.traefik1-rtr.rule=Host(`traefik.$DOMAINNAME1`)"
+      # - "traefik.http.routers.traefik1-rtr.entrypoints=https"
+      # - "traefik.http.routers.traefik1-rtr.tls=true"
+      # - "traefik.http.routers.traefik1-rtr.rule=Host(`traefik.$DOMAINNAME1`)"
       ## Services - API
       - "traefik.http.routers.traefik0-rtr.service=api@internal"
-      - "traefik.http.routers.traefik1-rtr.service=api@internal"
+      # - "traefik.http.routers.traefik1-rtr.service=api@internal"
       ## Healthcheck/ping
       - "traefik.http.routers.ping.rule=Host(`traefik.$DOMAINNAME0`) && Path(`/ping`)"
       - "traefik.http.routers.ping.tls=true"
@@ -318,7 +318,7 @@ services:
       ## Middlewares
       #- "traefik.http.routers.traefik0-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.traefik0-rtr.middlewares=chain-authelia0@file"
-      - "traefik.http.routers.traefik1-rtr.middlewares=chain-authelia1@file"
+      # - "traefik.http.routers.traefik1-rtr.middlewares=chain-authelia1@file"
 
   # Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
   socket-proxy:
@@ -331,9 +331,9 @@ services:
         ipv4_address: $SOCKET_PROXY_IPV4  # You can specify a static IP
     privileged: true
     ports:
-      # - 127.0.0.1:2375:2375  # Port 2375 should only ever get exposed to the internal network. When possible use this line.
+      - 127.0.0.1:2375:2375  # Port 2375 should only ever get exposed to the internal network. When possible use this line.
       # I use the next line instead, as I want portainer to manage multiple docker endpoints within my home network.
-      - 2375:2375
+      # - 2375:2375
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
@@ -376,7 +376,7 @@ services:
     image: lscr.io/linuxserver/heimdall
     container_name: heimdall
     # ports:
-    #  - "$HEIMDALL_PORT:3000"
+    #  - "$HEIMDALL_PORT:80"
     volumes:
       - $APPDIR/heimdall:/config
     environment:
@@ -400,7 +400,7 @@ services:
   #   image: organizr/organizr
   #   container_name: organizr
   #   # ports:
-  #   #  - "$ORGANIZR_PORT:3000"
+  #   #  - "$ORGANIZR_PORT:80"
   #   volumes:
   #     - $APPDIR/organizr:/config
   #   environment:
@@ -410,7 +410,7 @@ services:
   #     - "traefik.enable=true"
   #     ## HTTP Routers
   #     - "traefik.http.routers.organizr-rtr.entrypoints=https"
-  #     - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME1`,`www.$DOMAINNAME1`)"
+  #     - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME0`,`www.$DOMAINNAME0`)"
   #     - "traefik.http.routers.organizr-rtr.tls.options=tls-opts@file"
   #     - "traefik.http.routers.organizr-rtr.tls=true"
   #     ## Middlewares
@@ -431,8 +431,8 @@ services:
     # depends_on:
     #   - traefik
     # ports:
-    #    - "9091:9091"
-    #    - "9959:9959"  # Telemetry data
+    #    - "$AUTHELIA_PORT:$AUTHELIA_PORT"
+    #    - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
     volumes:
       - $APPDIR/authelia/configuration0.yml:/config/configuration.yml  # Set the first configuration file
       - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
@@ -465,52 +465,52 @@ services:
       - "traefik.http.routers.authelia0-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.authelia0-rtr.service=authelia0-svc"
-      - "traefik.http.services.authelia0-svc.loadbalancer.server.port=9091"
+      - "traefik.http.services.authelia0-svc.loadbalancer.server.port=$AUTHELIA_PORT"
 
-  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
-  authelia1:  # Second instance for DOMAINNAME1
-    <<: *common-keys-core
-    container_name: authelia1
-    # Check this before upgrading: https://github.com/authelia/authelia#breaking-changes
-    image: ghcr.io/authelia/authelia:4.37
-    # depends_on:
-    #   - traefik
-    # ports:
-    #    - "9091:9091"
-    #    - "9959:9959"  # Telemetry data
-    volumes:
-      - $APPDIR/authelia/configuration1.yml:/config/configuration.yml  # Set the first configuration file
-      - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
-    environment:
-      # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
-      TZ: $TZ
-      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
-      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
-      AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
-      AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
-      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
-      AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
-      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
-    secrets:
-      - authelia_jwt_secret
-      - authelia_session_secret
-      - authelia_session_redis_password
-      - authelia_storage_mysql_password
-      - authelia_notifier_smtp_password
-      - authelia_duo_api_secret_key
-      - authelia_storage_encryption_key
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.authelia1-rtr.entrypoints=https"
-      - "traefik.http.routers.authelia1-rtr.rule=Host(`auth.$DOMAINNAME1`)"
-      - "traefik.http.routers.authelia1-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.authelia1-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.authelia1-rtr.middlewares=chain-authelia1@file"
-      ## HTTP Services
-      - "traefik.http.routers.authelia1-rtr.service=authelia1-svc"
-      - "traefik.http.services.authelia1-svc.loadbalancer.server.port=9091"
+  # # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  # authelia1:  # Second instance for DOMAINNAME1
+  #   <<: *common-keys-core
+  #   container_name: authelia1
+  #   # Check this before upgrading: https://github.com/authelia/authelia#breaking-changes
+  #   image: ghcr.io/authelia/authelia:4.37
+  #   # depends_on:
+  #   #   - traefik
+  #   # ports:
+    #    - "$AUTHELIA_PORT:$AUTHELIA_PORT"
+    #    - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
+  #   volumes:
+  #     - $APPDIR/authelia/configuration1.yml:/config/configuration.yml  # Set the first configuration file
+  #     - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
+  #   environment:
+  #     # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
+  #     TZ: $TZ
+  #     AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+  #     AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+  #     AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
+  #     AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
+  #     AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
+  #     AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
+  #     AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+  #   secrets:
+  #     - authelia_jwt_secret
+  #     - authelia_session_secret
+  #     - authelia_session_redis_password
+  #     - authelia_storage_mysql_password
+  #     - authelia_notifier_smtp_password
+  #     - authelia_duo_api_secret_key
+  #     - authelia_storage_encryption_key
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.authelia1-rtr.entrypoints=https"
+  #     - "traefik.http.routers.authelia1-rtr.rule=Host(`auth.$DOMAINNAME1`)"
+  #     - "traefik.http.routers.authelia1-rtr.tls.options=tls-opts@file"
+  #     - "traefik.http.routers.authelia1-rtr.tls=true"
+  #     ## Middlewares
+  #     - "traefik.http.routers.authelia1-rtr.middlewares=chain-authelia1@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.authelia1-rtr.service=authelia1-svc"
+  #     - "traefik.http.services.authelia1-svc.loadbalancer.server.port=9091"
 
   # # Keycloak - Open Source Identity and Access Management
   # keycloak:
@@ -587,9 +587,9 @@ services:
     networks:
       t2_proxy:
         ipv4_address: $REDIS_IPV4
-    entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
     ports:
-      - "$REDIS_PORT:6379"
+      - "$REDIS_PORT:$REDIS_PORT"
     volumes:
       - $APPDIR/redis/data:/data
       - /etc/timezone:/etc/timezone:ro
@@ -599,17 +599,19 @@ services:
   rediscommander:
     <<: *common-keys-apps
     container_name: rediscommander
-    image: rediscommander/redis-commander:latest
+    image: ghcr.io/joeferner/redis-commander:latest
     depends_on:
       - redis
     # ports:
-    #   - "$REDISCOMMANDER_PORT:8081"
+    #   - "$REDISCOMMANDER_PORT:$REDISCOMMANDER_PORT"
     environment:
       REDIS_HOST: $REDIS_HOST
+      REDIS_PORT: $REDIS_PORT
       # REDIS_PASSWORD_FILE: /run/secrets/redis_password  # Not currently working
       REDIS_PASSWORD: $REDIS_PASSWORD
-    # secrets:
-    #   - redis_password
+      PORT: $REDISCOMMANDER_PORT
+    secrets:
+      - redis_password
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -621,7 +623,7 @@ services:
       - "traefik.http.routers.rediscommander-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.rediscommander-rtr.service=rediscommander-svc"
-      - "traefik.http.services.rediscommander-svc.loadbalancer.server.port=8081"
+      - "traefik.http.services.rediscommander-svc.loadbalancer.server.port=$REDISCOMMANDER_PORT"
 
 
   ############################## MAINTENANCE
@@ -855,16 +857,22 @@ services:
       - socket_proxy
     depends_on:
       - socket-proxy
+    healthcheck:
+      test: [ "CMD", "/dozzle", "healthcheck" ]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     # ports:
-    #   - "$DOZZLE_PORT:8080"
+    #   - "$DOZZLE_PORT:$DOZZLE_PORT"
     environment:
-      DOZZLE_LEVEL: info
-      DOZZLE_TAILSIZE: 300
-      DOZZLE_FILTER: "status=running"
-      # DOZZLE_FILTER: "label=log_me" # limits logs displayed to containers with this label
+      DOZZLE_ADDR: ":$DOZZLE_PORT"
       DOCKER_HOST: tcp://socket-proxy:2375
+      DOZZLE_FILTER: "status=running"
+      # DOZZLE_FILTER: "label=log_me"  # limits logs displayed to containers with this label
+      DOZZLE_LEVEL: info
     # volumes:
-    #  - /var/run/docker.sock:/var/run/docker.sock # Use Docker Socket Proxy instead for improved security
+    #  - /var/run/docker.sock:/var/run/docker.sock  # Use Docker Socket Proxy instead for improved security
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -876,7 +884,7 @@ services:
       - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
-      - "traefik.http.services.dozzle-svc.loadbalancer.server.port=8080"
+      - "traefik.http.services.dozzle-svc.loadbalancer.server.port=$DOZZLE_PORT"
 
   # Glances - System Information
   glances:
@@ -922,7 +930,7 @@ services:
     image: jlesage/dupeguru:latest
     container_name: dupeguru
     # ports:
-    #   - "$dupeguru_PORT:5800"
+    #   - "$DUPEGURU_PORT:5800"
     volumes:
       - $DATADIR:/storage:rw
       - $USERDIR:/data/home:ro
@@ -937,6 +945,7 @@ services:
       DISPLAY_WIDTH: 1600
       DISPLAY_HEIGHT: 960
       VNC_PASSWORD: $DUPEGURU_VNC_PASSWD
+      WEB_LISTENING_PORT: $DUPEGURU_PORT
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -949,7 +958,7 @@ services:
       - "traefik.http.middlewares.dupeguru-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
       ## HTTP Services
       - "traefik.http.routers.dupeguru-rtr.service=dupeguru-svc"
-      - "traefik.http.services.dupeguru-svc.loadbalancer.server.port=5800"
+      - "traefik.http.services.dupeguru-svc.loadbalancer.server.port=$DUPEGURU_PORT"
 
   # Tdarr - Distributed transcode automation
   tdarr:
@@ -1036,7 +1045,7 @@ services:
     #   - "traefik.http.routers.tdarr-node-rtr.middlewares=chain-authelia0@file"
     #   ## HTTP Services
     #   - "traefik.http.routers.tdarr-node-rtr.service=tdarr-node-svc"
-    #   - "traefik.http.services.tdarr-node-svc.loadbalancer.server.port=8265"
+    #   - "traefik.http.services.tdarr-node-svc.loadbalancer.server.port=$TDARR_NODE_PORT"
 
   # Gotify - A simple server for sending and receiving messages
   gotify:
@@ -1317,7 +1326,7 @@ services:
     container_name: firefly
     image: fireflyiii/core:latest
     # ports:
-    #   - "8080:8080"
+    #   - "$FIREFLY_PORT:8080"
     hostname: money.$DOMAINNAME0
     volumes:
       - $APPDIR/firefly/export:/var/www/firefly-iii/storage/export
@@ -1437,7 +1446,7 @@ services:
       - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia0@file"  # Note: possible issue before using Authelia, would need to configure /path for importer to bypass Authelia (/api/v1) - or just use http://firefly:$FIREFLY_PORT
       ## HTTP Services
       - "traefik.http.routers.firefly-rtr.service=firefly-svc"
-      - "traefik.http.services.firefly-svc.loadbalancer.server.port=$FIREFLY_PORT"
+      - "traefik.http.services.firefly-svc.loadbalancer.server.port=8080"
 
   ## Firefly III Data Importer
   importer:
@@ -1564,16 +1573,16 @@ services:
       - "traefik.http.routers.whoami0-rtr.rule=Host(`whoami.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami0-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.whoami0-rtr.tls=true"
-      - "traefik.http.routers.whoami1-rtr.entrypoints=https"
-      - "traefik.http.routers.whoami1-rtr.rule=Host(`whoami.$DOMAINNAME1`)"
-      - "traefik.http.routers.whoami1-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.whoami1-rtr.tls=true"
+      # - "traefik.http.routers.whoami1-rtr.entrypoints=https"
+      # - "traefik.http.routers.whoami1-rtr.rule=Host(`whoami.$DOMAINNAME1`)"
+      # - "traefik.http.routers.whoami1-rtr.tls.options=tls-opts@file"
+      # - "traefik.http.routers.whoami1-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.whoami0-rtr.middlewares=chain-authelia0@file"
-      - "traefik.http.routers.whoami1-rtr.middlewares=chain-authelia1@file"
+      # - "traefik.http.routers.whoami1-rtr.middlewares=chain-authelia1@file"
       ## HTTP Services
       - "traefik.http.routers.whoami0-rtr.service=whoami-svc"
-      - "traefik.http.routers.whoami1-rtr.service=whoami-svc"
+      # - "traefik.http.routers.whoami1-rtr.service=whoami-svc"
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=$WHOAMI_PORT"
 
   ############################## VPN
@@ -1591,7 +1600,7 @@ services:
       - SYS_MODULE
     environment:
       <<: *default-tz-puid-pgid
-      SERVERURL: vpn.$DOMAINNAME1
+      SERVERURL: vpn.$DOMAINNAME0
       SERVERPORT: $WIREGUARD_PORT
       PEERS: $WIREGUARD_PEERS
       PEERDNS: 192.168.1.2
@@ -1601,7 +1610,7 @@ services:
       - /usr/src:/usr/src
       - /lib/modules:/lib/modules
     # ports:
-    #   - 443:51820/udp
+    #   - $WIREGUARD_PORT:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv6.conf.all.disable_ipv6=0
@@ -1614,12 +1623,12 @@ services:
       - "traefik.enable=true"
       ## UDP Routers
       - "traefik.udp.routers.wireguard-udp.entrypoints=wireguard"
-      # - "traefik.udp.routers.wireguard-udp.rule=Host(`vpn.$DOMAINNAME1`)" # Rules cannot be used with UDP routers at this time - https://doc.traefik.io/traefik/routing/routers/#configuring-udp-routers
+      # - "traefik.udp.routers.wireguard-udp.rule=Host(`vpn.$DOMAINNAME0`)"  # Rules cannot be used with UDP routers at this time - https://doc.traefik.io/traefik/routing/routers/#configuring-udp-routers
       ## Middlewares
       # - "traefik.udp.routers.wireguard-udp.middlewares=chain-no-auth@file"
       ## UDP Services
       - "traefik.udp.routers.wireguard-udp.service=wireguard-udp-svc"
-      - "traefik.udp.services.wireguard-udp-svc.loadbalancer.server.port=51820"
+      - "traefik.udp.services.wireguard-udp-svc.loadbalancer.server.port=$WIREGUARD_PORT"
 
   # Gluetun - VPN client in a thin Docker container
   gluetun:
@@ -1855,7 +1864,7 @@ services:
   #     # WORLD: /worlds/backups/world_backup  # Read the world from the folder my_world
   #     # WORLD: http://www.example.com/worlds/MySave.zip  # Read the world from a URL
   #     SERVER_NAME: NUC_Server
-  #     # SERVER_PORT: 25566  # Dangerous to change if you don't know what you're doing
+  #     # SERVER_PORT: $MINECRAFT_PORT  # Dangerous to change if you don't know what you're doing
   #     DIFFICULTY: 1  # peaceful, easy, normal, hard
   #     WHITELIST: $MINECRAFT_USER_LIST  # Allow-listed players
   #     OPS: $MINECRAFT_USER_LIST  # Op/Administrator players
@@ -1926,14 +1935,14 @@ services:
   #   #   - "traefik.enable=true"
   #   #   ## HTTP Routers
   #   #   - "traefik.http.routers.minecraft-rtr.entrypoints=minecraft"
-  #   #   - "traefik.http.routers.minecraft-rtr.rule=Host(`vanilla.mc.$DOMAINNAME1`)"
+  #   #   - "traefik.http.routers.minecraft-rtr.rule=Host(`vanilla.mc.$DOMAINNAME0`)"
   #   #   ## Middlewares
   #   #   - "traefik.http.routers.minecraft-rtr.middlewares=chain-no-auth@file,minecraft-remove-bypass-cache"
   #   #   - "traefik.http.middlewares.minecraft-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
   #   #   - "traefik.http.middlewares.minecraft-remove-bypass-cache.stripprefix.forceSlash=false"
   #   #   ## HTTP Services
   #   #   - "traefik.http.routers.minecraft-rtr.service=minecraft-svc"
-  #   #   - "traefik.http.services.minecraft-svc.loadbalancer.server.port=25565"
+  #   #   - "traefik.http.services.minecraft-svc.loadbalancer.server.port=$MINECRAFT_PORT"
 
   # mc-backup:
   #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
@@ -1973,14 +1982,14 @@ services:
   #     # needs to match the password configured for the container, which is 'minecraft' by default
   #     RWA_RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
   #   # ports:
-  #   #   - 4326:4326
-  #   #   - 4327:4327
+  #   #   - $MINECRAFT_RCON_PORT:4326
+  #   #   - $MINECRAFT_RCON_WEBSOCKET_PORT:4327
   #   labels:
   #     - "traefik.enable=true"
   #     ## HTTP Routers
   #     - "traefik.http.routers.minecraft-rcon-rtr.entrypoints=https"
   #     - "traefik.http.routers.minecraft-rcon-websocket-rtr.entrypoints=minecraft-rcon-websocket"
-  #     - "traefik.http.routers.minecraft-rcon-rtr.rule=Host(`vanilla-rcon.mc.$DOMAINNAME1`)"
+  #     - "traefik.http.routers.minecraft-rcon-rtr.rule=Host(`vanilla-rcon.mc.$DOMAINNAME0`)"
   #     ## Middlewares
   #     - "traefik.http.routers.minecraft-rcon-rtr.middlewares=chain-no-auth@file"
   #     - "traefik.http.routers.minecraft-rcon-websocket-rtr.middlewares=chain-no-auth@file"
@@ -2037,9 +2046,8 @@ services:
   #     - /dev/kvm
   #   ports:
   #     - $BLUEBUBBLES_VNC_PORT:$BLUEBUBBLES_VNC_PORT  # Must connect to the server via VPN to have access to VNC
-  #     - 1234:1234
+  #     - $BLUEBUBBLES_SERVER_PORT:$BLUEBUBBLES_SERVER_PORT
   #     - 50922:10022
-  #     # - $BLUEBUBBLES_SERVER_PORT:$BLUEBUBBLES_SERVER_PORT
   #   # dns:
   #   #   - 1.1.1.1
   #   environment:
@@ -2047,7 +2055,7 @@ services:
   #     IMAGE_PATH: /image
   #     BOOTDISK: /bootdisk
   #     EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
-  #     ADDITIONAL_PORTS: "hostfwd=tcp::1234-:1234,"
+  #     ADDITIONAL_PORTS: "hostfwd=tcp::$BLUEBUBBLES_SERVER_PORT-:$BLUEBUBBLES_SERVER_PORT,"
   #     DISPLAY: ":99"
   #     WIDTH: 1920
   #     HEIGHT: 1080
@@ -2066,7 +2074,7 @@ services:
   #     - "traefik.http.routers.bluebubbles-rtr.middlewares=chain-no-auth@file"
   #     ## HTTP Services
   #     - "traefik.http.routers.bluebubbles-rtr.service=bluebubbles-svc"
-  #     - "traefik.http.services.bluebubbles-svc.loadbalancer.server.port=1234"
+  #     - "traefik.http.services.bluebubbles-svc.loadbalancer.server.port=$BLUEBUBBLES_SERVER_PORT"
 
 
   ############################## MEDIA SERVER
@@ -2171,7 +2179,7 @@ services:
       ## HTTP Services
       - "traefik.http.routers.tautulli-rtr-bypass.service=tautulli-svc"
       - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
-      - "traefik.http.services.tautulli-svc.loadbalancer.server.port=$TAUTULLI_PORT"
+      - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"
 
 
   ############################# INDEXERS
@@ -2184,8 +2192,8 @@ services:
     networks:
       t2_proxy:
         ipv4_address: $PROWLARR_IPV4
-    ports:
-      - "$PROWLARR_PORT:9696"
+    # ports:
+    #   - "$PROWLARR_PORT:9696"
     volumes:
       - $APPDIR/prowlarr:/config
       - "/etc/localtime:/etc/localtime:ro"
@@ -2405,8 +2413,8 @@ services:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
-    ports:
-      - "$READARR_PORT:8787"
+    # ports:
+    #   - "$READARR_PORT:8787"
     volumes:
       - $APPDIR/readarr:/config
       - $DATADIR:/data
@@ -2445,8 +2453,8 @@ services:
     networks:
       t2_proxy:
         ipv4_address: $LIDARR_IPV4
-    ports:
-      - "8686:8686"
+    # ports:
+    #   - "$LIDARR_PORT:8686"
     volumes:
       - $APPDIR/lidarr:/config
       - $DATADIR:/data
@@ -2501,7 +2509,7 @@ services:
       - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
-      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=$OVERSEERR_PORT"
+      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"
 
   ## Ombi - Request Management System
   ombi:
@@ -2581,12 +2589,9 @@ services:
       - "traefik.http.routers.jellyfin-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.jellyfin-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia0@file,jellyfin-remove-bypass-cache,jellyfin-redirect-regex"
+      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia0@file,jellyfin-remove-bypass-cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.forceSlash=false"
-      ## Reroute $DOMAINNAME1 domains to $DOMAINNAME0
-      - "traefik.http.middlewares.jellyfin-redirect-regex.redirectregex.regex=^https://play\\.$DOMAINNAME1(.*)"
-      - "traefik.http.middlewares.jellyfin-redirect-regex.redirectregex.replacement=https://$DOMAINNAME0$${1}"
       # - "traefik.http.middlewares.jellyfin-add-slash.addPrefix.prefix=/"
       ## HTTP Services
       - "traefik.http.routers.jellyfin-rtr.service=jellyfin-svc"
@@ -2599,7 +2604,7 @@ services:
   #   image: lscr.io/linuxserver/plex:latest
   #   container_name: plex
   #   ports:
-  #     # - "32400:32400/tcp"  # Web host proxied via Traefik
+  #     # - "$PLEX_PORT:32400/tcp"  # Web host proxied via Traefik
   #     # - "1900:1900/udp"  # DLNA - Conflicts with Jellyfin, xTeVe, and Synology default ports
   #     - "3005:3005/tcp"
   #     # - "5353:5353/udp"
@@ -2649,8 +2654,8 @@ services:
     networks:
       t2_proxy:
         ipv4_address: $BAZARR_IPV4
-    ports:
-      - $BAZARR_PORT:6767
+    # ports:
+    #   - $BAZARR_PORT:6767
     volumes:
       - $APPDIR/bazarr:/config
       - $DATADIR/media:/data/media
@@ -2684,7 +2689,7 @@ services:
     image: jlesage/handbrake:latest
     container_name: handbrake
     # ports:
-    #   - "$HANDBRAKE_PORT:5800"
+    #   - "$HANDBRAKE_PORT:$HANDBRAKE_PORT"
     volumes:
       - $DATADIR:/data
       - $APPDIR/handbrake/config:/config
@@ -2700,6 +2705,7 @@ services:
       DISPLAY_HEIGHT: 960
       AUTOMATED_CONVERSION_KEEP_SOURCE: 1
       # VNC_PASSWORD: $HANDBRAKE_VNC_PASSWD
+      WEB_LISTENING_PORT: $HANDBRAKE_PORT
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -2711,7 +2717,7 @@ services:
       - "traefik.http.routers.handbrake-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.handbrake-rtr.service=handbrake-svc"
-      - "traefik.http.services.handbrake-svc.loadbalancer.server.port=5800"
+      - "traefik.http.services.handbrake-svc.loadbalancer.server.port=$HANDBRAKE_PORT"
 
 
   ############################## MONITORING

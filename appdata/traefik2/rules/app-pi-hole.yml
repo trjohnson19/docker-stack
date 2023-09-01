@@ -1,7 +1,7 @@
 http:
   routers:
     pi-hole-rtr:
-      rule: "Host(`pihole.{{env "DOMAINNAME0"}}`)"
+      rule: 'Host(`pihole.{{env "DOMAINNAME0"}}`)'
       entryPoints:
         - https
       middlewares:
@@ -12,10 +12,10 @@ http:
         certResolver: dns-cloudflare
   middlewares:
     pihole-add-admin:
-      addPrefix: 
+      addPrefix:
         prefix: "/admin"
   services:
     pi-hole-svc:
       loadBalancer:
         servers:
-          - url: "http://pihole.home.arpa"
+          - url: 'http://pihole.home.arpa'

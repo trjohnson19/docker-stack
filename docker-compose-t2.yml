@@ -2643,6 +2643,73 @@ services:
   #     - "traefik.http.routers.plex-rtr.service=plex-svc"
   #     - "traefik.http.services.plex-svc.loadbalancer.server.port=32400"
 
+  calibre:
+    <<: *common-keys-apps
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
+    devices:
+      - /dev/dri:/dev/dri
+    # ports:
+    #   - $CALIBRE_PORT:$CALIBRE_PORT
+    #   - $CALIBRE_HTTPS_PORT:$CALIBRE_HTTPS_PORT
+    #   - $CALIBRE_WEB_PORT:8081
+    security_opt:
+      - seccomp:unconfined  # Required for some setups
+    environment:
+      <<: *default-tz-puid-pgid
+      # CLI_ARGS:  # Optional
+      CUSTOM_PORT: $CALIBRE_PORT
+      # CUSTOM_HTTPS_PORT: $CALIBRE_HTTPS_PORT
+      # CUSTOM_USER:
+      # PASSWORD:  # Use reverse proxy authentication instead
+      # SUBFOLDER:
+      TITLE: Calibre
+      FM_HOME: /import
+      START_DOCKER:  # Set to FALSE to disable DinD Docker setup
+      DRI_NODE: /dev/dri/renderD128
+    volumes:
+      - $APPDIR/calibre/config:/config
+      - "$DATADIR/media/Calibre Library:/books"
+      - $DATADIR/torrents-private/books:/import
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.calibre-rtr.entrypoints=https"
+      - "traefik.http.routers.calibre-rtr.rule=Host(`calibre.$DOMAINNAME0`)"
+      - "traefik.http.routers.calibre-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.calibre-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.calibre-rtr.middlewares=chain-authelia0@file"
+      ## HTTP Services
+      - "traefik.http.routers.calibre-rtr.service=calibre-svc"
+      - "traefik.http.services.calibre-svc.loadbalancer.server.port=$CALIBRE_PORT"
+
+  ## Calibre-Web - A web app that offers a clean and intuitive interface for browsing, reading, and downloading eBooks using a valid Calibre database
+  calibre-web:
+    <<: *common-keys-apps
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    # ports:
+    #   - $CALIBRE_WEB_PORT:8083
+    environment:
+      <<: *default-tz-puid-pgid
+      DOCKER_MODS: linuxserver/mods:universal-calibre
+    volumes:
+      - $APPDIR/calibre-web/config:/config
+      - "$DATADIR/media/Calibre Library:/books"
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.calibre-web-rtr.entrypoints=https"
+      - "traefik.http.routers.calibre-web-rtr.rule=Host(`calibre-web.$DOMAINNAME0`)"
+      - "traefik.http.routers.calibre-web-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.calibre-web-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.calibre-web-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.calibre-web-rtr.service=calibre-web-svc"
+      - "traefik.http.services.calibre-web-svc.loadbalancer.server.port=8083"
+
 
   ############################# MEDIA FILE MANAGEMENT
 

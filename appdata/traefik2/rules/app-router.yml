@@ -1,0 +1,16 @@
+http:
+  routers:
+    router-rtr:
+      rule: 'Host(`router.{{env "DOMAINNAME0"}}`)'
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+      service: router-svc
+      tls:
+        certResolver: dns-cloudflare
+  services:
+    router-svc:
+      loadBalancer:
+        servers:
+          - url: 'http://192.168.1.254'  # or whatever your external host's IP:port is

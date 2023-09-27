@@ -87,8 +87,8 @@ appdata/nextcloud/data/*
 appdata/qbittorrent/*
 !appdata/qbittorrent/custom-cont-init.d
 appdata/qbittorrent/custom-cont-init.d/*
-!appdata/qbittorrent/custom-cont-init.d/init_update_qbit_cron
-!appdata/qbittorrent/custom-cont-init.d/init_update_qbit_port
+!appdata/qbittorrent/custom-cont-init.d/10_init_update_qbit_port
+!appdata/qbittorrent/custom-cont-init.d/20_init_update_qbit_cron
 !appdata/qbittorrent/custom-services.d
 !appdata/qbittorrent/custom-services.d/*
 !appdata/qbittorrent/persistent

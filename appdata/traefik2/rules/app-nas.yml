@@ -14,7 +14,7 @@ http:
         - nas-stripprefix
       service: nas-svc
       tls:
-        certResolver: dns-cloudflare
+        options: tls-opts@file
   services:
     nas-svc:
       loadBalancer:

@@ -9,7 +9,7 @@ http:
         - chain-no-auth
       service: home-assistant-svc
       tls:
-        certResolver: dns-cloudflare
+        options: tls-opts@file
   services:
     home-assistant-svc:
       loadBalancer:

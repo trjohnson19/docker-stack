@@ -6,11 +6,16 @@ http:
         - https
       middlewares:
         - chain-authelia0
+        - router-add-cgi-bin
       service: router-svc
       tls:
-        certResolver: dns-cloudflare
+        options: tls-opts@file
+  middlewares:
+    router-add-cgi-bin:
+      addPrefix:
+        prefix: "/cgi-bin"
   services:
     router-svc:
       loadBalancer:
         servers:
-          - url: 'http://192.168.1.254'  # or whatever your external host's IP:port is
+          - url: 'http://router.home.arpa'  # or whatever your external host's IP:port is

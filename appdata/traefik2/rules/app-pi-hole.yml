@@ -9,7 +9,7 @@ http:
         - pihole-add-admin
       service: pi-hole-svc
       tls:
-        certResolver: dns-cloudflare
+        options: tls-opts@file
   middlewares:
     pihole-add-admin:
       addPrefix:

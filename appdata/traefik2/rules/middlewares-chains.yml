@@ -23,12 +23,12 @@ http:
           - middlewares-authelia0
 
 
-    chain-authelia1:
-      chain:
-        middlewares:
-          - middlewares-rate-limit
-          - middlewares-secure-headers
-          - middlewares-authelia1
+#    chain-authelia1:
+#      chain:
+#        middlewares:
+#          - middlewares-rate-limit
+#          - middlewares-secure-headers
+#          - middlewares-authelia1
 
 
 #    chain-oauth:
@@ -37,8 +37,8 @@ http:
 #          - middlewares-rate-limit
 #          - middlewares-secure-headers
 #          - middlewares-oauth
-    
-    
+
+
     chain-nextcloud:
       chain:
         middlewares:

@@ -8,7 +8,7 @@ http:
         - chain-authelia0
       service: qbittorrent-private-svc
       tls:
-        options: tls-opts@file
+        certResolver: dns-cloudflare
   services:
     qbittorrent-private-svc:
       loadBalancer:

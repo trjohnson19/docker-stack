@@ -8,7 +8,7 @@ http:
         - chain-authelia0
       service: printer-svc
       tls:
-        options: tls-opts@file
+        certResolver: dns-cloudflare
   services:
     printer-svc:
       loadBalancer:

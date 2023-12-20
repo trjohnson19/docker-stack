@@ -8,7 +8,7 @@ http:
         - chain-authelia0
       service: homebridge-svc
       tls:
-        options: tls-opts@file
+        certResolver: dns-cloudflare
   services:
     homebridge-svc:
       loadBalancer:

@@ -15,7 +15,7 @@ http:
         - plex-stripprefix
       service: plex-svc
       tls:
-        certResolver: dns-cloudflare
+        options: tls-opts@file
   services:
     plex-svc:
       loadBalancer:

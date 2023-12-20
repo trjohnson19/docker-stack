@@ -303,7 +303,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # HTTP Routers
       - "traefik.http.routers.traefik0-rtr.entrypoints=https"  # An example of a service available on both `abcxyz.$DOMAINNAME0` and `abcxyz.$DOMAINNAME1`
-      # - "traefik.http.routers.traefik0-rtr.tls=true"
+      - "traefik.http.routers.traefik0-rtr.tls=true"
       - "traefik.http.routers.traefik0-rtr.rule=Host(`traefik.$DOMAINNAME0`)"
       # - "traefik.http.routers.traefik1-rtr.entrypoints=https"
       # - "traefik.http.routers.traefik1-rtr.tls=true"
@@ -313,7 +313,7 @@ services:
       # - "traefik.http.routers.traefik1-rtr.service=api@internal"
       ## Healthcheck/ping
       - "traefik.http.routers.ping.rule=Host(`traefik.$DOMAINNAME0`) && Path(`/ping`)"
-      # - "traefik.http.routers.ping.tls=true"
+      - "traefik.http.routers.ping.tls=true"
       - "traefik.http.routers.ping.service=ping@internal"
       ## Middlewares
       #- "traefik.http.routers.traefik0-rtr.middlewares=chain-basic-auth@file"
@@ -387,6 +387,7 @@ services:
       - "traefik.http.routers.heimdall-rtr.entrypoints=https"
       - "traefik.http.routers.heimdall-rtr.rule=Host(`dash.$DOMAINNAME0`) || Host(`heimdall.$DOMAINNAME0`)"
       - "traefik.http.routers.heimdall-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.heimdall-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.heimdall-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -411,6 +412,7 @@ services:
   #     - "traefik.http.routers.organizr-rtr.entrypoints=https"
   #     - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME0`,`www.$DOMAINNAME0`)"
   #     - "traefik.http.routers.organizr-rtr.tls.options=tls-opts@file"
+  #     - "traefik.http.routers.organizr-rtr.tls=true"
   #     ## Middlewares
   #     - "traefik.http.routers.organizr-rtr.middlewares=chain-authelia1@file"
   #     ## HTTP Services
@@ -458,6 +460,7 @@ services:
       - "traefik.http.routers.authelia0-rtr.entrypoints=https"
       - "traefik.http.routers.authelia0-rtr.rule=Host(`auth.$DOMAINNAME0`)"
       - "traefik.http.routers.authelia0-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.authelia0-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.authelia0-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -502,6 +505,7 @@ services:
   #     - "traefik.http.routers.authelia1-rtr.entrypoints=https"
   #     - "traefik.http.routers.authelia1-rtr.rule=Host(`auth.$DOMAINNAME1`)"
   #     - "traefik.http.routers.authelia1-rtr.tls.options=tls-opts@file"
+  #     - "traefik.http.routers.authelia1-rtr.tls=true"
   #     ## Middlewares
   #     - "traefik.http.routers.authelia1-rtr.middlewares=chain-authelia1@file"
   #     ## HTTP Services
@@ -567,6 +571,7 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.entrypoints=https"
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME0`)"
       - "traefik.http.routers.phpmyadmin-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.phpmyadmin-rtr.tls=true"
       ## Middlewares
       #- "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia0@file"
@@ -613,6 +618,7 @@ services:
       - "traefik.http.routers.rediscommander-rtr.entrypoints=https"
       - "traefik.http.routers.rediscommander-rtr.rule=Host(`rediscom.$DOMAINNAME0`)"
       - "traefik.http.routers.rediscommander-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.rediscommander-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.rediscommander-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -763,6 +769,7 @@ services:
       - "traefik.http.routers.vscode-rtr.entrypoints=https"
       - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME0`)"
       - "traefik.http.routers.vscode-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.vscode-rtr.tls=true"
       ## Middlewares
       #- "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia0@file"
@@ -790,6 +797,7 @@ services:
       - "traefik.http.routers.filebrowser-rtr.entrypoints=https"
       - "traefik.http.routers.filebrowser-rtr.rule=Host(`fb.$DOMAINNAME0`)"
       - "traefik.http.routers.filebrowser-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.filebrowser-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.filebrowser-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -823,6 +831,7 @@ services:
       - "traefik.http.routers.guacamole-rtr.entrypoints=https"
       - "traefik.http.routers.guacamole-rtr.rule=Host(`guac.$DOMAINNAME0`)"
       - "traefik.http.routers.guacamole-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.guacamole-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.guacamole-rtr.middlewares=chain-authelia0@file,guacamole-remove-bypass-cache,add-guacamole"
       - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
@@ -870,6 +879,7 @@ services:
       - "traefik.http.routers.dozzle-rtr.entrypoints=https"
       - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$DOMAINNAME0`)"
       - "traefik.http.routers.dozzle-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.dozzle-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -907,6 +917,7 @@ services:
       - "traefik.http.routers.glances-rtr.entrypoints=https"
       - "traefik.http.routers.glances-rtr.rule=Host(`glances.$DOMAINNAME0`)"
       - "traefik.http.routers.glances-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.glances-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.glances-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -941,6 +952,7 @@ services:
       - "traefik.http.routers.dupeguru-rtr.entrypoints=https"
       - "traefik.http.routers.dupeguru-rtr.rule=Host(`dupe.$DOMAINNAME0`)"
       - "traefik.http.routers.dupeguru-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.dupeguru-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.dupeguru-rtr.middlewares=chain-authelia0@file,dupeguru-remove-bypass-cache"
       - "traefik.http.middlewares.dupeguru-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
@@ -988,6 +1000,7 @@ services:
       - "traefik.http.routers.tdarr-rtr.entrypoints=https"
       - "traefik.http.routers.tdarr-rtr.rule=Host(`tdarr.$DOMAINNAME0`)"
       - "traefik.http.routers.tdarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.tdarr-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.tdarr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -1089,6 +1102,7 @@ services:
       - "traefik.http.routers.gotify-rtr.entrypoints=https"
       - "traefik.http.routers.gotify-rtr.rule=Host(`gotify.$DOMAINNAME0`)"
       - "traefik.http.routers.gotify-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.gotify-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.gotify-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -1222,6 +1236,7 @@ services:
       - "traefik.http.routers.vaultwarden-rtr.entrypoints=https"
       - "traefik.http.routers.vaultwarden-rtr.rule=Host(`vault.$DOMAINNAME0`)"
       - "traefik.http.routers.vaultwarden-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.vaultwarden-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.vaultwarden-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -1232,6 +1247,7 @@ services:
       - "traefik.http.routers.vaultwarden-websocket-rtr.entrypoints=https"
       - "traefik.http.routers.vaultwarden-websocket-rtr.rule=Host(`vault.$DOMAINNAME0`) && Path(`/notifications/hub`)"
       - "traefik.http.routers.vaultwarden-websocket-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.vaultwarden-websocket-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.vaultwarden-websocket-rtr.middlewares=chain-no-auth@file"
       ## HTTP Services
@@ -1290,6 +1306,7 @@ services:
       - "traefik.http.routers.nextcloud-rtr.entrypoints=https"
       - "traefik.http.routers.nextcloud-rtr.rule=Host(`drive.$DOMAINNAME0`)"
       - "traefik.http.routers.nextcloud-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.nextcloud-rtr.tls=true"
       ## Middlewares
       #- "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.nextcloud-rtr.middlewares=chain-nextcloud@file,nextcloud-remove-bypass-cache"
@@ -1424,6 +1441,7 @@ services:
       - "traefik.http.routers.firefly-rtr.entrypoints=https"
       - "traefik.http.routers.firefly-rtr.rule=Host(`money.$DOMAINNAME0`)"
       - "traefik.http.routers.firefly-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.firefly-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia0@file"  # Note: possible issue before using Authelia, would need to configure /path for importer to bypass Authelia (/api/v1) - or just use http://firefly:$FIREFLY_PORT
       ## HTTP Services
@@ -1503,6 +1521,7 @@ services:
       - "traefik.http.routers.firefly-importer-rtr.entrypoints=https"
       - "traefik.http.routers.firefly-importer-rtr.rule=Host(`import.$DOMAINNAME0`)"
       - "traefik.http.routers.firefly-importer-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.firefly-importer-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.firefly-importer-rtr.middlewares=chain-authelia0@file"  # Note: issue when using Authelia, default buffer size of 4096 not large enough, currently set to 8192
       ## HTTP Services
@@ -1553,9 +1572,11 @@ services:
       - "traefik.http.routers.whoami0-rtr.entrypoints=https"
       - "traefik.http.routers.whoami0-rtr.rule=Host(`whoami.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami0-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.whoami0-rtr.tls=true"
       # - "traefik.http.routers.whoami1-rtr.entrypoints=https"
       # - "traefik.http.routers.whoami1-rtr.rule=Host(`whoami.$DOMAINNAME1`)"
       # - "traefik.http.routers.whoami1-rtr.tls.options=tls-opts@file"
+      # - "traefik.http.routers.whoami1-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.whoami0-rtr.middlewares=chain-authelia0@file"
       # - "traefik.http.routers.whoami1-rtr.middlewares=chain-authelia1@file"
@@ -1677,13 +1698,13 @@ services:
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
       OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
       VPN_PORT_FORWARDING: "on"
-      VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_PRIVATE_VPN_SERVICE_PROVIDER
+      VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:
       # WIREGUARD_ADDRESSES:
-      SERVER_COUNTRIES: $GLUETUN_PRIVATE_SERVER_COUNTRIES
-      SERVER_CITIES: $GLUETUN_PRIVATE_SERVER_CITIES
-      SERVER_HOSTNAMES: $GLUETUN_PRIVATE_SERVER_HOSTNAMES
+      SERVER_COUNTRIES: $GLUETUN_SERVER_COUNTRIES
+      SERVER_CITIES: $GLUETUN_SERVER_CITIES
+      SERVER_HOSTNAMES: $GLUETUN_SERVER_HOSTNAMES
       TZ: $TZ
       UPDATER_PERIOD: "24h"  # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT"
@@ -1761,6 +1782,7 @@ services:
   #     - "traefik.http.routers.pihole-rtr.entrypoints=https"
   #     - "traefik.http.routers.pihole-rtr.rule=Host(`pihole.$DOMAINNAME0`)"
   #     - "traefik.http.routers.pihole-rtr.tls.options=tls-opts@file"
+  #     - "traefik.http.routers.pihole-rtr.tls=true"
   #     ## Middlewares
   #     #- "traefik.http.routers.pihole-rtr.middlewares=chain-basic-auth@file"
   #     - "traefik.http.routers.pihole-rtr.middlewares=chain-authelia0@file"
@@ -2093,7 +2115,7 @@ services:
   # qbit-private is used for private trackers
   qbit-private:
     # <<: *common-keys-apps  # We do not want this to be able to communicate locally (except as specified)
-    image: lscr.io/linuxserver/qbittorrent:4.6.2
+    image: lscr.io/linuxserver/qbittorrent:4.5.4
     container_name: qbit-private
     security_opt:
       - no-new-privileges:true
@@ -2142,11 +2164,13 @@ services:
       ## HTTP Bypass Routers
       - "traefik.http.routers.tautulli-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.tautulli-rtr-bypass.rule=Host(`tautulli.$DOMAINNAME0`) && Query(`apikey`, `$TAUTULLI_API_KEY`)"
+      - "traefik.http.routers.tautulli-rtr-bypass.tls=true"
       - "traefik.http.routers.tautulli-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.tautulli-rtr-bypass.priority=100"
       ## HTTP Routers
       - "traefik.http.routers.tautulli-rtr.entrypoints=https"
       - "traefik.http.routers.tautulli-rtr.rule=Host(`tautulli.$DOMAINNAME0`)"
+      - "traefik.http.routers.tautulli-rtr.tls=true"
       - "traefik.http.routers.tautulli-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.tautulli-rtr-bypass.priority=99"
       ## Middlewares
@@ -2181,11 +2205,13 @@ services:
       - "traefik.http.routers.prowlarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.prowlarr-rtr-bypass.rule=Host(`prowlarr.$DOMAINNAME0`) && ( Headers(`X-Api-Key`, `$PROWLARR_API_KEY`) || Query(`apikey`, `$PROWLARR_API_KEY`) )"
       - "traefik.http.routers.prowlarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.prowlarr-rtr-bypass.tls=true"
       - "traefik.http.routers.prowlarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.prowlarr-rtr.entrypoints=https"
       - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.$DOMAINNAME0`)"
       - "traefik.http.routers.prowlarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.prowlarr-rtr.tls=true"
       - "traefik.http.routers.prowlarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.prowlarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2242,11 +2268,13 @@ services:
       - "traefik.http.routers.radarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.radarr-rtr-bypass.rule=Host(`radarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
       - "traefik.http.routers.radarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-rtr-bypass.tls=true"
       - "traefik.http.routers.radarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.radarr-rtr.entrypoints=https"
       - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$DOMAINNAME0`)"
       - "traefik.http.routers.radarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-rtr.tls=true"
       - "traefik.http.routers.radarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2281,11 +2309,13 @@ services:
       - "traefik.http.routers.radarr-4k-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.radarr-4k-rtr-bypass.rule=Host(`radarr-4k.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
       - "traefik.http.routers.radarr-4k-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-4k-rtr-bypass.tls=true"
       - "traefik.http.routers.radarr-4k-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.radarr-4k-rtr.entrypoints=https"
       - "traefik.http.routers.radarr-4k-rtr.rule=Host(`radarr-4k.$DOMAINNAME0`)"
       - "traefik.http.routers.radarr-4k-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-4k-rtr.tls=true"
       - "traefik.http.routers.radarr-4k-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.radarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2320,11 +2350,13 @@ services:
       - "traefik.http.routers.sonarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.sonarr-rtr-bypass.rule=Host(`sonarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
       - "traefik.http.routers.sonarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-rtr-bypass.tls=true"
       - "traefik.http.routers.sonarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.sonarr-rtr.entrypoints=https"
       - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.$DOMAINNAME0`)"
       - "traefik.http.routers.sonarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-rtr.tls=true"
       - "traefik.http.routers.sonarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.sonarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2359,11 +2391,13 @@ services:
       - "traefik.http.routers.sonarr-4k-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.rule=Host(`sonarr-4k.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.tls=true"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.sonarr-4k-rtr.entrypoints=https"
       - "traefik.http.routers.sonarr-4k-rtr.rule=Host(`sonarr-4k.$DOMAINNAME0`)"
       - "traefik.http.routers.sonarr-4k-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-4k-rtr.tls=true"
       - "traefik.http.routers.sonarr-4k-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.sonarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2395,11 +2429,13 @@ services:
       - "traefik.http.routers.readarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$READARR_API_KEY`) || Query(`apikey`, `$READARR_API_KEY`))"
       - "traefik.http.routers.readarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.readarr-rtr-bypass.tls=true"
       - "traefik.http.routers.readarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.readarr-rtr.entrypoints=https"
       - "traefik.http.routers.readarr-rtr.rule=Host(`readarr.$DOMAINNAME0`)"
       - "traefik.http.routers.readarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.readarr-rtr.tls=true"
       - "traefik.http.routers.readarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.readarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2433,11 +2469,13 @@ services:
       - "traefik.http.routers.lidarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.lidarr-rtr-bypass.rule=Host(`lidarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$LIDARR_API_KEY`) || Query(`apikey`, `$LIDARR_API_KEY`))"
       - "traefik.http.routers.lidarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.lidarr-rtr-bypass.tls=true"
       - "traefik.http.routers.lidarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.lidarr-rtr.entrypoints=https"
       - "traefik.http.routers.lidarr-rtr.rule=Host(`lidarr.$DOMAINNAME0`)"
       - "traefik.http.routers.lidarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.lidarr-rtr.tls=true"
       - "traefik.http.routers.lidarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.lidarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2466,6 +2504,7 @@ services:
       - "traefik.http.routers.overseerr-rtr.entrypoints=https"
       - "traefik.http.routers.overseerr-rtr.rule=Host(`overseerr.$DOMAINNAME0`) || Host(`request.$DOMAINNAME0`)"
       - "traefik.http.routers.overseerr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.overseerr-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -2492,6 +2531,7 @@ services:
       - "traefik.http.routers.ombi-rtr.entrypoints=https"
       - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME0`)"
       - "traefik.http.routers.ombi-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.ombi-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -2547,6 +2587,7 @@ services:
       - "traefik.http.routers.jellyfin-rtr.entrypoints=https"
       - "traefik.http.routers.jellyfin-rtr.rule=Host(`jellyfin.$DOMAINNAME0`)"
       - "traefik.http.routers.jellyfin-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.jellyfin-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia0@file,jellyfin-remove-bypass-cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
@@ -2593,6 +2634,7 @@ services:
   #     ## HTTP Routers
   #     - "traefik.http.routers.plex-rtr.entrypoints=https"
   #     - "traefik.http.routers.plex-rtr.rule=Host(`plex.$DOMAINNAME0`)"
+  #     - "traefik.http.routers.plex-rtr.tls=true"
   #     ## Middlewares
   #     - "traefik.http.routers.plex-rtr.middlewares=chain-authelia0@file,plex-remove-bypass-cache"
   #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
@@ -2628,13 +2670,14 @@ services:
     volumes:
       - $APPDIR/calibre/config:/config
       - "$DATADIR/media/Calibre Library:/books"
-      - $DATADIR/torrents-private/books:/import:ro
+      - $DATADIR/torrents-private/books:/import
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.calibre-rtr.entrypoints=https"
       - "traefik.http.routers.calibre-rtr.rule=Host(`calibre.$DOMAINNAME0`)"
       - "traefik.http.routers.calibre-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.calibre-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.calibre-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
@@ -2660,39 +2703,12 @@ services:
       - "traefik.http.routers.calibre-web-rtr.entrypoints=https"
       - "traefik.http.routers.calibre-web-rtr.rule=Host(`calibre-web.$DOMAINNAME0`)"
       - "traefik.http.routers.calibre-web-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.calibre-web-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.calibre-web-rtr.middlewares=chain-no-auth@file"
       ## HTTP Services
       - "traefik.http.routers.calibre-web-rtr.service=calibre-web-svc"
       - "traefik.http.services.calibre-web-svc.loadbalancer.server.port=8083"
-
-  # audiobookshelf - Self-hosted audiobook and podcast server
-  audiobookshelf:
-    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
-    image: ghcr.io/advplyr/audiobookshelf:latest
-    container_name: audiobookshelf
-    # ports:
-    #   - $AUDIOBOOKSHELF_PORT:13378
-    volumes:
-      - $APPDIR/audiobookshelf/config:/config
-      - $DATADIR/media/audiobooks:/audiobooks
-      - $DATADIR/media/podcasts:/podcasts
-      - $APPDIR/audiobookshelf/metadata:/metadata  # Could be in $DATADIR to minimize storage usage on host
-    environment:
-      # HOST: 127.0.0.1
-      PORT: $AUDIOBOOKSHELF_PORT
-      SOURCE: docker
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.audiobookshelf-rtr.entrypoints=https"
-      - "traefik.http.routers.audiobookshelf-rtr.rule=Host(`abs.$DOMAINNAME0`)"
-      - "traefik.http.routers.audiobookshelf-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.audiobookshelf-rtr.middlewares=chain-authelia0@file"
-      ## HTTP Services
-      - "traefik.http.routers.audiobookshelf-rtr.service=audiobookshelf-svc"
-      - "traefik.http.services.audiobookshelf-svc.loadbalancer.server.port=$AUDIOBOOKSHELF_PORT"
 
 
   ############################# MEDIA FILE MANAGEMENT
@@ -2718,11 +2734,13 @@ services:
       - "traefik.http.routers.bazarr-rtr-bypass.entrypoints=https"
       - "traefik.http.routers.bazarr-rtr-bypass.rule=Host(`bazarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$BAZARR_API_KEY`) || Query(`apikey`, `$BAZARR_API_KEY`))"
       - "traefik.http.routers.bazarr-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.bazarr-rtr-bypass.tls=true"
       - "traefik.http.routers.bazarr-rtr-bypass.priority=100"
       ## HTTP Routers
       - "traefik.http.routers.bazarr-rtr.entrypoints=https"
       - "traefik.http.routers.bazarr-rtr.rule=Host(`bazarr.$DOMAINNAME0`)"
       - "traefik.http.routers.bazarr-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.bazarr-rtr.tls=true"
       - "traefik.http.routers.bazarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.bazarr-rtr-bypass.middlewares=chain-no-auth@file"
@@ -2761,6 +2779,7 @@ services:
       - "traefik.http.routers.handbrake-rtr.entrypoints=https"
       - "traefik.http.routers.handbrake-rtr.rule=Host(`handbrake.$DOMAINNAME0`)"
       - "traefik.http.routers.handbrake-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.handbrake-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.handbrake-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services

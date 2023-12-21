@@ -115,6 +115,10 @@ appdata/recyclarr/config/*
 !appdata/recyclarr/config/recyclarr.yml
 !appdata/recyclarr/config/settings.yml
 
+!appdata/redis
+appdata/redis/*
+!appdata/redis/healthcheck.example.sh
+
 !appdata/traefik2
 appdata/traefik2/*
 !appdata/traefik2/rules

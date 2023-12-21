@@ -549,6 +549,9 @@ services:
     container_name: postgres
     image: postgres:16
     user: "${PUID}:${PGID}"
+    networks:
+      t2_proxy:
+        ipv4_address: $POSTGRES_IPV4
     ports:
       - "$POSTGRES_PORT:$POSTGRES_PORT"
     healthcheck:
@@ -614,10 +617,17 @@ services:
       t2_proxy:
         ipv4_address: $REDIS_IPV4
     entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      start_period: 5s
+      interval: 5s
+      retries: 5
+      timeout: 3s
     ports:
       - "$REDIS_PORT:$REDIS_PORT"
     volumes:
       - $APPDIR/redis/data:/data
+      - $APPDIR/redis/healthcheck.sh:/healthcheck.sh:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 

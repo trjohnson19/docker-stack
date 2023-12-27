@@ -9,7 +9,8 @@
 # Find suitable variables
 lines="$(printenv | grep -o "FILE__.*=")"  # Note, leaves hanging `=`
 # Split into array
-IFS=" " read -r -a vars <<< "$lines"  # https://www.shellcheck.net/wiki/SC2206
+mapfile -t vars <<< "$lines"  # https://www.shellcheck.net/wiki/SC2206
+
 # Enumerate variable names
 for var in "${vars[@]}"; do
     # Remove trailing `=`

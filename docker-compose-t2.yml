@@ -590,7 +590,7 @@ services:
       ## HTTP Routers
       - "traefik.http.routers.keycloak-rtr.entrypoints=https"
       # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
-      - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && ( Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`) )"
+      - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && (Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`))"
       - "traefik.http.routers.keycloak-rtr.tls.options=tls-opts@file"
       ## Middlewares
       - "traefik.http.routers.keycloak-rtr.middlewares=chain-keycloak@file"

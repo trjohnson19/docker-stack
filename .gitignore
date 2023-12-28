@@ -47,7 +47,7 @@ Thumbs.db
 
 # Explicitly include select items
 !.bash_aliases.example
-!.bashrc.example
+!.bash_rc.example
 !CHANGELOG.md
 !.gitignore
 !docker-compose-t2.yml
@@ -81,6 +81,7 @@ appdata/keycloak/*
 appdata/keycloak/build/*
 !appdata/keycloak/build/docker_secrets.sh
 !appdata/keycloak/build/entrypoint.sh
+!appdata/keycloak/build/healthcheck.sh
 !appdata/keycloak/build/keycloak.Dockerfile
 !appdata/keycloak/ObjectStore
 appdata/keycloak/ObjectStore/*

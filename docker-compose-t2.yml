@@ -528,29 +528,34 @@ services:
       context: .
       dockerfile: $APPDIR/keycloak/build/keycloak.Dockerfile
       args:
-        KC_CACHE: "local"
-        # KC_CACHE_CONFIG_FILE:
-        # KC_CACHE_STACK:
-        KC_DB: "postgres"
-        KC_TRANSACTION_XA_ENABLED: "true"
-        KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
-        # KC_HTTP_RELATIVE_PATH:
-        KC_HEALTH_ENABLED: "true"
-        KC_METRICS_ENABLED: "true"
-        # KC_VAULT:
-        # KC_FIPS_MODE:
-        QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
-    # image: quay.io/keycloak/keycloak:23.0  # https://quay.io/repository/keycloak/keycloak?tab=tags
-    # command: ["start"]
-    # command: ["start", "--optimized"]
-    command: ["start", "--hostname-strict-https", "false"]
-    ports:
-      - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
+        ARG_KC_CACHE: "local"
+        # ARG_KC_CACHE_CONFIG_FILE:
+        # ARG_KC_CACHE_STACK:
+        ARG_KC_DB: "mariadb"
+        ARG_KC_TRANSACTION_XA_ENABLED: "true"
+        ARG_KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
+        # ARG_KC_HTTP_RELATIVE_PATH:
+        ARG_KC_HEALTH_ENABLED: "true"
+        ARG_KC_METRICS_ENABLED: "true"
+        # ARG_KC_VAULT:
+        # ARG_KC_FIPS_MODE:
+        ARG_QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
+    command: ["start", "--optimized"]
+    healthcheck:
+      test: ["CMD-SHELL", "/build/healthcheck.sh"]
+      start_period: 30s
+      interval: 10s
+      retries: 3
+      timeout: 3s
+    # ports:
+    #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:
       - $APPDIR/keycloak/conf:/conf
       - $APPDIR/keycloak/ObjectStore:/ObjectStore  # https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      # Remember to `chmod +x` for all .sh scripts
       - $APPDIR/keycloak/build/docker_secrets.sh:/build/docker_secrets.sh:ro  # Workaround to enable docker secrets
       - $APPDIR/keycloak/build/entrypoint.sh:/build/entrypoint.sh:ro  # Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/healthcheck.sh:/build/healthcheck.sh:ro  # Workaround to use healthcheck without `curl`
     environment:
       # KC_CACHE: local
       FILE__KEYCLOAK_ADMIN: /run/secrets/keycloak_admin
@@ -592,14 +597,16 @@ services:
       # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
       - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && (Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`))"
       - "traefik.http.routers.keycloak-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.keycloak-rtr-bypass.priority=99"
       ## Middlewares
       - "traefik.http.routers.keycloak-rtr.middlewares=chain-keycloak@file"
       ### Administration routers and middlewares
       ## HTTP Routers
       - "traefik.http.routers.keycloak-admin-rtr.entrypoints=https"
       # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
-      - "traefik.http.routers.keycloak-admin-rtr.rule=Host(`key.$DOMAINNAME0`) && ClientIP(`192.168.1.0/24`)"
+      - "traefik.http.routers.keycloak-admin-rtr.rule=Host(`key.$DOMAINNAME0`) && ClientIP(`$LAN_NETWORK`)"  # Only allow admin paths on local network (or VPN)
       - "traefik.http.routers.keycloak-admin-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.keycloak-admin-rtr-bypass.priority=100"  # Give priority to bypass rule if matched
       ## Middlewares
       - "traefik.http.routers.keycloak-admin-rtr.middlewares=chain-keycloak@file"
       ### Combined services

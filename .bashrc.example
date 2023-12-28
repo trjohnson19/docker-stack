@@ -1,0 +1,2 @@
+# Appended to end of .bashrc to allow for drl2 shortcut for dcrec2 && dclogs2
+drl2() { dcrec2 "${@}" && dclogs2 "${@}"; }

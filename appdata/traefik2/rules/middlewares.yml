@@ -1,3 +1,4 @@
+---
 http:
   middlewares:
     middlewares-basic-auth:
@@ -54,15 +55,21 @@ http:
           - "Remote-Email"
 
 
-    # middlewares-authelia1:
-    #   forwardAuth:
-    #     address: 'http://authelia1:9091/api/verify?rd=https://auth.{{env "DOMAINNAME1"}}'
-    #     trustForwardHeader: true
-    #     authResponseHeaders:
-    #       - "Remote-User"
-    #       - "Remote-Groups"
-    #       - "Remote-Name"
-    #       - "Remote-Email"
+    middlewares-keycloak:
+      forwardAuth:
+        address: 'http://keycloak:9092'
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"
+          - "Forwarded"
+          - "X-Forwarded-For"
+          - "X-Forwarded-Proto"
+          - "X-Forwarded-Host"
+          - "X-Forwarded-Port"
+          - "X-Forwarded-User"
 
 
     # middlewares-oauth:

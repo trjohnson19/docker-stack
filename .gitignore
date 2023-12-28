@@ -46,11 +46,13 @@ Thumbs.db
 !.env.example
 
 # Explicitly include select items
-!.gitignore
-!README.md
+!.bash_aliases.example
+!.bash_rc.example
 !CHANGELOG.md
-!LICENSE
+!.gitignore
 !docker-compose-t2.yml
+!LICENSE
+!README.md
 
 # Select which items to include from appdata
 !appdata
@@ -72,6 +74,17 @@ appdata/jellyfin/*
 !appdata/jellyfin/config
 appdata/jellyfin/config/*
 !appdata/jellyfin/config/web-config.json.example
+
+!appdata/keycloak
+appdata/keycloak/*
+!appdata/keycloak/build
+appdata/keycloak/build/*
+!appdata/keycloak/build/docker_secrets.sh
+!appdata/keycloak/build/entrypoint.sh
+!appdata/keycloak/build/healthcheck.sh
+!appdata/keycloak/build/keycloak.Dockerfile
+!appdata/keycloak/ObjectStore
+appdata/keycloak/ObjectStore/*
 
 !appdata/nextcloud
 appdata/nextcloud/*
@@ -114,6 +127,10 @@ appdata/recyclarr/*
 appdata/recyclarr/config/*
 !appdata/recyclarr/config/recyclarr.yml
 !appdata/recyclarr/config/settings.yml
+
+!appdata/redis
+appdata/redis/*
+!appdata/redis/healthcheck.example.sh
 
 !appdata/traefik2
 appdata/traefik2/*

@@ -85,6 +85,14 @@ secrets:
     file: $SECRETSDIR/guac_mysql_password
   htpasswd:
     file: $SECRETSDIR/htpasswd
+  keycloak_admin:
+    file: $SECRETSDIR/keycloak_admin
+  keycloak_admin_password:
+    file: $SECRETSDIR/keycloak_admin_password
+  kc_db_username:
+    file: $SECRETSDIR/kc_db_username
+  kc_db_password:
+    file: $SECRETSDIR/kc_db_password
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
   nextcloud_admin_user:
@@ -101,6 +109,10 @@ secrets:
     file: $SECRETSDIR/nextcloud_smtp_password
   plex_claim:
     file: $SECRETSDIR/plex_claim
+  postgres_user:
+    file: $SECRETSDIR/postgres_user
+  postgres_password:
+    file: $SECRETSDIR/postgres_password
   qbittorrent_user:
     file: $SECRETSDIR/qbittorrent_user
   qbittorrent_pass:
@@ -508,17 +520,99 @@ services:
   #     - "traefik.http.routers.authelia1-rtr.service=authelia1-svc"
   #     - "traefik.http.services.authelia1-svc.loadbalancer.server.port=9091"
 
-  # # Keycloak - Open Source Identity and Access Management
-  # keycloak:
-  #   <<: *common-keys-core
-  #   container_name: keycloak
-  #   image: quay.io/keycloak/keycloak:20.0  # https://quay.io/repository/keycloak/keycloak?tab=tags
-  #   volumes:
-  #     - $APPDIR/keycloak:/conf
-  #   environment:
-  #     KEYCLOAK_ADMIN_FILE: /run/secrets/keycloak_admin
-  #     KEYCLOAK_ADMIN_PASSWORD: /run/secrets/keycloak_admin_password
-  #     KC_FEATURES: docker,
+  # Keycloak - Open Source Identity and Access Management
+  keycloak:
+    <<: *common-keys-core
+    container_name: keycloak
+    build:
+      context: .
+      dockerfile: $APPDIR/keycloak/build/keycloak.Dockerfile
+      args:
+        ARG_KC_CACHE: "local"
+        # ARG_KC_CACHE_CONFIG_FILE:
+        # ARG_KC_CACHE_STACK:
+        ARG_KC_DB: "mariadb"
+        ARG_KC_TRANSACTION_XA_ENABLED: "true"
+        ARG_KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
+        # ARG_KC_HTTP_RELATIVE_PATH:
+        ARG_KC_HEALTH_ENABLED: "true"
+        ARG_KC_METRICS_ENABLED: "true"
+        # ARG_KC_VAULT:
+        # ARG_KC_FIPS_MODE:
+        ARG_QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
+    command: ["start", "--optimized"]
+    healthcheck:
+      test: ["CMD-SHELL", "/build/healthcheck.sh"]
+      start_period: 30s
+      interval: 10s
+      retries: 3
+      timeout: 3s
+    # ports:
+    #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
+    volumes:
+      - $APPDIR/keycloak/conf:/conf
+      - $APPDIR/keycloak/ObjectStore:/ObjectStore  # https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      # Remember to `chmod +x` for all .sh scripts
+      - $APPDIR/keycloak/build/docker_secrets.sh:/build/docker_secrets.sh:ro  # Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/entrypoint.sh:/build/entrypoint.sh:ro  # Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/healthcheck.sh:/build/healthcheck.sh:ro  # Workaround to use healthcheck without `curl`
+    environment:
+      # KC_CACHE: local
+      FILE__KEYCLOAK_ADMIN: /run/secrets/keycloak_admin
+      FILE__KEYCLOAK_ADMIN_PASSWORD: /run/secrets/keycloak_admin_password
+      # KC_DB: postgres
+      KC_DB: mariadb
+      FILE__KC_DB_PASSWORD: /run/secrets/kc_db_password
+      # KC_DB_URL: "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/keycloak"
+      # KC_DB_URL: "jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/keycloak"
+      KC_DB_URL_DATABASE: keycloak
+      # KC_DB_URL_HOST: $POSTGRES_HOST
+      # KC_DB_URL_PORT: $POSTGRES_PORT
+      KC_DB_URL_HOST: $MARIADB_HOST
+      KC_DB_URL_PORT: $MARIADB_PORT
+      FILE__KC_DB_USERNAME: /run/secrets/kc_db_username
+      # KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
+      # KC_HOSTNAME: "key.${DOMAINNAME0}"
+      # KC_HOSTNAME_ADMIN: "key.${DOMAINNAME0}"
+      KC_HOSTNAME_ADMIN_URL: "https://key.${DOMAINNAME0}"
+      KC_HOSTNAME_DEBUG: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_URL: "https://key.${DOMAINNAME0}"
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_PORT: $KEYCLOAK_PORT
+      # KC_HEALTH_ENABLED: "true"
+      # KC_METRICS_ENABLED: "true"
+      KC_PROXY: edge
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"  # https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+    secrets:
+      - keycloak_admin
+      - keycloak_admin_password
+      - kc_db_password
+      - kc_db_username
+    labels:
+      - "traefik.enable=true"
+      ### Authentication routers and middlewares
+      ## HTTP Routers
+      - "traefik.http.routers.keycloak-rtr.entrypoints=https"
+      # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
+      - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && (Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`))"
+      - "traefik.http.routers.keycloak-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.keycloak-rtr-bypass.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.keycloak-rtr.middlewares=chain-keycloak@file"
+      ### Administration routers and middlewares
+      ## HTTP Routers
+      - "traefik.http.routers.keycloak-admin-rtr.entrypoints=https"
+      # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
+      - "traefik.http.routers.keycloak-admin-rtr.rule=Host(`key.$DOMAINNAME0`) && ClientIP(`$LAN_NETWORK`)"  # Only allow admin paths on local network (or VPN)
+      - "traefik.http.routers.keycloak-admin-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.keycloak-admin-rtr-bypass.priority=100"  # Give priority to bypass rule if matched
+      ## Middlewares
+      - "traefik.http.routers.keycloak-admin-rtr.middlewares=chain-keycloak@file"
+      ### Combined services
+      ## HTTP Services
+      - "traefik.http.routers.keycloak-admin-rtr.service=keycloak-admin-svc"
+      - "traefik.http.services.keycloak-admin-svc.loadbalancer.server.port=$KEYCLOAK_PORT"
 
 
   ############################## DATABASE
@@ -538,6 +632,36 @@ services:
       FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password  # Not taking this pw during initialization
     secrets:
       - mysql_root_password
+
+  # PostgreSQL - PostgreSQL Database
+  postgres:
+    <<: *common-keys-core
+    container_name: postgres
+    image: postgres:16
+    user: "${PUID}:${PGID}"
+    networks:
+      t2_proxy:
+        ipv4_address: $POSTGRES_IPV4
+    ports:
+      - "$POSTGRES_PORT:$POSTGRES_PORT"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d \"$${POSTGRES_DB:-$${POSTGRES_USER:-$$(cat \"$${POSTGRES_USER_FILE}\")}}\" -U \"$${POSTGRES_USER:-$$(cat \"$$POSTGRES_USER_FILE\")}\""]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - $APPDIR/postgres:/config
+      - $DATADIR/postgres/data:/var/lib/postgresql/data
+    environment:
+      <<: *default-tz-puid-pgid
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGPORT: $POSTGRES_PORT
+      PGDATA: /var/lib/postgresql/data/pgdata
+    secrets:
+      - postgres_user
+      - postgres_password
 
   # phpMyAdmin - Database management
   # Create a new user with admin privileges. Cannot login as MySQL root for some reason.
@@ -574,6 +698,29 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
 
+  # Adminer - Database management in a single PHP file.
+  adminer:
+    <<: *common-keys-core
+    container_name: adminer
+    image: adminer:latest
+    # ports:
+    #   - 8080:8080
+    environment:
+      # ADMINER_DESIGN: 'nette'  # https://github.com/vrana/adminer/tree/master/designs
+      ADMINER_DEFAULT_SERVER: postgres
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.adminer-rtr.entrypoints=https"
+      - "traefik.http.routers.adminer-rtr.rule=Host(`adminer.$DOMAINNAME0`)"
+      - "traefik.http.routers.adminer-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      #- "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia0@file"
+      ## HTTP Services
+      - "traefik.http.routers.adminer-rtr.service=adminer-svc"
+      - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
+
   # Redis - Key-value Store
   redis:
     <<: *common-keys-core
@@ -583,10 +730,17 @@ services:
       t2_proxy:
         ipv4_address: $REDIS_IPV4
     entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      start_period: 5s
+      interval: 5s
+      retries: 5
+      timeout: 3s
     ports:
       - "$REDIS_PORT:$REDIS_PORT"
     volumes:
       - $APPDIR/redis/data:/data
+      - $APPDIR/redis/healthcheck.sh:/healthcheck.sh:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
@@ -849,7 +1003,7 @@ services:
     depends_on:
       - socket-proxy
     healthcheck:
-      test: [ "CMD", "/dozzle", "healthcheck" ]
+      test: ["CMD", "/dozzle", "healthcheck"]
       interval: 3s
       timeout: 30s
       retries: 5

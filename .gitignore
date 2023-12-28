@@ -46,11 +46,13 @@ Thumbs.db
 !.env.example
 
 # Explicitly include select items
-!.gitignore
-!README.md
+!.bash_aliases.example
+!.bashrc.example
 !CHANGELOG.md
-!LICENSE
+!.gitignore
 !docker-compose-t2.yml
+!LICENSE
+!README.md
 
 # Select which items to include from appdata
 !appdata

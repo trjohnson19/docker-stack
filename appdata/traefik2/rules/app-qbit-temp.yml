@@ -1,0 +1,17 @@
+---
+http:
+  routers:
+    qbittorrent-temp-rtr:
+      rule: 'Host(`qbit-temp.{{env "DOMAINNAME0"}}`)'
+      entryPoints:
+        - https
+      middlewares:
+        - chain-authelia0
+      service: qbittorrent-temp-svc
+      tls:
+        options: tls-opts@file
+  services:
+    qbittorrent-temp-svc:
+      loadBalancer:
+        servers:
+          - url: 'http://mint.home.arpa:8170'  # or whatever your external host's IP:port is

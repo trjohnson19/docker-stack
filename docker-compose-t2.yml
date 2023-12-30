@@ -1847,6 +1847,49 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"  # Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
 
+  # Gluetun - VPN client in a thin Docker container
+  # gluetun-private is used for private trackers
+  gluetun-temp:
+    image: ghcr.io/qdm12/gluetun:latest
+    container_name: gluetun-temp
+    networks:
+      gluetun_net:
+        ipv4_address: $GLUETUN_TEMP_IPV4
+      t2_proxy:
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT:$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
+      - $QBITTORRENT_TEMP_PORT:$QBITTORRENT_TEMP_PORT  # qBittorrent web UI
+    volumes:
+      - $APPDIR/gluetun:/gluetun
+    environment:
+      <<: *default-tz-puid-pgid
+      VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
+      VPN_TYPE: "openvpn"
+      # OpenVPN:
+      OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
+      OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
+      OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
+      VPN_PORT_FORWARDING: "on"
+      VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_TEMP_VPN_SERVICE_PROVIDER
+      # Wireguard:
+      # WIREGUARD_PRIVATE_KEY:
+      # WIREGUARD_ADDRESSES:
+      SERVER_COUNTRIES: $GLUETUN_TEMP_SERVER_COUNTRIES
+      SERVER_CITIES: $GLUETUN_TEMP_SERVER_CITIES
+      SERVER_HOSTNAMES: $GLUETUN_TEMP_SERVER_HOSTNAMES
+      TZ: $TZ
+      UPDATER_PERIOD: "24h"  # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT"
+    secrets:
+      - gluetun_openvpn_user
+      - gluetun_openvpn_password
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"  # Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+
 
   ############################## SERVICES
 
@@ -2268,6 +2311,39 @@ services:
       - $APPDIR/qbittorrent-private/persistent:/persistent  # Space for persistent storage
       - $APPDIR/qbittorrent-private/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
       - $APPDIR/qbittorrent-private/custom-services.d:/custom-services.d:ro
+      - $DATADIR/torrents-private:/data/torrents-private  # Final home for data
+      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
+    secrets:
+      - qbittorrent_user
+      - qbittorrent_pass
+    labels:  # Define connection via traefik rules
+      - "com.centurylinklabs.watchtower.enable=false"  # Ensure constant connectivity is prioritized for trackers
+
+  # qBittorrent - an open-source software alternative to µTorrent
+  # qbit-private is used for private trackers
+  qbit-temp:
+    # <<: *common-keys-apps  # We do not want this to be able to communicate locally (except as specified)
+    image: lscr.io/linuxserver/qbittorrent:4.6.2
+    container_name: qbit-temp
+    security_opt:
+      - no-new-privileges:true
+    network_mode: "service:gluetun-temp"
+    environment:
+      # Built-in env variables
+      <<: *default-tz-puid-pgid
+      WEBUI_PORT: $QBITTORRENT_TEMP_PORT
+      # Custom env variables
+      LOG_LEVEL: "WARN"  # "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+      FILE__QBITTORRENT_USERNAME: /run/secrets/qbittorrent_user
+      FILE__QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_pass
+      GLUETUN_IPV4: $GLUETUN_TEMP_IPV4
+      GLUETUN_HTTP_CONTROL_SERVER_PORT: $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
+    volumes:
+      - $APPDIR/qbittorrent-temp/config:/config
+      - $APPDIR/qbittorrent-temp/scripts:/scripts:ro  # Add scripts
+      - $APPDIR/qbittorrent-temp/persistent:/persistent  # Space for persistent storage
+      - $APPDIR/qbittorrent-temp/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
+      - $APPDIR/qbittorrent-temp/custom-services.d:/custom-services.d:ro
       - $DATADIR/torrents-private:/data/torrents-private  # Final home for data
       - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
     secrets:

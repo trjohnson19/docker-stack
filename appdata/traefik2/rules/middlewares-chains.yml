@@ -32,6 +32,14 @@ http:
           - middlewares-keycloak
 
 
+    chain-authentik:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers
+          - middlewares-authentik
+
+
 #    chain-oauth:
 #      chain:
 #        middlewares:

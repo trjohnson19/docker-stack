@@ -49,6 +49,18 @@ secrets:
     file: $SECRETSDIR/authelia_storage_encryption_key
   authelia_storage_mysql_password:
     file: $SECRETSDIR/authelia_storage_mysql_password
+  authentik_postgresql__name:
+    file: $SECRETSDIR/authentik_postgresql__name
+  authentik_postgresql__user:
+    file: $SECRETSDIR/authentik_postgresql__user
+  authentik_postgresql__password:
+    file: $SECRETSDIR/authentik_postgresql__password
+  authentik_redis__password:
+    file: $SECRETSDIR/authentik_redis__password
+  authentik_secret_key:
+    file: $SECRETSDIR/authentik_secret_key
+  authentik_email__password:
+    file: $SECRETSDIR/authentik_email__password
   cloudflare_api_key:
     file: $SECRETSDIR/cloudflare_api_key
   cloudflare_ddns_api_token:
@@ -476,50 +488,6 @@ services:
       - "traefik.http.routers.authelia0-rtr.service=authelia0-svc"
       - "traefik.http.services.authelia0-svc.loadbalancer.server.port=$AUTHELIA_PORT"
 
-  # # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
-  # authelia1:  # Second instance for DOMAINNAME1
-  #   <<: *common-keys-core
-  #   container_name: authelia1
-  #   # Check this before upgrading: https://github.com/authelia/authelia#breaking-changes
-  #   image: ghcr.io/authelia/authelia:4.37
-  #   # depends_on:
-  #   #   - traefik
-  #   # ports:
-    #    - "$AUTHELIA_PORT:$AUTHELIA_PORT"
-    #    - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
-  #   volumes:
-  #     - $APPDIR/authelia/configuration1.yml:/config/configuration.yml  # Set the first configuration file
-  #     - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
-  #   environment:
-  #     # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
-  #     TZ: $TZ
-  #     AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
-  #     AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
-  #     AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
-  #     AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
-  #     AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
-  #     AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
-  #     AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
-  #   secrets:
-  #     - authelia_jwt_secret
-  #     - authelia_session_secret
-  #     - authelia_session_redis_password
-  #     - authelia_storage_mysql_password
-  #     - authelia_notifier_smtp_password
-  #     - authelia_duo_api_secret_key
-  #     - authelia_storage_encryption_key
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.authelia1-rtr.entrypoints=https"
-  #     - "traefik.http.routers.authelia1-rtr.rule=Host(`auth.$DOMAINNAME1`)"
-  #     - "traefik.http.routers.authelia1-rtr.tls.options=tls-opts@file"
-  #     ## Middlewares
-  #     - "traefik.http.routers.authelia1-rtr.middlewares=chain-authelia1@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.authelia1-rtr.service=authelia1-svc"
-  #     - "traefik.http.services.authelia1-svc.loadbalancer.server.port=9091"
-
   # Keycloak - Open Source Identity and Access Management
   keycloak:
     <<: *common-keys-core
@@ -614,6 +582,149 @@ services:
       - "traefik.http.routers.keycloak-admin-rtr.service=keycloak-admin-svc"
       - "traefik.http.services.keycloak-admin-svc.loadbalancer.server.port=$KEYCLOAK_PORT"
 
+  # Authentik - an open-source Identity Provider, focused on flexibility and versatility
+  authentik:
+    <<: *common-keys-core
+    container_name: authentik
+    image: ghcr.io/goauthentik/server:latest
+    command: server
+    ports:
+      - "$AUTHENTIK_PORT:$AUTHENTIK_PORT"
+    volumes:
+      - $APPDIR/authentik/media:/media
+      - $APPDIR/authentik/templates:/templates
+    environment:
+      # https://goauthentik.io/docs/installation/configuration
+      # Test configuration with `dcrun2 run --rm authentik-server dump_config`
+      # Use `file://` prefix to load from docker secret - https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
+      COMPOSE_PORT_HTTP: $AUTHENTIK_PORT
+      # COMPOSE_PORT_HTTPS:
+      AUTHENTIK_POSTGRESQL__HOST: $POSTGRES_HOST
+      AUTHENTIK_POSTGRESQL__NAME: file:///run/secrets/authentik_postgresql__name
+      AUTHENTIK_POSTGRESQL__USER: file:///run/secrets/authentik_postgresql__user
+      AUTHENTIK_POSTGRESQL__PORT: $POSTGRES_PORT
+      AUTHENTIK_POSTGRESQL__PASSWORD: file:///run/secrets/authentik_postgresql__password
+      AUTHENTIK_REDIS__HOST: $REDIS_HOST
+      AUTHENTIK_REDIS__PORT: $REDIS_PORT
+      # AUTHENTIK_REDIS__USERNAME: $REDIS_USER
+      AUTHENTIK_REDIS__PASSWORD: file:///run/secrets/authentik_redis__password
+      AUTHENTIK_LISTEN__LISTEN_HTTP: "0.0.0.0:${AUTHENTIK_PORT}"
+      # AUTHENTIK_LISTEN__LISTEN_HTTPS: "0.0.0.0:"
+      AUTHENTIK_LISTEN__LISTEN_LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
+      # AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS:
+      AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret_key
+      AUTHENTIK_LOG_LEVEL: info  # trace, debug, info, warning, error
+      AUTHENTIK_COOKIE_DOMAIN: $DOMAINNAME0
+      # AUTHENTIK_ERROR_REPORTING__ENABLED: 'true'
+      AUTHENTIK_EMAIL__HOST: $EMAIL_SERVER
+      AUTHENTIK_EMAIL__PORT: $EMAIL_SERVER_PORT
+      AUTHENTIK_EMAIL__USERNAME: $EMAIL_SERVER_USER
+      AUTHENTIK_EMAIL__PASSWORD: file:///run/secrets/authentik_email__password
+      AUTHENTIK_EMAIL__USE_TLS: 'false'
+      AUTHENTIK_EMAIL__USE_SSL: 'true'
+      AUTHENTIK_EMAIL__TIMEOUT: 10
+      AUTHENTIK_EMAIL__FROM: server@authentik.$DOMAINNAME0
+      AUTHENTIK_AVATARS: initials
+      AUTHENTIK_DEFAULT_USER_CHANGE_NAME: 'true'
+      AUTHENTIK_DEFAULT_USER_CHANGE_EMAIL: 'true'
+      AUTHENTIK_DEFAULT_USER_CHANGE_USERNAME: 'true'
+      AUTHENTIK_GDPR_COMPLIANCE: 'true'
+      # AUTHENTIK_DEFAULT_TOKEN_LENGTH:
+      AUTHENTIK_IMPERSONATION: 'true'
+      # AUTHENTIK_FOOTER_LINKS:
+      # COMPOSE_PORT_HTTPS:
+    secrets:
+      - authentik_postgresql__name
+      - authentik_postgresql__user
+      - authentik_postgresql__password
+      - authentik_redis__password
+      - authentik_secret_key
+      - authentik_email__password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.authentik-rtr.entrypoints=https"
+      # - "traefik.http.routers.authentik-outpost-rtr.entrypoints=https"
+      ### Base application rule
+      - "traefik.http.routers.authentik-rtr.rule=Host(`authentik.$DOMAINNAME0`)"
+      - "traefik.http.routers.authentik-rtr.tls.options=tls-opts@file"
+      ### Catch any subdomain using individual application forwardAuth
+      # - "traefik.http.routers.authentik-outpost-rtr.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.$DOMAINNAME0`) && PathPrefix(`/outpost.goauthentik.io/`)"
+      # - "traefik.http.routers.authentik-outpost-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.authentik-rtr.middlewares=chain-no-auth@file"  # Do not use authentication, but use rate limiting and secure headers
+      ## HTTP Services
+      - "traefik.http.routers.authentik-rtr.service=authentik-svc"
+      - "traefik.http.services.authentik-svc.loadbalancer.server.port=$AUTHENTIK_PORT"
+
+  authentik-worker:
+    <<: *common-keys-core
+    container_name: authentik-worker
+    image: ghcr.io/goauthentik/server:latest
+    command: worker
+    # `user: root` and the docker socket volume are optional.
+    # See more for the docker socket integration here:
+    # https://goauthentik.io/docs/outposts/integrations/docker
+    # Removing `user: root` also prevents the worker from fixing the permissions
+    # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
+    # (1000:1000 by default)
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $APPDIR/authentik/media:/media
+      - $APPDIR/authentik/certs:/certs
+      - $APPDIR/authentik/templates:/templates
+    environment:
+      # https://goauthentik.io/docs/installation/configuration
+      # Test configuration with `dcrun2 run --rm authentik-server dump_config`
+      # Use `file://` prefix to load from docker secret - https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
+      AUTHENTIK_POSTGRESQL__HOST: $POSTGRES_HOST
+      AUTHENTIK_POSTGRESQL__NAME: 'file:///run/secrets/authentik_postgresql__name'
+      AUTHENTIK_POSTGRESQL__USER: 'file:///run/secrets/authentik_postgresql__user'
+      AUTHENTIK_POSTGRESQL__PORT: $POSTGRES_PORT
+      AUTHENTIK_POSTGRESQL__PASSWORD: 'file:///run/secrets/authentik_postgresql__password'
+      AUTHENTIK_REDIS__HOST: $REDIS_HOST
+      AUTHENTIK_REDIS__PORT: $REDIS_PORT
+      # AUTHENTIK_REDIS__USERNAME: $REDIS_USER
+      AUTHENTIK_REDIS__PASSWORD: 'file:///run/secrets/authentik_redis__password'
+      AUTHENTIK_LISTEN__LISTEN_HTTP: "0.0.0.0:$AUTHENTIK_PORT"
+      # AUTHENTIK_LISTEN__LISTEN_HTTPS: "0.0.0.0:"
+      AUTHENTIK_LISTEN__LISTEN_LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
+      AUTHENTIK_LISTEN__LISTEN_DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
+      # AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS:
+      AUTHENTIK_SECRET_KEY: 'file:///run/secrets/authentik_secret_key'
+      AUTHENTIK_LOG_LEVEL: info  # trace, debug, info, warning, error
+      AUTHENTIK_COOKIE_DOMAIN: authentik.$DOMAINNAME0
+      # AUTHENTIK_ERROR_REPORTING__ENABLED: 'true'
+      AUTHENTIK_EMAIL__HOST: $EMAIL_SERVER
+      AUTHENTIK_EMAIL__PORT: $EMAIL_SERVER_PORT
+      AUTHENTIK_EMAIL__USERNAME: $EMAIL_SERVER_USER
+      AUTHENTIK_EMAIL__PASSWORD: 'file:///run/secrets/authentik_email__password'
+      AUTHENTIK_EMAIL__USE_TLS: 'false'
+      AUTHENTIK_EMAIL__USE_SSL: 'true'
+      AUTHENTIK_EMAIL__TIMEOUT: 10
+      AUTHENTIK_EMAIL__FROM: server@authentik.$DOMAINNAME0
+      AUTHENTIK_AVATARS: initials
+      AUTHENTIK_DEFAULT_USER_CHANGE_NAME: 'true'
+      AUTHENTIK_DEFAULT_USER_CHANGE_EMAIL: 'true'
+      AUTHENTIK_DEFAULT_USER_CHANGE_USERNAME: 'true'
+      AUTHENTIK_GDPR_COMPLIANCE: 'true'
+      # AUTHENTIK_DEFAULT_TOKEN_LENGTH:
+      AUTHENTIK_IMPERSONATION: 'true'
+      # AUTHENTIK_FOOTER_LINKS:
+      # COMPOSE_PORT_HTTPS:
+    secrets:
+      - authentik_postgresql__name
+      - authentik_postgresql__user
+      - authentik_postgresql__password
+      - authentik_redis__password
+      - authentik_secret_key
+      - authentik_email__password
 
   ############################## DATABASE
 
@@ -634,11 +745,17 @@ services:
       - mysql_root_password
 
   # PostgreSQL - PostgreSQL Database
+  # Steps for adding a new user/database:
+  # 1. Log in to adminer.$DOMAINNAME0 with postgres root
+  # 1. Open `SQL command` and execute the following lines:
+  #     CREATE USER <username> WITH PASSWORD '<password>';
+  #     CREATE DATABASE <dbname> OWNER <username>;
+  #     GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <username>;
   postgres:
     <<: *common-keys-core
     container_name: postgres
     image: postgres:16
-    user: "${PUID}:${PGID}"
+    # user: "${PUID}:${PGID}"
     networks:
       t2_proxy:
         ipv4_address: $POSTGRES_IPV4
@@ -1700,19 +1817,24 @@ services:
       WHOAMI_NAME: WhoAmI
     labels:
       - "traefik.enable=true"
-      ## HTTP Routers  # Set to respond on both `whoami.$DOMAINNAME0` and `whoami.$DOMAINNAME1`
-      - "traefik.http.routers.whoami0-rtr.entrypoints=https"
-      - "traefik.http.routers.whoami0-rtr.rule=Host(`whoami.$DOMAINNAME0`)"
-      - "traefik.http.routers.whoami0-rtr.tls.options=tls-opts@file"
-      # - "traefik.http.routers.whoami1-rtr.entrypoints=https"
-      # - "traefik.http.routers.whoami1-rtr.rule=Host(`whoami.$DOMAINNAME1`)"
-      # - "traefik.http.routers.whoami1-rtr.tls.options=tls-opts@file"
+      ## HTTP Routers  # Set to respond on multiple `whoami` domains
+      - "traefik.http.routers.whoami-authelia0-rtr.entrypoints=https"
+      - "traefik.http.routers.whoami-authelia0-rtr.rule=Host(`whoami-authelia.$DOMAINNAME0`)"
+      - "traefik.http.routers.whoami-authelia0-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.whoami-keycloak-rtr.entrypoints=https"
+      - "traefik.http.routers.whoami-keycloak-rtr.rule=Host(`whoami-keycloak.$DOMAINNAME0`)"
+      - "traefik.http.routers.whoami-keycloak-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.whoami-authentik-rtr.entrypoints=https"
+      - "traefik.http.routers.whoami-authentik-rtr.rule=Host(`whoami-authentik.$DOMAINNAME0`)"
+      - "traefik.http.routers.whoami-authentik-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.whoami0-rtr.middlewares=chain-authelia0@file"
-      # - "traefik.http.routers.whoami1-rtr.middlewares=chain-authelia1@file"
+      - "traefik.http.routers.whoami-authelia0-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.whoami-keycloak-rtr.middlewares=chain-keycloak@file"
+      - "traefik.http.routers.whoami-authentik-rtr.middlewares=chain-authentik@file"
       ## HTTP Services
-      - "traefik.http.routers.whoami0-rtr.service=whoami-svc"
-      # - "traefik.http.routers.whoami1-rtr.service=whoami-svc"
+      - "traefik.http.routers.whoami-authelia0-rtr.service=whoami-svc"
+      - "traefik.http.routers.whoami-keycloak-rtr.service=whoami-svc"
+      - "traefik.http.routers.whoami-authentik-rtr.service=whoami-svc"
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=$WHOAMI_PORT"
 
   ############################## VPN

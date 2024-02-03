@@ -2,15 +2,15 @@
 $CONFIG = array (
   'htaccess.RewriteBase' => '/',
   'memcache.local' => '\\OC\\Memcache\\APCu',
-  'apps_paths' => 
+  'apps_paths' =>
   array (
-    0 => 
+    0 =>
     array (
       'path' => '/var/www/html/apps',
       'url' => '/apps',
       'writable' => false,
     ),
-    1 => 
+    1 =>
     array (
       'path' => '/var/www/html/custom_apps',
       'url' => '/custom_apps',
@@ -19,7 +19,7 @@ $CONFIG = array (
   ),
   'passwordsalt' => '',
   'secret' => '',
-  'trusted_domains' => 
+  'trusted_domains' =>
   array (
     0 => 'localhost',
     1 => 's',
@@ -48,27 +48,28 @@ $CONFIG = array (
   'mail_smtpname' => '',
   'mail_smtppassword' => '',
   'twofactor_enforced' => '',
-  'twofactor_enforced_groups' => 
+  'twofactor_enforced_groups' =>
   array (
   ),
-  'twofactor_enforced_excluded_groups' => 
+  'twofactor_enforced_excluded_groups' =>
   array (
   ),
   'overwriteprotocol' => 'https',
-  'trusted_proxies' => 
+  'trusted_proxies' =>
   array (
     0 => '192.168.250.0/24',
   ),
   'maintenance' => false,
+  'maintenance_window_start' => 1,
   'loglevel' => 2,
-  'app_install_overwrite' => 
+  'app_install_overwrite' =>
   array (
     0 => 'twofactor_totp',
   ),
   'theme' => '',
   'memcache.locking' => '\\OC\\Memcache\\Redis',
   'debug' => false,
-  'redis' => 
+  'redis' =>
   array (
     'host' => 'redis',
     'port' => 6379,

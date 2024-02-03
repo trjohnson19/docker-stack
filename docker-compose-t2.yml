@@ -49,6 +49,8 @@ secrets:
     file: $SECRETSDIR/authelia_storage_encryption_key
   authelia_storage_mysql_password:
     file: $SECRETSDIR/authelia_storage_mysql_password
+  authentik_email__password:
+    file: $SECRETSDIR/authentik_email__password
   authentik_postgresql__name:
     file: $SECRETSDIR/authentik_postgresql__name
   authentik_postgresql__user:
@@ -59,8 +61,8 @@ secrets:
     file: $SECRETSDIR/authentik_redis__password
   authentik_secret_key:
     file: $SECRETSDIR/authentik_secret_key
-  authentik_email__password:
-    file: $SECRETSDIR/authentik_email__password
+  authentik_token_ldap:
+    file: $SECRETSDIR/authentik_token_ldap
   cloudflare_api_key:
     file: $SECRETSDIR/cloudflare_api_key
   cloudflare_ddns_api_token:
@@ -588,8 +590,8 @@ services:
     container_name: authentik
     image: ghcr.io/goauthentik/server:latest
     command: server
-    ports:
-      - "$AUTHENTIK_PORT:$AUTHENTIK_PORT"
+    # ports:
+    #   - "$AUTHENTIK_PORT:$AUTHENTIK_PORT"
     volumes:
       - $APPDIR/authentik/media:/media
       - $APPDIR/authentik/templates:/templates
@@ -608,12 +610,12 @@ services:
       AUTHENTIK_REDIS__PORT: $REDIS_PORT
       # AUTHENTIK_REDIS__USERNAME: $REDIS_USER
       AUTHENTIK_REDIS__PASSWORD: file:///run/secrets/authentik_redis__password
-      AUTHENTIK_LISTEN__LISTEN_HTTP: "0.0.0.0:${AUTHENTIK_PORT}"
-      # AUTHENTIK_LISTEN__LISTEN_HTTPS: "0.0.0.0:"
-      AUTHENTIK_LISTEN__LISTEN_LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
+      AUTHENTIK_LISTEN__HTTP: "0.0.0.0:${AUTHENTIK_PORT}"
+      # AUTHENTIK_LISTEN__HTTPS: "0.0.0.0:"
+      AUTHENTIK_LISTEN__LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
+      AUTHENTIK_LISTEN__LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
+      AUTHENTIK_LISTEN__METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
+      AUTHENTIK_LISTEN__DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
       # AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS:
       AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret_key
       AUTHENTIK_LOG_LEVEL: info  # trace, debug, info, warning, error
@@ -647,13 +649,9 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.authentik-rtr.entrypoints=https"
-      # - "traefik.http.routers.authentik-outpost-rtr.entrypoints=https"
       ### Base application rule
       - "traefik.http.routers.authentik-rtr.rule=Host(`authentik.$DOMAINNAME0`)"
       - "traefik.http.routers.authentik-rtr.tls.options=tls-opts@file"
-      ### Catch any subdomain using individual application forwardAuth
-      # - "traefik.http.routers.authentik-outpost-rtr.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.$DOMAINNAME0`) && PathPrefix(`/outpost.goauthentik.io/`)"
-      # - "traefik.http.routers.authentik-outpost-rtr.tls.options=tls-opts@file"
       ## Middlewares
       - "traefik.http.routers.authentik-rtr.middlewares=chain-no-auth@file"  # Do not use authentication, but use rate limiting and secure headers
       ## HTTP Services
@@ -690,12 +688,12 @@ services:
       AUTHENTIK_REDIS__PORT: $REDIS_PORT
       # AUTHENTIK_REDIS__USERNAME: $REDIS_USER
       AUTHENTIK_REDIS__PASSWORD: 'file:///run/secrets/authentik_redis__password'
-      AUTHENTIK_LISTEN__LISTEN_HTTP: "0.0.0.0:$AUTHENTIK_PORT"
-      # AUTHENTIK_LISTEN__LISTEN_HTTPS: "0.0.0.0:"
-      AUTHENTIK_LISTEN__LISTEN_LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
-      AUTHENTIK_LISTEN__LISTEN_DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
+      AUTHENTIK_LISTEN__HTTP: "0.0.0.0:${AUTHENTIK_PORT}"
+      # AUTHENTIK_LISTEN__HTTPS: "0.0.0.0:"
+      AUTHENTIK_LISTEN__LDAP: "0.0.0.0:${AUTHENTIK_LDAP_PORT}"
+      AUTHENTIK_LISTEN__LDAPS: "0.0.0.0:${AUTHENTIK_LDAPS_PORT}"
+      AUTHENTIK_LISTEN__METRICS: "0.0.0.0:${AUTHENTIK_METRICS_PORT}"
+      AUTHENTIK_LISTEN__DEBUG: "0.0.0.0:${AUTHENTIK_DEBUG_PORT}"
       # AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS:
       AUTHENTIK_SECRET_KEY: 'file:///run/secrets/authentik_secret_key'
       AUTHENTIK_LOG_LEVEL: info  # trace, debug, info, warning, error
@@ -725,6 +723,7 @@ services:
       - authentik_redis__password
       - authentik_secret_key
       - authentik_email__password
+
 
   ############################## DATABASE
 

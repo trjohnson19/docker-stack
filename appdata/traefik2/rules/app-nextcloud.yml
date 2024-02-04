@@ -1,3 +1,4 @@
+---
 http:
   middlewares:
     nextcloud-middlewares-secure-headers:

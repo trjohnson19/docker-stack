@@ -38,8 +38,10 @@ Thumbs.db
 
 # htpcBeginner guidelines #
 ###########################
-*  # Exclude everything in the base folder by default
-*/  # Exclude every parent directory by default
+# Exclude everything in the base folder by default
+/*
+# Exclude every parent directory by default
+*/
 
 # Exclude .env to protect sensitive information
 .env
@@ -145,6 +147,14 @@ appdata/unbound/config/*
 !appdata/unbound/config/root.hints
 !appdata/unbound/config/root.hints.cron.example
 !appdata/unbound/config/unbound.conf
+
+# Include the .github directory
+!.github
+!.github/*
+
+# Include the .vscode directory
+.vscode
+.vscode/*
 
 # Exclude the secrets directory
 secrets

@@ -1,3 +1,4 @@
+---
 http:
   middlewares:
     nextcloud-middlewares-secure-headers:
@@ -23,9 +24,9 @@ http:
         # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
         permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
         customResponseHeaders:
-        ### Change this to none to remove the Robots error:
-          X-Robots-Tag: "none"
-          server: ""
+        # ### Change this to none to remove the Robots error:
+        #   X-Robots-Tag: "none"
+        #   server: ""
 
 
 ### This section redirects requests for Nextcloud calendar and contacts service discovery

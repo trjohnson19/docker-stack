@@ -63,6 +63,12 @@ appdata/*
 !appdata/authelia
 appdata/authelia/*
 
+!appdata/authentik
+appdata/authentik/*
+!appdata/authentik/config
+appdata/authentik/config/*
+!appdata/authentik/config/ak-outpost-ldap-conf.example.yml
+
 !appdata/cf-ddns
 appdata/cf-ddns/*
 !appdata/cf-ddns/config.yaml.example

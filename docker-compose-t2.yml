@@ -260,11 +260,13 @@ services:
       # Set Wireguard entrypoint
       - --entryPoints.wireguard.address=:$WIREGUARD_PORT/udp
       # Set Minecraft entrypoint
-      - --entryPoints.minecraft.address=:25565
-      # # Set minecraft-rcon entrypoint
+      # - --entryPoints.minecraft.address=:25565
+      # Set minecraft-rcon entrypoint
       # - --entryPoints.minecraft-rcon.address=:4326
       # Set minecraft-rcon-websocket entrypoint
       # - --entryPoints.minecraft-rcon-websocket.address=:4327
+      # Set Authentik LDAPS entrypoint
+      - --entryPoints.authentik-ldaps.address=:$AUTHENTIK_LDAPS_PORT
     networks:
       t2_proxy:
         ipv4_address: $TRAEFIK_IPV4  # You can specify a static IP
@@ -295,6 +297,10 @@ services:
       - target: $WIREGUARD_PORT  # Port 80 UDP port for Wireguard
         published: $WIREGUARD_PORT
         protocol: udp
+        mode: host
+      - target: $AUTHENTIK_LDAPS_PORT  # LDAPS port
+        published: $AUTHENTIK_LDAPS_PORT
+        protocol: tcp
         mode: host
     volumes:
       - $APPDIR/traefik2/rules:/rules # file provider directory

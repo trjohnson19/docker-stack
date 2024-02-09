@@ -1,0 +1,27 @@
+---
+log_level: info
+docker_labels:
+  traefik.enable: "true"
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.tls: "true"
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.rule: HostSNI(`*`)  # Must bind to * because LDAPS does not send SNI https://community.traefik.io/t/15570
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.service: ak-outpost-ldap-svc
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.entrypoints: authentik-ldaps
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.tls.options: tls-opts@file
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.tls.passthrough: "false"  # Do not use TLS between Traefik and Authentik
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.tls.certResolver: dns-cloudflare
+  traefik.tcp.routers.ak-outpost-ldaps-rtr.tls.domains[0].main: ak-ldaps.<DOMAINNAME0>
+  traefik.tcp.services.ak-outpost-ldap-svc.loadbalancer.server.port: "<AUTHENTIK_LDAP_PORT>"  # Note: use LDAP (3389), not LDAPS (6636)
+  traefik.http.routers.ak-outpost-ldap-healthcheck-rtr.rule: Host(`ak-ldaps.<DOMAINNAME0>`)
+  traefik.http.routers.ak-outpost-ldap-healthcheck-rtr.service: ak-outpost-ldap-healthcheck-svc
+  traefik.http.routers.ak-outpost-ldap-healthcheck-rtr.entrypoints: https
+  traefik.http.routers.ak-outpost-ldap-healthcheck-rtr.middlewares: chain-no-auth@file
+  traefik.http.routers.ak-outpost-ldap-healthcheck-rtr.tls.options: tls-opts@file
+  traefik.http.services.ak-outpost-ldap-healthcheck-svc.loadbalancer.healthcheck.path: /outpost.goauthentik.io/ping
+  traefik.http.services.ak-outpost-ldap-healthcheck-svc.loadbalancer.healthcheck.port: "<AUTHENTIK_LDAP_HEALTHCHECK_PORT>"  # Likely 9300
+authentik_host: https://authentik.<DOMAINNAME0>/
+docker_network: t2_proxy
+container_image: null
+docker_map_ports: false
+authentik_host_browser: ""
+object_naming_template: ak-outpost-%(name)s
+authentik_host_insecure: false

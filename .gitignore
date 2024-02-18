@@ -76,6 +76,8 @@ appdata/cf-ddns/*
 !appdata/gotify
 appdata/gotify/*
 !appdata/gotify/config
+appdata/gotify/config/*
+!appdata/gotify/config/entrypoint.sh
 
 !appdata/jellyfin
 appdata/jellyfin/*

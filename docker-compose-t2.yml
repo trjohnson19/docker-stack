@@ -1086,9 +1086,9 @@ services:
       GUACD_HOSTNAME: guacd
       MYSQL_HOSTNAME: $MARIADB_HOST
       MYSQL_PORT: $MARIADB_PORT
-      MYSQL_DATABASE_FILE: /run/secrets/guac_db_name
-      MYSQL_USER_FILE: /run/secrets/guac_mysql_user
-      MYSQL_PASSWORD_FILE: /run/secrets/guac_mysql_password
+      MYSQL_DATABASE_FILE: /run/secrets/guac_db_name  # Secrets do not work with 600 secrets, must chmod 644
+      MYSQL_USER_FILE: /run/secrets/guac_mysql_user  # Secrets do not work with 600 secrets, must chmod 644
+      MYSQL_PASSWORD_FILE: /run/secrets/guac_mysql_password  # Secrets do not work with 600 secrets, must chmod 644
     secrets:
       - guac_db_name
       - guac_mysql_user

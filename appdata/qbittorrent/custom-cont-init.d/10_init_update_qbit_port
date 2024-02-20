@@ -237,8 +237,8 @@ case "${LOG_LEVEL}" in
 esac
 
 # Sleep for a short time to allow Gluetun to acquire a port
-log_info "${script_init_log_prefix} Waiting 15 seconds to allow gluetun to start up"
-sleep 15
+log_info "${script_init_log_prefix} Waiting 5 seconds to allow gluetun to start up"
+sleep 5
 
 log_trace "${script_init_log_prefix} Starting the script"
 log_trace "${script_init_log_prefix} -> ${qbit_update_config_log_prefix}"

@@ -3,11 +3,9 @@
 
 name: Differential ShellCheck
 
-on:
-  push:
-    branches: [ "main" ]  # yamllint disable-line rule:brackets
-  pull_request:
-    branches: [ "main" ]  # yamllint disable-line rule:brackets
+on:  # yamllint disable-line rule:truthy
+  push: null
+  pull_request: null
 
 permissions:
   contents: read

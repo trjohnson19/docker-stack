@@ -11,10 +11,8 @@ permissions:
   { }
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    branches: [ "main" ]  # yamllint disable-line rule:brackets
-  pull_request:
-    branches: [ "main" ]  # yamllint disable-line rule:brackets
+  push: null
+  pull_request: null
 jobs:
   run-lint:
     runs-on: ubuntu-latest

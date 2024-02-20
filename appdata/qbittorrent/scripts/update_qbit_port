@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
+## Safely create a temporary folder for files
+update_qbit_port_temp_dir=$(mktemp -d "$(basename "$0").XXXXXXXXXX")
+
 ## Gluetun API variables
 ## Per https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/control-server.md
 ## Global API variables
@@ -8,8 +11,8 @@ gluetun_host="${GLUETUN_IPV4:-localhost//[$'\r\n']/''}"  ### See '${parameter//p
 gluetun_address="http://${gluetun_host}"
 gluetun_control_server_port="${GLUETUN_HTTP_CONTROL_SERVER_PORT:-9001}"
 gluetun_uri="${gluetun_address}:${gluetun_control_server_port}"
-gluetun_forwarded_port_file="${TMPDIR:-/tmp}/gluetun_port"
-gluetun_api_response_file="${TMPDIR:-/tmp}/gluetun_api_response"
+gluetun_forwarded_port_file="${update_qbit_port_temp_dir}/gluetun_port"
+gluetun_api_response_file="${update_qbit_port_temp_dir}/gluetun_api_response"
 ## Function variables
 gluetun_api_path_portforwarded="/v1/openvpn/portforwarded"
 gluetun_api_uri_portforwarded="${gluetun_uri}${gluetun_api_path_portforwarded}"
@@ -22,9 +25,9 @@ qbit_api_port="${WEBUI_PORT:-8080}"
 qbit_uri="${qbit_address}:${qbit_api_port}"
 qbit_api_base="/api/v2"
 qbit_api_uri_base="${qbit_uri}${qbit_api_base}"
-qbit_api_cookie_file="${TMPDIR:-/tmp}/qbit_cookie"
-qbit_api_preferences_file="${TMPDIR:-/tmp}/qbit_preferences"
-qbit_api_response_file="${TMPDIR:-/tmp}/qbit_api_response"
+qbit_api_cookie_file="${update_qbit_port_temp_dir}/qbit_cookie"
+qbit_api_preferences_file="${update_qbit_port_temp_dir}/qbit_preferences"
+qbit_api_response_file="${update_qbit_port_temp_dir}/qbit_api_response"
 qbit_api_curl_global_opts=(--silent --cookie "${qbit_api_cookie_file}" --cookie-jar "${qbit_api_cookie_file}" --header "Referer: ${qbit_uri}" --write-out "%{response_code}")
 ## Function variables
 ### qbit_cookie_test

@@ -1,6 +1,8 @@
 # Keycloak can be rebuilt when changes are made to the Dockerfile using the `dcbuild2` from .bash_aliases
 FROM quay.io/keycloak/keycloak:23.0 as builder
 
+USER keycloak
+
 # Build options
 ARG ARG_KC_CACHE
 # ARG ARG_KC_CACHE_CONFIG_FILE
@@ -36,6 +38,15 @@ RUN /opt/keycloak/bin/kc.sh build
 # Copy build files to start files
 FROM quay.io/keycloak/keycloak:23.0
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
+
+USER keycloak
+
+HEALTHCHECK \
+    --interval=10s \
+    --timeout=3s \
+    --start-period=30s \
+    --retries=3 \
+    CMD /build/healthcheck.sh || exit 1
 
 # Start keycloak with Docker secrets
 ENTRYPOINT ["/build/entrypoint.sh"]

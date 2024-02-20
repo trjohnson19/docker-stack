@@ -517,12 +517,6 @@ services:
         # ARG_KC_FIPS_MODE:
         ARG_QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
     command: ["start", "--optimized"]
-    healthcheck:
-      test: ["CMD-SHELL", "/build/healthcheck.sh"]
-      start_period: 30s
-      interval: 10s
-      retries: 3
-      timeout: 3s
     # ports:
     #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:

@@ -1,16 +1,20 @@
-# This workflow executes several linters on changed files based on languages used in your code base whenever
-# you push a code or open a pull request.
-#
-# You can adjust the behavior by modifying this file.
-# For more information, see:
-# https://github.com/github/super-linter
+---
+## This workflow executes several linters on changed files based on languages
+## used in your code base whenever you push a code or open a pull request.
+##
+## You can adjust the behavior by modifying this file.
+## For more information, see:
+## https://github.com/github/super-linter
 name: Lint Code Base
+
+permissions:
+  { }
 
 on:  # yamllint disable-line rule:truthy
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]  # yamllint disable-line rule:brackets
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ]  # yamllint disable-line rule:brackets
 jobs:
   run-lint:
     runs-on: ubuntu-latest
@@ -21,13 +25,16 @@ jobs:
       statuses: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        # yamllint disable-line rule:line-length
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # @v4.1.1
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
+          ## Full git history is needed to get a proper list of changed files
+          ## within `super-linter`
           fetch-depth: 0
 
       - name: Lint Code Base
-        uses: super-linter/super-linter@v6
+        # yamllint disable-line rule:line-length
+        uses: super-linter/super-linter@f5150a3ce82fe45ad2d9f1e92ac6fc2c9b7c14a5  # @v6.1.1
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "main"

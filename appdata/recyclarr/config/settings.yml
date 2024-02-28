@@ -1,5 +1,15 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/settings-schema.json
+---
+## yamllint disable-line rule:line-length
+## yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/settings-schema.json
 
-# Edit this file to customize the behavior of Recyclarr beyond its defaults
-# For the settings file reference guide, visit the link to the wiki below:
-# https://github.com/recyclarr/recyclarr/wiki/Settings-Reference
+## Edit this file to customize the behavior of Recyclarr beyond its defaults
+## For the settings file reference guide, visit the link to the wiki below:
+## https://github.com/recyclarr/recyclarr/wiki/Settings-Reference
+
+repositories:
+  trash_guides:
+    clone_url: https://github.com/TRaSH-/Guides.git
+    branch: master
+  config_templates:
+    clone_url: https://github.com/recyclarr/config-templates.git
+    branch: master

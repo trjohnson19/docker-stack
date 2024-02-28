@@ -1,3 +1,4 @@
+---
 http:
   routers:
     homebridge-rtr:
@@ -13,4 +14,6 @@ http:
     homebridge-svc:
       loadBalancer:
         servers:
-          - url: 'http://mint.home.arpa:{{env "HOMEBRIDGE_PORT"}}'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://mint.home.arpa:{{env "HOMEBRIDGE_PORT"}}'
+...

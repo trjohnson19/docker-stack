@@ -1,31 +1,37 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/config-schema.json
-#
-# A starter config to use with Recyclarr. Most values are set to "reasonable defaults". Update the
-# values below as needed for your instance. You will be required to update the API Key and URL for
-# each instance you want to use.
-#
-# Many optional settings have been omitted to keep this template simple.
-#
-# For more details on the configuration, see the Configuration Reference on the wiki here:
-# https://recyclarr.dev/wiki/yaml/config-reference#sonarr
+---
+## yamllint disable-line rule:line-length
+## yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/config-schema.json
+##
+## A starter config to use with Recyclarr. Most values are set to "reasonable
+## defaults". Update the values below as needed for your instance. You will be
+## required to update the API Key and URL for each instance you want to use.
+##
+## Many optional settings have been omitted to keep this template simple.
+##
+## For more details on the configuration, see the Configuration Reference on
+## the wiki here:
+## https://recyclarr.dev/wiki/yaml/config-reference#sonarr
 
-# Configuration specific to Sonarr
+## Configuration specific to Sonarr
 sonarr:
   sonarr:
-    # Set the URL/API Key to your actual instance
+    ## Set the URL/API Key to your actual instance
     base_url: http://sonarr:8989
     api_key: !secret sonarr_apikey
 
-    # Quality definitions from the guide to sync to Sonarr.
-    # Use "docker run recyclarr/recyclarr:latest list qualities sonarr" to see options
+    ## Quality definitions from the guide to sync to Sonarr.
+    ## Use "docker run recyclarr/recyclarr:latest list qualities sonarr" to see
+    ## options
     quality_definition:
       type: series
 
-    # Release profiles from the guide to sync to Sonarr.
-    # You can optionally add tags and make negative scores strictly ignored
-    # Use "docker run recyclarr/recyclarr:latest list release-profiles sonarr" to see options
+    ## Release profiles from the guide to sync to Sonarr.
+    ## You can optionally add tags and make negative scores strictly ignored
+    ## Use "docker run recyclarr/recyclarr:latest list release-profiles sonarr"
+    ## to see options
     release_profiles:
-      ## TV
+      #### TV
+      ## yamllint disable rule:line-length
       - trash_ids:
           - 71899E6C303A07AF0E4746EFF9873532 # P2P Groups + Repack/Proper
           - 76e060895c5b8a765c310933da0a5357 # Optionals
@@ -33,10 +39,12 @@ sonarr:
           - EBC725268D687D588A20CBC5F97E538B # Low Quality Groups
           # - 6cd9e10bb5bb4c63d2d7cd3279924c7b # Anime - Second release profile
           - 1B018E0C53EC825085DD911102E2CA36 # Release Sources (Streaming Service)
+        ## yamllint enable rule:line-length
         strict_negative_scores: true
         tags: [tv]
 
-      ## TV
+      #### TV
+      ## yamllint disable rule:line-length
       - trash_ids:
           # - 71899E6C303A07AF0E4746EFF9873532 # P2P Groups + Repack/Proper
           # - 76e060895c5b8a765c310933da0a5357 # Optionals
@@ -44,24 +52,28 @@ sonarr:
           # - EBC725268D687D588A20CBC5F97E538B # Low Quality Groups
           - 6cd9e10bb5bb4c63d2d7cd3279924c7b # Anime - Second release profile
           # - 1B018E0C53EC825085DD911102E2CA36 # Release Sources (Streaming Service)
+        ## yamllint enable rule:line-length
         strict_negative_scores: false
         tags: [anime]
 
   sonarr_4k:
-    # Set the URL/API Key to your actual instance
+    ## Set the URL/API Key to your actual instance
     base_url: http://sonarr-4k:8989
     api_key: !secret sonarr_4k_apikey
 
-    # Quality definitions from the guide to sync to Sonarr.
-    # Use "docker run recyclarr/recyclarr:latest list qualities sonarr" to see options
+    ## Quality definitions from the guide to sync to Sonarr.
+    ## Use "docker run recyclarr/recyclarr:latest list qualities sonarr" to see
+    ## options
     quality_definition:
       type: series
 
-    # Release profiles from the guide to sync to Sonarr.
-    # You can optionally add tags and make negative scores strictly ignored
-    # Use "docker run recyclarr/recyclarr:latest list release-profiles sonarr" to see options
+    ## Release profiles from the guide to sync to Sonarr.
+    ## You can optionally add tags and make negative scores strictly ignored
+    ## Use "docker run recyclarr/recyclarr:latest list release-profiles sonarr"
+    ## to see options
     release_profiles:
-      ## TV
+      #### TV
+      ## yamllint disable rule:line-length
       - trash_ids:
           - 71899E6C303A07AF0E4746EFF9873532 # P2P Groups + Repack/Proper
           - 76e060895c5b8a765c310933da0a5357 # Optionals
@@ -69,10 +81,12 @@ sonarr:
           - EBC725268D687D588A20CBC5F97E538B # Low Quality Groups
           # - 6cd9e10bb5bb4c63d2d7cd3279924c7b # Anime - Second release profile
           - 1B018E0C53EC825085DD911102E2CA36 # Release Sources (Streaming Service)
+        ## yamllint enable rule:line-length
         strict_negative_scores: true
         tags: [tv]
 
-      ## TV
+      #### TV
+      ## yamllint disable rule:line-length
       - trash_ids:
           # - 71899E6C303A07AF0E4746EFF9873532 # P2P Groups + Repack/Proper
           # - 76e060895c5b8a765c310933da0a5357 # Optionals
@@ -80,29 +94,33 @@ sonarr:
           # - EBC725268D687D588A20CBC5F97E538B # Low Quality Groups
           - 6cd9e10bb5bb4c63d2d7cd3279924c7b # Anime - Second release profile
           # - 1B018E0C53EC825085DD911102E2CA36 # Release Sources (Streaming Service)
+        ## yamllint enable rule:line-length
         strict_negative_scores: false
         tags: [anime]
 
-# Configuration specific to Radarr.
+## Configuration specific to Radarr.
 radarr:
   radarr:
-  # Set the URL/API Key to your actual instance
+  ## Set the URL/API Key to your actual instance
     base_url: http://radarr:7878
     api_key: !secret radarr_apikey
 
-    # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
+    ## Which quality definition in the guide to sync to Radarr. Only choice
+    ## right now is 'movie'
     quality_definition:
       type: movie
 
-    # Set to 'true' to automatically remove custom formats from Radarr when they are removed from
-    # the guide or your configuration. This will NEVER delete custom formats you manually created!
+    ## Set to 'true' to automatically remove custom formats from Radarr when
+    ## they are removed from the guide or your configuration. This will NEVER
+    ## delete custom formats you manually created!
     delete_old_custom_formats: true
 
     custom_formats:
-      # A list of custom formats to sync to Radarr. Must match the "name" in the importable JSON.
-      # Do NOT use the heading names here, those do not work! These are case-insensitive.
+      ## A list of custom formats to sync to Radarr. Must match the "name" in
+      ## the importable JSON. Do NOT use the heading names here, those do not
+      ## work! These are case-insensitive.
       - trash_ids:
-          # [No Category]
+          ## [No Category]
           - 820b09bb9acbfde9c35c71e0e565dad8 # 1080p
           - fb392fb0d61a010ae38e49ceaa24a1ef # 2160p
           - b2be17d608fc88818940cd1833b0b24c # 720p
@@ -111,7 +129,7 @@ radarr:
           - ff5bc9e8ce91d46c997ca3ac6994d6f8 # FraMeSToR
           - 8cd3ac70db7ac318cf9a0e01333940a4 # SiC
 
-          # Audio Advanced #1
+          ## Audio Advanced #1
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 185f1dd7264c4562b9022d963ac37424 # DD+
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
@@ -122,7 +140,7 @@ radarr:
           - 3cafb66171b47f226146a0770576870f # TrueHD
           - 496f355514737f7d83bf7aa4d24f8169 # TrueHD ATMOS
 
-          # Audio Advanced #2
+          ## Audio Advanced #2
           - 240770601cc226190c367ef59aba7463 # AAC
           - c2998bd0d90ed5621d8df281e839436e # DD
           - 8e109e50e0a0b83a5098b056e13bf6db # DTS-HD HRA
@@ -131,7 +149,7 @@ radarr:
           - a061e2e700f81932daf888599f8a8273 # Opus
           - e7c2fcae07cbada050a0af3357491d7b # PCM
 
-          # Audio Channels
+          ## Audio Channels
           - b124be9b146540f8e62f98fe32e49a2a # 1.0 Mono
           - 89dac1be53d5268a7e10a19d3c896826 # 2.0 Stereo
           - 205125755c411c3b8622ca3175d27b37 # 3.0 Sound
@@ -141,7 +159,7 @@ radarr:
           - e77382bcfeba57cb83744c9c5449b401 # 7.1 Surround
           - f2aacebe2c932337fe352fa6e42c1611 # 9.1 Surround
 
-          # # French Audio Version
+          # ## French Audio Version
           # - 6d27683346c78d6a3f772e30877910a7 # French Audio
           # - 72b1548df1ac3175ca105a9ce7043c91 # Multi-Audio
           # - d5f3a1afdb77e6b95e489f7654532d04 # Multi-French
@@ -153,7 +171,7 @@ radarr:
           # - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
           # - 95aa50f71a01c82354a7a2b385f1c4d8 # VQ
 
-          # # French Source Groups
+          # ## French Source Groups
           # - 5322da05b19d857acc1e75be3edf47b3 # FR HD Bluray Tier 01
           # - 57f34251344be2e283fc30e00e458be6 # FR HD Bluray Tier 02
           # - 48f031e76111f17ea94898f4cdc34fdc # FR LQ
@@ -165,7 +183,7 @@ radarr:
           # - 9790a618cec1aeac8ce75601a17ea40d # FR WEB Tier 01
           # - 3c83a765f84239716bd5fd2d7af188f9 # FR WEB Tier 02
 
-          # HDR Formats
+          ## HDR Formats
           - 58d6a88f13e2db7f5059c41047876f00 # DV
           - e23edd2482476e595fb990b12e7c609c # DV HDR10
           - 55d53828b9d81cbe20b02efd00aa0efd # DV HLG
@@ -177,7 +195,7 @@ radarr:
           - 9364dd386c9b4a1100dde8264690add7 # HLG
           - 08d6d8834ad9ec87b1dc7ec8148e7a1f # PQ
 
-          # HQ Release Groups
+          ## HQ Release Groups
           - ed27ebfef2f323e964fb1f61391bcb35 # HD Bluray Tier 01
           - c20c8647f2746a1f4c4262b0fbbeeeae # HD Bluray Tier 02
           - 3a3ff47579026e76d6504ebea39390de # Remux Tier 01
@@ -189,7 +207,7 @@ radarr:
           - 403816d65392c79236dcb6dd591aeda4 # WEB Tier 02
           - af94e0fe497124d1f9ce732069ec8c3b # WEB Tier 03
 
-          # Misc
+          ## Misc
           # - 9de657fd3d327ecf144ec73dfe3a3e9a # Dutch Groups
           - 0d91270a7255a1e388fa85e959f359d8 # FreeLeech
           - ff86c4326018682f817830ced463332b # MPEG2
@@ -199,7 +217,7 @@ radarr:
           - 2899d84dc9372de3408e6d8cc18e9666 # x264
           - 9170d55c319f4fe40da8711ba9d8050d # x265
 
-          # Movie Versions
+          ## Movie Versions
           - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
           - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
           - 0f12c086e289cf966fa5948eac571f44 # Hybrid
@@ -211,7 +229,7 @@ radarr:
           - 957d0f44b592285f26449575e8b1167e # Special Edition
           - e9001909a4c88013a359d0b9920d7bea # Theatrical Cut
 
-          # Optional
+          ## Optional
           - cae4ca30163749b891686f95532519bd # AV1
           - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
           - f700d29429c023a5734505e77daeaea7 # DV (FEL)
@@ -225,7 +243,7 @@ radarr:
           - f537cf427b64c38c8e36298f657e4828 # Scene
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
 
-          # Streaming Services
+          ## Streaming Services
           - b3b3a6ac74ecbd56bcdbefa4799fb9df # AMZN
           - 40e9380490e748672c2522eaaeb692f7 # ATVP
           - cc5e51a9e85a6296ceefe097a77f12f4 # BCORE
@@ -238,15 +256,16 @@ radarr:
           - e36a0ba1bc902b26ee40818a1d59b8bd # PMTP
           - bf7e73dd1d85b12cc527dc619761c840 # Pathe
 
-          # Unwanted
+          ## Unwanted
           - b8cd450cbfa689c0259a01d9e29ba3d6 # 3D
           - ed38b889b31be83fda192888e2286d83 # BR-DISK
           - 90a6f9a284dff5103f6346090e6280c8 # LQ
           - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
 
-        # Uncomment the below properties to specify one or more quality profiles that should be
-        # updated with scores from the guide for each custom format. Without this, custom formats
-        # are synced to Radarr but no scores are set in any quality profiles.
+        ## Uncomment the below properties to specify one or more quality
+        ## profiles that should be updated with scores from the guide for each
+        ## custom format. Without this, custom formats are synced to Radarr but
+        ## no scores are set in any quality profiles.
         quality_profiles:
           - name: 0 - Own-Any
             reset_unmatched_scores: true
@@ -266,7 +285,7 @@ radarr:
             reset_unmatched_scores: true
 
       - trash_ids:
-          # [No Category]
+          ## [No Category]
           - 820b09bb9acbfde9c35c71e0e565dad8 # 1080p
           - fb392fb0d61a010ae38e49ceaa24a1ef # 2160p
           - b2be17d608fc88818940cd1833b0b24c # 720p
@@ -275,7 +294,7 @@ radarr:
           - ff5bc9e8ce91d46c997ca3ac6994d6f8 # FraMeSToR
           - 8cd3ac70db7ac318cf9a0e01333940a4 # SiC
 
-          # Audio Advanced #1
+          ## Audio Advanced #1
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 185f1dd7264c4562b9022d963ac37424 # DD+
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
@@ -286,7 +305,7 @@ radarr:
           - 3cafb66171b47f226146a0770576870f # TrueHD
           - 496f355514737f7d83bf7aa4d24f8169 # TrueHD ATMOS
 
-          # Audio Advanced #2
+          ## Audio Advanced #2
           - 240770601cc226190c367ef59aba7463 # AAC
           - c2998bd0d90ed5621d8df281e839436e # DD
           - 8e109e50e0a0b83a5098b056e13bf6db # DTS-HD HRA
@@ -295,7 +314,7 @@ radarr:
           - a061e2e700f81932daf888599f8a8273 # Opus
           - e7c2fcae07cbada050a0af3357491d7b # PCM
 
-          # Audio Channels
+          ## Audio Channels
           - b124be9b146540f8e62f98fe32e49a2a # 1.0 Mono
           - 89dac1be53d5268a7e10a19d3c896826 # 2.0 Stereo
           - 205125755c411c3b8622ca3175d27b37 # 3.0 Sound
@@ -305,7 +324,7 @@ radarr:
           - e77382bcfeba57cb83744c9c5449b401 # 7.1 Surround
           - f2aacebe2c932337fe352fa6e42c1611 # 9.1 Surround
 
-          # # French Audio Version
+          # ## French Audio Version
           # - 6d27683346c78d6a3f772e30877910a7 # French Audio
           # - 72b1548df1ac3175ca105a9ce7043c91 # Multi-Audio
           # - d5f3a1afdb77e6b95e489f7654532d04 # Multi-French
@@ -317,7 +336,7 @@ radarr:
           # - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
           # - 95aa50f71a01c82354a7a2b385f1c4d8 # VQ
 
-          # # French Source Groups
+          # ## French Source Groups
           # - 5322da05b19d857acc1e75be3edf47b3 # FR HD Bluray Tier 01
           # - 57f34251344be2e283fc30e00e458be6 # FR HD Bluray Tier 02
           # - 48f031e76111f17ea94898f4cdc34fdc # FR LQ
@@ -329,7 +348,7 @@ radarr:
           # - 9790a618cec1aeac8ce75601a17ea40d # FR WEB Tier 01
           # - 3c83a765f84239716bd5fd2d7af188f9 # FR WEB Tier 02
 
-          # HDR Formats
+          ## HDR Formats
           - 58d6a88f13e2db7f5059c41047876f00 # DV
           - e23edd2482476e595fb990b12e7c609c # DV HDR10
           - 55d53828b9d81cbe20b02efd00aa0efd # DV HLG
@@ -341,7 +360,7 @@ radarr:
           - 9364dd386c9b4a1100dde8264690add7 # HLG
           - 08d6d8834ad9ec87b1dc7ec8148e7a1f # PQ
 
-          # HQ Release Groups
+          ## HQ Release Groups
           - ed27ebfef2f323e964fb1f61391bcb35 # HD Bluray Tier 01
           - c20c8647f2746a1f4c4262b0fbbeeeae # HD Bluray Tier 02
           - 3a3ff47579026e76d6504ebea39390de # Remux Tier 01
@@ -353,7 +372,7 @@ radarr:
           - 403816d65392c79236dcb6dd591aeda4 # WEB Tier 02
           - af94e0fe497124d1f9ce732069ec8c3b # WEB Tier 03
 
-          # Misc
+          ## Misc
           # - 9de657fd3d327ecf144ec73dfe3a3e9a # Dutch Groups
           - 0d91270a7255a1e388fa85e959f359d8 # FreeLeech
           - ff86c4326018682f817830ced463332b # MPEG2
@@ -363,7 +382,7 @@ radarr:
           - 2899d84dc9372de3408e6d8cc18e9666 # x264
           - 9170d55c319f4fe40da8711ba9d8050d # x265
 
-          # Movie Versions
+          ## Movie Versions
           - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
           - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
           - 0f12c086e289cf966fa5948eac571f44 # Hybrid
@@ -375,7 +394,7 @@ radarr:
           - 957d0f44b592285f26449575e8b1167e # Special Edition
           - e9001909a4c88013a359d0b9920d7bea # Theatrical Cut
 
-          # Optional
+          ## Optional
           - cae4ca30163749b891686f95532519bd # AV1
           - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
           - f700d29429c023a5734505e77daeaea7 # DV (FEL)
@@ -389,7 +408,7 @@ radarr:
           - f537cf427b64c38c8e36298f657e4828 # Scene
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
 
-          # Streaming Services
+          ## Streaming Services
           - b3b3a6ac74ecbd56bcdbefa4799fb9df # AMZN
           - 40e9380490e748672c2522eaaeb692f7 # ATVP
           - cc5e51a9e85a6296ceefe097a77f12f4 # BCORE
@@ -402,13 +421,14 @@ radarr:
           - e36a0ba1bc902b26ee40818a1d59b8bd # PMTP
           - bf7e73dd1d85b12cc527dc619761c840 # Pathe
 
-          # Unwanted
+          ## Unwanted
           - b8cd450cbfa689c0259a01d9e29ba3d6 # 3D
           - ed38b889b31be83fda192888e2286d83 # BR-DISK
           - 90a6f9a284dff5103f6346090e6280c8 # LQ
           - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
 
-          # Anime
+          ## Anime
+          ## yamllint disable rule:line-length
           - fb3ccc5d5cc8f77c9055d4cb4561dded # Anime BD Tier 01 (Top SeaDex Muxers)
           - 66926c8fa9312bc74ab71bf69aae4f4a # Anime BD Tier 02 (SeaDex Muxers)
           - fa857662bad28d5ff21a6e611869a0ff # Anime BD Tier 03 (SeaDex Muxers)
@@ -431,8 +451,9 @@ radarr:
           - 3df5e6dfef4b09bb6002f732bed5b774 # v2
           - db92c27ba606996b146b57fbe6d09186 # v3
           - d4e5e842fad129a3c097bdb2d20d31a0 # v4
+          ## yamllint enable rule:line-length
 
-          # Anime Optional
+          ## Anime Optional
           - a5d148168c4506b55cf53984107c396e # 10bit
           - 4a3b087eea2ce012fcc1ce319259a3be # Anime Dual Audio
           # - b23eae459cc960816f2d6ba84af45055 # Dubs Only
@@ -445,23 +466,26 @@ radarr:
             reset_unmatched_scores: true
 
   radarr_4k:
-  # Set the URL/API Key to your actual instance
+  ## Set the URL/API Key to your actual instance
     base_url: http://radarr-4k:7878
     api_key: !secret radarr_4k_apikey
 
-    # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
+    ## Which quality definition in the guide to sync to Radarr. Only choice
+    ## right now is 'movie'
     quality_definition:
       type: movie
 
-    # Set to 'true' to automatically remove custom formats from Radarr when they are removed from
-    # the guide or your configuration. This will NEVER delete custom formats you manually created!
+    ## Set to 'true' to automatically remove custom formats from Radarr when
+    ## they are removed from the guide or your configuration. This will NEVER
+    ## delete custom formats you manually created!
     delete_old_custom_formats: true
 
     custom_formats:
-      # A list of custom formats to sync to Radarr. Must match the "name" in the importable JSON.
-      # Do NOT use the heading names here, those do not work! These are case-insensitive.
+      ## A list of custom formats to sync to Radarr. Must match the "name" in
+      ## the importable JSON. Do NOT use the heading names here, those do not
+      ## work! These are case-insensitive.
       - trash_ids:
-          # [No Category]
+          ## [No Category]
           - 820b09bb9acbfde9c35c71e0e565dad8 # 1080p
           - fb392fb0d61a010ae38e49ceaa24a1ef # 2160p
           - b2be17d608fc88818940cd1833b0b24c # 720p
@@ -470,7 +494,7 @@ radarr:
           - ff5bc9e8ce91d46c997ca3ac6994d6f8 # FraMeSToR
           - 8cd3ac70db7ac318cf9a0e01333940a4 # SiC
 
-          # Audio Advanced #1
+          ## Audio Advanced #1
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 185f1dd7264c4562b9022d963ac37424 # DD+
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
@@ -481,7 +505,7 @@ radarr:
           - 3cafb66171b47f226146a0770576870f # TrueHD
           - 496f355514737f7d83bf7aa4d24f8169 # TrueHD ATMOS
 
-          # Audio Advanced #2
+          ## Audio Advanced #2
           - 240770601cc226190c367ef59aba7463 # AAC
           - c2998bd0d90ed5621d8df281e839436e # DD
           - 8e109e50e0a0b83a5098b056e13bf6db # DTS-HD HRA
@@ -490,7 +514,7 @@ radarr:
           - a061e2e700f81932daf888599f8a8273 # Opus
           - e7c2fcae07cbada050a0af3357491d7b # PCM
 
-          # Audio Channels
+          ## Audio Channels
           - b124be9b146540f8e62f98fe32e49a2a # 1.0 Mono
           - 89dac1be53d5268a7e10a19d3c896826 # 2.0 Stereo
           - 205125755c411c3b8622ca3175d27b37 # 3.0 Sound
@@ -500,7 +524,7 @@ radarr:
           - e77382bcfeba57cb83744c9c5449b401 # 7.1 Surround
           - f2aacebe2c932337fe352fa6e42c1611 # 9.1 Surround
 
-          # # French Audio Version
+          # ## French Audio Version
           # - 6d27683346c78d6a3f772e30877910a7 # French Audio
           # - 72b1548df1ac3175ca105a9ce7043c91 # Multi-Audio
           # - d5f3a1afdb77e6b95e489f7654532d04 # Multi-French
@@ -512,7 +536,7 @@ radarr:
           # - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
           # - 95aa50f71a01c82354a7a2b385f1c4d8 # VQ
 
-          # # French Source Groups
+          # ## French Source Groups
           # - 5322da05b19d857acc1e75be3edf47b3 # FR HD Bluray Tier 01
           # - 57f34251344be2e283fc30e00e458be6 # FR HD Bluray Tier 02
           # - 48f031e76111f17ea94898f4cdc34fdc # FR LQ
@@ -524,7 +548,7 @@ radarr:
           # - 9790a618cec1aeac8ce75601a17ea40d # FR WEB Tier 01
           # - 3c83a765f84239716bd5fd2d7af188f9 # FR WEB Tier 02
 
-          # HDR Formats
+          ## HDR Formats
           - 58d6a88f13e2db7f5059c41047876f00 # DV
           - e23edd2482476e595fb990b12e7c609c # DV HDR10
           - 55d53828b9d81cbe20b02efd00aa0efd # DV HLG
@@ -536,7 +560,7 @@ radarr:
           - 9364dd386c9b4a1100dde8264690add7 # HLG
           - 08d6d8834ad9ec87b1dc7ec8148e7a1f # PQ
 
-          # HQ Release Groups
+          ## HQ Release Groups
           - ed27ebfef2f323e964fb1f61391bcb35 # HD Bluray Tier 01
           - c20c8647f2746a1f4c4262b0fbbeeeae # HD Bluray Tier 02
           - 3a3ff47579026e76d6504ebea39390de # Remux Tier 01
@@ -548,7 +572,7 @@ radarr:
           - 403816d65392c79236dcb6dd591aeda4 # WEB Tier 02
           - af94e0fe497124d1f9ce732069ec8c3b # WEB Tier 03
 
-          # Misc
+          ## Misc
           # - 9de657fd3d327ecf144ec73dfe3a3e9a # Dutch Groups
           - 0d91270a7255a1e388fa85e959f359d8 # FreeLeech
           - ff86c4326018682f817830ced463332b # MPEG2
@@ -558,7 +582,7 @@ radarr:
           - 2899d84dc9372de3408e6d8cc18e9666 # x264
           - 9170d55c319f4fe40da8711ba9d8050d # x265
 
-          # Movie Versions
+          ## Movie Versions
           - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
           - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
           - 0f12c086e289cf966fa5948eac571f44 # Hybrid
@@ -570,7 +594,7 @@ radarr:
           - 957d0f44b592285f26449575e8b1167e # Special Edition
           - e9001909a4c88013a359d0b9920d7bea # Theatrical Cut
 
-          # Optional
+          ## Optional
           - cae4ca30163749b891686f95532519bd # AV1
           - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
           - f700d29429c023a5734505e77daeaea7 # DV (FEL)
@@ -584,7 +608,7 @@ radarr:
           - f537cf427b64c38c8e36298f657e4828 # Scene
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
 
-          # Streaming Services
+          ## Streaming Services
           - b3b3a6ac74ecbd56bcdbefa4799fb9df # AMZN
           - 40e9380490e748672c2522eaaeb692f7 # ATVP
           - cc5e51a9e85a6296ceefe097a77f12f4 # BCORE
@@ -597,21 +621,22 @@ radarr:
           - e36a0ba1bc902b26ee40818a1d59b8bd # PMTP
           - bf7e73dd1d85b12cc527dc619761c840 # Pathe
 
-          # Unwanted
+          ## Unwanted
           - b8cd450cbfa689c0259a01d9e29ba3d6 # 3D
           - ed38b889b31be83fda192888e2286d83 # BR-DISK
           - 90a6f9a284dff5103f6346090e6280c8 # LQ
           - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
 
-        # Uncomment the below properties to specify one or more quality profiles that should be
-        # updated with scores from the guide for each custom format. Without this, custom formats
-        # are synced to Radarr but no scores are set in any quality profiles.
+        ## Uncomment the below properties to specify one or more quality
+        ## profiles that should be updated with scores from the guide for each
+        ## custom format. Without this, custom formats are synced to Radarr but
+        ## no scores are set in any quality profiles.
         quality_profiles:
           - name: 0 - Own-Ultra-HD
             reset_unmatched_scores: true
 
       - trash_ids:
-          # [No Category]
+          ## [No Category]
           - 820b09bb9acbfde9c35c71e0e565dad8 # 1080p
           - fb392fb0d61a010ae38e49ceaa24a1ef # 2160p
           - b2be17d608fc88818940cd1833b0b24c # 720p
@@ -620,7 +645,7 @@ radarr:
           - ff5bc9e8ce91d46c997ca3ac6994d6f8 # FraMeSToR
           - 8cd3ac70db7ac318cf9a0e01333940a4 # SiC
 
-          # Audio Advanced #1
+          ## Audio Advanced #1
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 185f1dd7264c4562b9022d963ac37424 # DD+
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
@@ -631,7 +656,7 @@ radarr:
           - 3cafb66171b47f226146a0770576870f # TrueHD
           - 496f355514737f7d83bf7aa4d24f8169 # TrueHD ATMOS
 
-          # Audio Advanced #2
+          ## Audio Advanced #2
           - 240770601cc226190c367ef59aba7463 # AAC
           - c2998bd0d90ed5621d8df281e839436e # DD
           - 8e109e50e0a0b83a5098b056e13bf6db # DTS-HD HRA
@@ -640,7 +665,7 @@ radarr:
           - a061e2e700f81932daf888599f8a8273 # Opus
           - e7c2fcae07cbada050a0af3357491d7b # PCM
 
-          # Audio Channels
+          ## Audio Channels
           - b124be9b146540f8e62f98fe32e49a2a # 1.0 Mono
           - 89dac1be53d5268a7e10a19d3c896826 # 2.0 Stereo
           - 205125755c411c3b8622ca3175d27b37 # 3.0 Sound
@@ -650,7 +675,7 @@ radarr:
           - e77382bcfeba57cb83744c9c5449b401 # 7.1 Surround
           - f2aacebe2c932337fe352fa6e42c1611 # 9.1 Surround
 
-          # # French Audio Version
+          # ## French Audio Version
           # - 6d27683346c78d6a3f772e30877910a7 # French Audio
           # - 72b1548df1ac3175ca105a9ce7043c91 # Multi-Audio
           # - d5f3a1afdb77e6b95e489f7654532d04 # Multi-French
@@ -662,7 +687,7 @@ radarr:
           # - 9172b2f683f6223e3a1846427b417a3d # VOSTFR
           # - 95aa50f71a01c82354a7a2b385f1c4d8 # VQ
 
-          # # French Source Groups
+          # ## French Source Groups
           # - 5322da05b19d857acc1e75be3edf47b3 # FR HD Bluray Tier 01
           # - 57f34251344be2e283fc30e00e458be6 # FR HD Bluray Tier 02
           # - 48f031e76111f17ea94898f4cdc34fdc # FR LQ
@@ -674,7 +699,7 @@ radarr:
           # - 9790a618cec1aeac8ce75601a17ea40d # FR WEB Tier 01
           # - 3c83a765f84239716bd5fd2d7af188f9 # FR WEB Tier 02
 
-          # HDR Formats
+          ## HDR Formats
           - 58d6a88f13e2db7f5059c41047876f00 # DV
           - e23edd2482476e595fb990b12e7c609c # DV HDR10
           - 55d53828b9d81cbe20b02efd00aa0efd # DV HLG
@@ -686,7 +711,7 @@ radarr:
           - 9364dd386c9b4a1100dde8264690add7 # HLG
           - 08d6d8834ad9ec87b1dc7ec8148e7a1f # PQ
 
-          # HQ Release Groups
+          ## HQ Release Groups
           - ed27ebfef2f323e964fb1f61391bcb35 # HD Bluray Tier 01
           - c20c8647f2746a1f4c4262b0fbbeeeae # HD Bluray Tier 02
           - 3a3ff47579026e76d6504ebea39390de # Remux Tier 01
@@ -698,7 +723,7 @@ radarr:
           - 403816d65392c79236dcb6dd591aeda4 # WEB Tier 02
           - af94e0fe497124d1f9ce732069ec8c3b # WEB Tier 03
 
-          # Misc
+          ## Misc
           # - 9de657fd3d327ecf144ec73dfe3a3e9a # Dutch Groups
           - 0d91270a7255a1e388fa85e959f359d8 # FreeLeech
           - ff86c4326018682f817830ced463332b # MPEG2
@@ -708,7 +733,7 @@ radarr:
           - 2899d84dc9372de3408e6d8cc18e9666 # x264
           - 9170d55c319f4fe40da8711ba9d8050d # x265
 
-          # Movie Versions
+          ## Movie Versions
           - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
           - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
           - 0f12c086e289cf966fa5948eac571f44 # Hybrid
@@ -720,7 +745,7 @@ radarr:
           - 957d0f44b592285f26449575e8b1167e # Special Edition
           - e9001909a4c88013a359d0b9920d7bea # Theatrical Cut
 
-          # Optional
+          ## Optional
           - cae4ca30163749b891686f95532519bd # AV1
           - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
           - f700d29429c023a5734505e77daeaea7 # DV (FEL)
@@ -734,7 +759,7 @@ radarr:
           - f537cf427b64c38c8e36298f657e4828 # Scene
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
 
-          # Streaming Services
+          ## Streaming Services
           - b3b3a6ac74ecbd56bcdbefa4799fb9df # AMZN
           - 40e9380490e748672c2522eaaeb692f7 # ATVP
           - cc5e51a9e85a6296ceefe097a77f12f4 # BCORE
@@ -747,13 +772,14 @@ radarr:
           - e36a0ba1bc902b26ee40818a1d59b8bd # PMTP
           - bf7e73dd1d85b12cc527dc619761c840 # Pathe
 
-          # Unwanted
+          ## Unwanted
           - b8cd450cbfa689c0259a01d9e29ba3d6 # 3D
           - ed38b889b31be83fda192888e2286d83 # BR-DISK
           - 90a6f9a284dff5103f6346090e6280c8 # LQ
           - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
 
-          # Anime
+          ## Anime
+          ## yamllint disable rule:line-length
           - fb3ccc5d5cc8f77c9055d4cb4561dded # Anime BD Tier 01 (Top SeaDex Muxers)
           - 66926c8fa9312bc74ab71bf69aae4f4a # Anime BD Tier 02 (SeaDex Muxers)
           - fa857662bad28d5ff21a6e611869a0ff # Anime BD Tier 03 (SeaDex Muxers)
@@ -776,8 +802,9 @@ radarr:
           - 3df5e6dfef4b09bb6002f732bed5b774 # v2
           - db92c27ba606996b146b57fbe6d09186 # v3
           - d4e5e842fad129a3c097bdb2d20d31a0 # v4
+          ## yamllint enable rule:line-length
 
-          # Anime Optional
+          ## Anime Optional
           - a5d148168c4506b55cf53984107c396e # 10bit
           - 4a3b087eea2ce012fcc1ce319259a3be # Anime Dual Audio
           # - b23eae459cc960816f2d6ba84af45055 # Dubs Only

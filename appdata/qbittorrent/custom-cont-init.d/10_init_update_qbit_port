@@ -1,8 +1,10 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
+#TODO(@trjohnson19): Convert to python
+
 ## Safely create a temporary folder for files
-init_update_qbit_port_temp_dir=$(mktemp -d "$(basename "$0").XXXXXXXXXX")
+init_update_qbit_port_temp_dir="$(mktemp -d "$(basename "$0").XXXXXXXXXX")"
 
 ## qBittorrent config variables
 qbit_conf_file='/config/qBittorrent/qBittorrent.conf'
@@ -103,7 +105,7 @@ function gluetun_get_forwarded_port {
 	log_trace "${gluetun_get_port_log_prefix} Gluetun portforwarded API response code: $(cat "${gluetun_api_response_file}")"
 
 	# Inform the user if unsuccessful
-	if [[ $(cat "${gluetun_api_response_file}") != '200' ]]; then
+	if [[ "$(cat "${gluetun_api_response_file}")" -ne '200' ]]; then
 		log_error "${gluetun_get_port_log_prefix} Unable to connect to the Gluetun API"
 
 		# Delete the API response file
@@ -122,7 +124,7 @@ function gluetun_get_forwarded_port {
 
 	# Extract the port from the JSON
 	log_trace "${gluetun_get_port_log_prefix} Extracting '.port' from '${gluetun_forwarded_port_file}'"
-	gluetun_forwarded_port=$(jq -r '.port' "${gluetun_forwarded_port_file}")
+	gluetun_forwarded_port="$(jq -r '.port' "${gluetun_forwarded_port_file}")"
 	export gluetun_forwarded_port
 
 	# Delete the temporary port file
@@ -130,7 +132,7 @@ function gluetun_get_forwarded_port {
 	rm -f "${gluetun_forwarded_port_file}"
 
 	# Inform the user
-	if [[ "${gluetun_forwarded_port}" != "0" ]]; then
+	if [[ "${gluetun_forwarded_port}" -ne '0' ]]; then
 		log_info "${gluetun_get_port_log_prefix} Current gluetun forwarded port: ${gluetun_forwarded_port}"
 	else
 		log_error "${gluetun_get_port_log_prefix} Gluetun does not have a forwarded port"
@@ -151,7 +153,7 @@ function qbit_update_config {
 	log_trace "${gluetun_get_port_log_prefix} -> ${qbit_update_config_log_prefix}"
 
 	# Exit if unsuccessful at getting the Gluetun port
-	if [[ "${gluetun_get_forwarded_port_return}" != 0 ]]; then
+	if (( "${gluetun_get_forwarded_port_return}" != 0 )); then
 		return "${gluetun_get_forwarded_port_return}"
 	fi
 
@@ -160,7 +162,7 @@ function qbit_update_config {
 	sed_print_pattern_2='s/^\(Session\\Port=\)\(.*\)/\2/p'  # Capture only the port number
 
 	# Check to see if qBittorrent.conf has 'Session\Port' defined
-	if [[ -z $(sed --silent "${sed_print_pattern_1}" "${qbit_conf_file}") ]]; then
+	if [[ -z "$(sed --silent "${sed_print_pattern_1}" "${qbit_conf_file}")" ]]; then
 		log_error "${qbit_update_config_log_prefix} qBittorrent.conf does not have 'Session\Port' defined"
 		log_error "${qbit_update_config_log_prefix} Unable to set port"
 
@@ -169,7 +171,7 @@ function qbit_update_config {
 
 	# Check to see what port is currently set in qBittorrent.conf
 	sed --silent "${sed_print_pattern_2}" "${qbit_conf_file}" >"${qbit_port_file}"
-	qbit_current_listen_port=$(cat "${qbit_port_file}")
+	qbit_current_listen_port="$(cat "${qbit_port_file}")"
 
 	# Delete the temporary port file
 	log_trace "${qbit_update_config_log_prefix} Deleting '${qbit_port_file}'"
@@ -182,7 +184,7 @@ function qbit_update_config {
 	fi
 
 	# Check to see if no update is needed
-	if [[ "${qbit_current_listen_port}" = "${gluetun_forwarded_port}" ]]; then
+	if [[ "${qbit_current_listen_port}" == "${gluetun_forwarded_port}" ]]; then
 		log_debug "${qbit_update_config_log_prefix} qBittorrent listening port == gluetun forwarded port"
 		log_trace "${qbit_update_config_log_prefix} ${qbit_current_listen_port} == ${gluetun_forwarded_port}"
 		log_info "${qbit_update_config_log_prefix} No qBittorent listening port update needed"
@@ -206,7 +208,7 @@ function qbit_update_config {
 
 	# Check to ensure port was updated
 	sed --silent "${sed_print_pattern_2}" "${qbit_conf_file}" >"${qbit_port_file}"
-	qbit_current_listen_port=$(cat "${qbit_port_file}")
+	qbit_current_listen_port="$(cat "${qbit_port_file}")"
 
 	# Delete the temporary port file
 	log_trace "${qbit_update_config_log_prefix} Deleting '${qbit_port_file}'"
@@ -238,7 +240,7 @@ esac
 
 # Sleep for a short time to allow Gluetun to acquire a port
 log_info "${script_init_log_prefix} Waiting 5 seconds to allow gluetun to start up"
-sleep 5
+sleep 2
 
 log_trace "${script_init_log_prefix} Starting the script"
 log_trace "${script_init_log_prefix} -> ${qbit_update_config_log_prefix}"
@@ -249,7 +251,7 @@ qbit_update_config; qbit_update_config_return=$?
 log_trace "${qbit_update_config_log_prefix} -> ${script_init_log_prefix}"
 
 # Exit if unsuccessful at updating the qbit port
-if [[ "${qbit_update_config_return}" != 0 ]]; then
+if (( "${qbit_update_config_return}" != 0 )); then
 	exit "${qbit_update_config_return}"
 fi
 

@@ -40,12 +40,12 @@ http:
           - middlewares-authentik
 
 
-#    chain-oauth:
-#      chain:
-#        middlewares:
-#          - middlewares-rate-limit
-#          - middlewares-secure-headers
-#          - middlewares-oauth
+    # chain-oauth:
+    #   chain:
+    #     middlewares:
+    #       - middlewares-rate-limit
+    #       - middlewares-secure-headers
+    #       - middlewares-oauth
 
 
     chain-nextcloud:
@@ -54,3 +54,4 @@ http:
           - middlewares-rate-limit
           - nextcloud-middlewares-secure-headers
           - nextcloud-redirect
+...

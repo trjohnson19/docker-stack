@@ -1,3 +1,4 @@
+---
 http:
   middlewares:
     plex-stripprefix:
@@ -7,6 +8,7 @@ http:
         forceSlash: false
   routers:
     plex-rtr:
+      ## yamllint disable-line rule:line-length
       rule: 'Host(`{{env "DOMAINNAME0"}}`) || Host(`p.{{env "DOMAINNAME0"}}`) || Host(`plex.{{env "DOMAINNAME0"}}`)'
       entryPoints:
         - https
@@ -20,4 +22,6 @@ http:
     plex-svc:
       loadBalancer:
         servers:
-          - url: 'http://nas.home.arpa:{{env "PLEX_PORT"}}'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://nas.home.arpa:{{env "PLEX_PORT"}}'
+...

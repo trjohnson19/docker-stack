@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
-FILE_ENV_VARS="$(env | grep '__FILE=')"
-for env_var in ${FILE_ENV_VARS}; do
-	var_name="$(echo "${env_var}" | grep -o '.*__FILE=' | sed 's/__FILE=//g')"
-	file_path="$(echo "${env_var}" | grep -o '__FILE=.*' | sed 's/__FILE=//g')"
-	file_content="$(cat "${file_path}")"; file_content_return=$?
-	[ ! "${file_content_return}" -eq 0 ] && exit 1 # Exit if last command failed
+file_env_vars="$(env | grep '__FILE=')"
+# Do not quote `${file_env_vars}`to ensure proper splitting
+for env_var in ${file_env_vars}; do
+	var_name="${env_var%%__FILE=*}"
+	file_path="${env_var##*__FILE=}"
+	file_content="$(cat "${file_path}")" || exit 1
 	new_var="${var_name}"="${file_content}"
 	export "$(echo "${new_var}" | xargs)"
 done

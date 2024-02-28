@@ -13,26 +13,34 @@ http:
         stsIncludeSubdomains: true
         stsPreload: true
         forceSTSHeader: true
-        ### We will modify this value for Nextcloud to remove the X-Frame-Options error:
-        customFrameOptionsValue: "SAMEORIGIN" #CSP takes care of this but may be needed for organizr.
+        ### We will modify this value for Nextcloud to remove the
+        ### X-Frame-Options error:
+        ### CSP takes care of this but may be needed for organizr.
+        customFrameOptionsValue: "SAMEORIGIN"
         contentTypeNosniff: true
         browserXssFilter: true
         # sslForceHost: true # add sslHost to all of the services
         # sslHost: "example.com"
         referrerPolicy: "no-referrer"
-        ### While CSP is a good security setting, Nextcloud's Apache server takes care of this for us!
+        ### While CSP is a good security setting, Nextcloud's Apache server
+        ### takes care of this for us!
+        ### yamllint disable-line rule:line-length
         # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
+        ### yamllint disable-line rule:line-length
         permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
         customResponseHeaders:
-        # ### Change this to none to remove the Robots error:
+        ### Change this to none to remove the Robots error:
         #   X-Robots-Tag: "none"
         #   server: ""
 
 
-### This section redirects requests for Nextcloud calendar and contacts service discovery
-### source: https://docs.nextcloud.com/server/21/admin_manual/issues/general_troubleshooting.html#service-discovery
+    ### This section redirects requests for Nextcloud calendar and contacts
+    ### service discovery
+    ### yamllint disable-line rule:line-length
+    ### https://docs.nextcloud.com/server/latest/admin_manual/issues/general_troubleshooting.html#service-discovery
     nextcloud-redirect:
       redirectRegex:
         permanent: true
         regex: "https://(.*)/.well-known/(card|cal)dav"
         replacement: "https://${1}/remote.php/dav/"
+...

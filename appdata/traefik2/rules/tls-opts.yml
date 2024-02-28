@@ -1,3 +1,4 @@
+---
 tls:
   options:
     tls-opts:
@@ -13,7 +14,8 @@ tls:
         - TLS_AES_256_GCM_SHA384
         - TLS_CHACHA20_POLY1305_SHA256
         - TLS_FALLBACK_SCSV
-#      curvePreferences:
-#        - CurveP521
-#        - CurveP384
-#      sniStrict: true
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+      # sniStrict: true
+...

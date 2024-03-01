@@ -1,5 +1,5 @@
 # Keycloak can be rebuilt when changes are made to the Dockerfile using the `dcbuild2` from .bash_aliases
-FROM quay.io/keycloak/keycloak@sha256:14e99d6f5dd0516a5bdc82537b732cb85469ecdb15ad7fe5f11ff67521544db8 as builder  # v23.0.7
+FROM quay.io/keycloak/keycloak:23.0.7@sha256:14e99d6f5dd0516a5bdc82537b732cb85469ecdb15ad7fe5f11ff67521544db8 as builder
 
 USER keycloak
 
@@ -36,7 +36,7 @@ WORKDIR /opt/keycloak
 RUN /opt/keycloak/bin/kc.sh build
 
 # Copy build files to start files
-FROM quay.io/keycloak/keycloak@sha256:14e99d6f5dd0516a5bdc82537b732cb85469ecdb15ad7fe5f11ff67521544db8  # v23.0.7
+FROM quay.io/keycloak/keycloak:23.0.7@sha256:14e99d6f5dd0516a5bdc82537b732cb85469ecdb15ad7fe5f11ff67521544db8
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 USER keycloak

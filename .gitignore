@@ -71,7 +71,7 @@ appdata/authentik/config/*
 
 !appdata/cf-ddns
 appdata/cf-ddns/*
-!appdata/cf-ddns/config.yaml.example
+!appdata/cf-ddns/config.example.yaml
 
 !appdata/gotify
 appdata/gotify/*
@@ -83,7 +83,7 @@ appdata/gotify/config/*
 appdata/jellyfin/*
 !appdata/jellyfin/config
 appdata/jellyfin/config/*
-!appdata/jellyfin/config/web-config.json.example
+!appdata/jellyfin/config/web-config.example.json
 
 !appdata/keycloak
 appdata/keycloak/*
@@ -131,6 +131,17 @@ appdata/qbittorrent-private/persistent/*
 !appdata/qbittorrent-private/scripts
 appdata/qbittorrent-private/scripts/*
 
+!appdata/qbittorrent-temp
+appdata/qbittorrent-temp/*
+!appdata/qbittorrent-temp/custom-cont-init.d
+appdata/qbittorrent-temp/custom-cont-init.d/*
+!appdata/qbittorrent-temp/custom-services.d
+appdata/qbittorrent-temp/custom-services.d/*
+!appdata/qbittorrent-temp/persistent
+appdata/qbittorrent-temp/persistent/*
+!appdata/qbittorrent-temp/scripts
+appdata/qbittorrent-temp/scripts/*
+
 !appdata/recyclarr
 appdata/recyclarr/*
 !appdata/recyclarr/config
@@ -153,7 +164,7 @@ appdata/unbound/*
 !appdata/unbound/config
 appdata/unbound/config/*
 !appdata/unbound/config/root.hints
-!appdata/unbound/config/root.hints.cron.example
+!appdata/unbound/config/root.hints.example.cron
 !appdata/unbound/config/unbound.conf
 
 # Include the .github directory
@@ -161,8 +172,8 @@ appdata/unbound/config/*
 !.github/*
 
 # Include the .vscode directory
-.vscode
-.vscode/*
+!.vscode
+!.vscode/*
 
 # Exclude the secrets directory
 secrets

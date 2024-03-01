@@ -14,4 +14,6 @@ http:
     qbittorrent-temp-svc:
       loadBalancer:
         servers:
-          - url: 'http://mint.home.arpa:8170'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://mint.home.arpa:8170'
+...

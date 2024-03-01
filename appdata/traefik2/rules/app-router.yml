@@ -1,3 +1,4 @@
+---
 http:
   routers:
     router-rtr:
@@ -13,4 +14,6 @@ http:
     router-svc:
       loadBalancer:
         servers:
-          - url: 'http://192.168.1.254'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://192.168.1.254'
+...

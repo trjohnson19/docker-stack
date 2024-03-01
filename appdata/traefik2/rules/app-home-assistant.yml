@@ -1,3 +1,4 @@
+---
 http:
   routers:
     home-assistant-rtr:
@@ -5,7 +6,7 @@ http:
       entryPoints:
         - https
       middlewares:
-        #- chain-authelia0
+        # - chain-authelia0
         - chain-no-auth
       service: home-assistant-svc
       tls:
@@ -14,4 +15,6 @@ http:
     home-assistant-svc:
       loadBalancer:
         servers:
-          - url: 'http://hass.home.arpa:{{env "HOME_ASSISTANT_PORT"}}'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://hass.home.arpa:{{env "HOME_ASSISTANT_PORT"}}'
+...

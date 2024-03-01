@@ -1,4 +1,5 @@
 ---
+## yamllint disable rule:line-length
 log_level: info
 docker_labels:
   traefik.enable: "true"

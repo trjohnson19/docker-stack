@@ -1,3 +1,4 @@
+---
 http:
   middlewares:
     nas-stripprefix:
@@ -19,4 +20,6 @@ http:
     nas-svc:
       loadBalancer:
         servers:
-          - url: 'http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}'  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: 'http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}'
+...

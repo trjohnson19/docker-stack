@@ -1,3 +1,4 @@
+---
 http:
   routers:
     printer-rtr:
@@ -13,4 +14,6 @@ http:
     printer-svc:
       loadBalancer:
         servers:
-          - url: "http://printer.home.arpa"  # or whatever your external host's IP:port is
+          ## Or whatever your external host's IP:port is
+          - url: "http://printer.home.arpa"
+...

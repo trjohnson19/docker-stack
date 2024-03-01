@@ -5,7 +5,8 @@ http:
       basicAuth:
         # users:
         #   - "user:$
-        usersFile: "/shared/.htpasswd"  # Be sure to mount the volume through docker-compose.yml
+        ## Be sure to mount the volume through docker-compose.yml
+        usersFile: "/shared/.htpasswd"
         realm: "Traefik 2 Basic Auth"
 
 
@@ -29,15 +30,19 @@ http:
         stsPreload: true
         forceSTSHeader: true
         # frameDeny: true  # Overwritten by customFrameOptionsValue
-        customFrameOptionsValue: 'allow-from https:{{env "DOMAINNAME0"}}'  # CSP takes care of this but may be needed for organizr.
+        ## CSP takes care of this but may be needed for organizr.
+        customFrameOptionsValue: 'allow-from https:{{env "DOMAINNAME0"}}'
         contentTypeNosniff: true
         browserXssFilter: true
         # sslForceHost: true  # Add sslHost to all of the services
         # sslHost: "{{env "DOMAINNAME0"}}"
         referrerPolicy: "same-origin"
-        # Setting contentSecurityPolicy is more secure but it can break things. Proper auth will reduce the risk.
-        # the below line also breaks some apps due to 'none' - sonarr, radarr, etc.
+        ## Setting contentSecurityPolicy is more secure but it can break
+        ## things. Proper auth will reduce the risk. The below line also breaks
+        ## some apps due to 'none' - sonarr, radarr, etc.
+        ## yamllint disable-line rule:line-length
         # contentSecurityPolicy: "frame-ancestors '*.{{env "DOMAINNAME0"}}:*';object-src 'none';script-src 'none';"
+        ## yamllint disable-line rule:line-length
         permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
         customResponseHeaders:
           X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
@@ -46,6 +51,7 @@ http:
 
     middlewares-authelia0:
       forwardAuth:
+        ## yamllint disable-line rule:line-length
         address: 'http://authelia0:9091/api/verify?rd=https://auth.{{env "DOMAINNAME0"}}'
         trustForwardHeader: true
         authResponseHeaders:
@@ -72,7 +78,8 @@ http:
           - "X-Forwarded-User"
 
 
-    # https://github.com/goauthentik/authentik/issues/2366#issuecomment-1159442127
+    ## yamllint disable-line rule:line-length
+    ## https://github.com/goauthentik/authentik/issues/2366#issuecomment-1159442127
     middlewares-authentik:
       forwardAuth:
         address: 'http://authentik:9000/outpost.goauthentik.io/auth/traefik'
@@ -93,7 +100,9 @@ http:
 
     # middlewares-oauth:
     #   forwardAuth:
-    #     address: "http://oauth:4181"  # Make sure you have the OAuth service in docker-compose.yml
+    #     ## Make sure you have the OAuth service in docker-compose.yml
+    #     address: "http://oauth:4181"
     #     trustForwardHeader: true
     #     authResponseHeaders:
     #       - "X-Forwarded-User"
+...

@@ -1,4 +1,0 @@
-## Update the unbound root hints every 6 months (1-Jan-XX and 1-Jul-XX at 4 AM) via internic
-## Explanation
-#{Jul/Jan 1 @ 4AM} {download quietly & output this file-----------------------} {pipe} {split output} {first to unbound root.hints-------------------} {don't print} {stream edit} {in place} {line#} {where the file came from------------------------------------------------------------------------------------} {which file to edit----------------------------------}
-0   4   1   */6 *  /usr/bin/wget -qO - https://www.internic.net/domain/named.root | /usr/bin/tee /home/<USER>/docker/appdata/unbound/config/root.hints 1>/dev/null && /usr/bin/sed --in-place "16a ; This file updated automatically with wget from https://www.internic.net/domain/named.root via mint's crontab\n;" /home/<USER>/docker/appdata/unbound/config/root.hints

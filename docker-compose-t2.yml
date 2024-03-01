@@ -1,11 +1,15 @@
 ---
+# yamllint disable rule:line-length
+## Line length rules do not make sense for this file. Comments have still
+## been limited to 80 character line length whenever possible.
 version: "3.9"
 
 
 ############################## NETWORKS
-# There is no need to create any networks outside this docker-compose file.
-# You may customize the network subnets (192.168.90.0/24, 91.0/24, 250.0/24) below as you please.
-# Docker Compose version 3.5 or higher required to define networks this way.
+## There is no need to create any networks outside this docker-compose file.
+## You may customize the network subnets (192.168.90.0/24, 91.0/24, 250.0/24)
+## below as you please.
+## Docker Compose version 3.5 or higher required to define networks this way.
 
 networks:
   t2_proxy:
@@ -37,7 +41,7 @@ networks:
 secrets:
   authelia_duo_api_secret_key:
     file: $SECRETSDIR/authelia_duo_api_secret_key
-  authelia_jwt_secret:  # Uses this site to generate: https://www.grc.com/passwords.htm
+  authelia_jwt_secret:  # https://www.grc.com/passwords.htm
     file: $SECRETSDIR/authelia_jwt_secret
   authelia_notifier_smtp_password:
     file: $SECRETSDIR/authelia_notifier_smtp_password
@@ -158,37 +162,38 @@ secrets:
 
 
 ########################### EXTENSION FIELDS
-# Helps eliminate repetition of sections
-# More Info on how to use this: https://github.com/htpcBeginner/docker-traefik/pull/228
+## Helps eliminate repetition of sections
+## More Info on how to use this:
+## https://github.com/htpcBeginner/docker-traefik/pull/228
 
-# Common environment values
+## Common environment values
 x-environment: &default-tz-puid-pgid
   TZ: $TZ
   PUID: $PUID
   PGID: $PGID
 
-# Proxy Network and Security
+## Proxy Network and Security
 x-network-and-security: &network-and-security
   networks:
     - t2_proxy
   security_opt:
     - no-new-privileges:true
 
-# Keys common to some of the services in basic-services.txt
+## Keys common to some of the services in basic-services.txt
 x-common-keys-core: &common-keys-core
   <<: *network-and-security
   restart: always
   # profiles:
   # - basic
 
-# Keys common to some of the dependent services/apps
+## Keys common to some of the dependent services/apps
 x-common-keys-apps: &common-keys-apps
   <<: *network-and-security
   restart: unless-stopped
   # profiles:
   # - apps
 
-# Keys common to some of the services in media-services.txt
+## Keys common to some of the services in media-services.txt
 x-common-keys-media: &common-keys-media
   <<: *network-and-security
   restart: "no"
@@ -200,72 +205,88 @@ x-common-keys-media: &common-keys-media
 services:
   ############################## FRONTENDS
 
-  # Traefik 2 - Reverse Proxy
-  # Touch (create empty files) traefik.log and acme/acme.json. Set acme.json permissions to 600.
-  # touch $APPDIR/traefik2/acme/acme.json
-  # chmod 600 $APPDIR/traefik2/acme/acme.json
-  # touch $APPDIR/traefik2/traefik.log
+  ## Traefik 2 - Reverse Proxy
+  ## Touch (create empty files) traefik.log and acme/acme.json.
+  ## Set acme.json permissions to 600.
+  ## touch $APPDIR/traefik2/acme/acme.json
+  ## chmod 600 $APPDIR/traefik2/acme/acme.json
+  ## touch $APPDIR/traefik2/traefik.log
   traefik:
     <<: *common-keys-core
     container_name: traefik
-    image: traefik:saintmarcelin # beaufort=3.0.x; saintmarcelin=2.10.x; banon=2.9.x
-    command: # CLI arguments
+    image: traefik:saintmarcelin  # beaufort=3.0.x; saintmarcelin=2.10.x
+    command:  # CLI arguments
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
-      # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
+      ## Allow these IPs to set the X-Forwarded-* headers
+      ## Cloudflare IPs: https://www.cloudflare.com/ips/
       - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/13,104.24.0.0/14,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
-      - --entryPoints.ping.address=:8081  # Allows for ping/healthcheck at https://traefik.$DOMAINNAMEX/ping
+      ## Allows for ping/healthcheck at https://traefik.$DOMAINNAMEX/ping
+      - --entryPoints.ping.address=:8081
       - --api=true
       - --api.insecure=true
       - --api.dashboard=true
       - --ping=true  # Allow for ping/healthcheck
-      #- --pilot.token=$TRAEFIK_PILOT_TOKEN
-      #- --serversTransport.insecureSkipVerify=true
+      # - --pilot.token=$TRAEFIK_PILOT_TOKEN
+      # - --serversTransport.insecureSkipVerify=true
       - --log=true
-      - --log.level=INFO # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      ## Default: ERROR; DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=INFO
       - --accessLog=true
       - --accessLog.filePath=/traefik.log
-      - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
+      ## Configuring a buffer of 100 lines
+      - --accessLog.bufferingSize=100
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
-      #- --providers.docker.endpoint=unix:///var/run/docker.sock # Use Docker Socket Proxy instead for improved security
+      ## Use Docker Socket Proxy instead for improved security
+      # - --providers.docker.endpoint=unix:///var/run/docker.sock
       - --providers.docker.endpoint=tcp://socket-proxy:2375
-      # Automatically set Host rule for services
-      #- --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME0`)
+      ## Automatically set Host rule for services
+      # - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME0`)
       - --providers.docker.exposedByDefault=false
-      #- --entrypoints.https.http.middlewares=chain-oauth@file
+      # - --entrypoints.https.http.middlewares=chain-oauth@file
       - --entrypoints.https.http.tls.options=tls-opts@file
       - --entrypoints.ping.http.tls.options=tls-opts@file
-      # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
+      ## Add dns-cloudflare as default certresolver for all services. Also
+      ## enables TLS and no need to specify on individual services
       - --entrypoints.https.http.tls.certresolver=dns-cloudflare
+      ## Pulls main and wildcard cert for first domain
       - --entrypoints.https.http.tls.domains[0].main=$DOMAINNAME0
       - --entrypoints.https.http.tls.domains[0].sans=*.$DOMAINNAME0
-      # - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1  # Pulls main cert for second domain
-      # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1  # Pulls wildcard cert for second domain
+      ## Pulls main and wildcard cert for second domain
+      # - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1
+      # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1
       - --providers.docker.network=t2_proxy
       - --providers.docker.swarmMode=false
-      - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
-      #- --providers.file.filename=/path/to/file # Load dynamic configuration from a file
-      - --providers.file.watch=true  # Only works on top level files in the rules folder
-      # - --certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory  # LetsEncrypt Staging Server - uncomment when testing
-      - --certificatesResolvers.dns-cloudflare.acme.keyType=EC384  # Optional. Used to specify the Key Type received from LetsEncrypt
+      ## Load dynamic configuration from one or more .toml or .yml files in a
+      ## directory
+      - --providers.file.directory=/rules
+      ## Load dynamic configuration from a file
+      #- --providers.file.filename=/path/to/file
+      ## Only works on top level files in the rules folder
+      - --providers.file.watch=true
+      ## LetsEncrypt Staging Server - uncomment when testing
+      # - --certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+      ## Optional. Used to specify the Key Type received from LetsEncrypt
+      - --certificatesResolvers.dns-cloudflare.acme.keyType=EC384
       - --certificatesResolvers.dns-cloudflare.acme.email=$CLOUDFLARE_EMAIL
       - --certificatesResolvers.dns-cloudflare.acme.storage=/acme.json
       - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
-      # Set Wireguard entrypoint
+      ## To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.delayBeforeCheck=90
+      ## Set Wireguard entrypoint
       - --entryPoints.wireguard.address=:$WIREGUARD_PORT/udp
-      # Set Minecraft entrypoint
+      ## Set Minecraft entrypoint
       # - --entryPoints.minecraft.address=:25565
-      # Set minecraft-rcon entrypoint
+      ## Set minecraft-rcon entrypoint
       # - --entryPoints.minecraft-rcon.address=:4326
-      # Set minecraft-rcon-websocket entrypoint
+      ## Set minecraft-rcon-websocket entrypoint
       # - --entryPoints.minecraft-rcon-websocket.address=:4327
-      # Set Authentik LDAPS entrypoint
+      ## Set Authentik LDAPS entrypoint
       - --entryPoints.authentik-ldaps.address=:$AUTHENTIK_LDAPS_PORT
     networks:
       t2_proxy:
@@ -303,18 +324,23 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - $APPDIR/traefik2/rules:/rules # file provider directory
-      # - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
-      - $APPDIR/traefik2/acme/acme.json:/acme.json # cert location - you must touch this file and change permissions to 600
-      - $APPDIR/traefik2/traefik.log:/traefik.log # for fail2ban - make sure to touch file before starting container
+      - $APPDIR/traefik2/rules:/rules  # File provider directory
+      ## Use Docker Socket Proxy instead for improved security
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+      ## Cert location - you must touch this file and change permissions to 600
+      - $APPDIR/traefik2/acme/acme.json:/acme.json
+      ## For fail2ban - make sure to touch file before starting container
+      - $APPDIR/traefik2/traefik.log:/traefik.log
       - $DOCKERDIR/shared:/shared
     environment:
       CF_API_EMAIL_FILE: /run/secrets/cloudflare_email
       CF_API_KEY_FILE: /run/secrets/cloudflare_api_key
-      HTPASSWD_FILE: /run/secrets/htpassword  # HTPASSWD_FILE can be whatever as it is not used/called anywhere.
-      DOMAINNAME0: $DOMAINNAME0   # So DOMAINNAME0 can be used in Traefik rules
-      # DOMAINNAME1: $DOMAINNAME1   # So DOMAINNAME1 can be used in Traefik rules
-      HOMEBRIDGE_PORT: $HOMEBRIDGE_PORT   # So HOMEBRIDGE_PORT can be used in Traefik rules
+      ## HTPASSWD_FILE can be whatever as it is not used/called anywhere.
+      HTPASSWD_FILE: /run/secrets/htpassword
+      ## Include vars so they can be used in Traefik rules
+      DOMAINNAME0: $DOMAINNAME0
+      # DOMAINNAME1: $DOMAINNAME1
+      HOMEBRIDGE_PORT: $HOMEBRIDGE_PORT
       HOME_ASSISTANT_PORT: $HOME_ASSISTANT_PORT
       SYNOLOGY_PORT: $SYNOLOGY_PORT
       SYNOLOGY_PHOTO_PORT: $SYNOLOGY_PHOTO_PORT
@@ -326,15 +352,17 @@ services:
       - cloudflare_api_key
       - htpasswd
     labels:
-      #- "autoheal=true"
+      # - "autoheal=true"
       - "traefik.enable=true"
-      # HTTP-to-HTTPS Redirect
+      ## HTTP-to-HTTPS Redirect
       - "traefik.http.routers.http-catchall.entrypoints=http"
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # HTTP Routers
-      - "traefik.http.routers.traefik0-rtr.entrypoints=https"  # An example of a service available on both `abcxyz.$DOMAINNAME0` and `abcxyz.$DOMAINNAME1`
+      ## An example of a service available on both `abcxyz.$DOMAINNAME0`
+      ## and `abcxyz.$DOMAINNAME1`
+      - "traefik.http.routers.traefik0-rtr.entrypoints=https"
       # - "traefik.http.routers.traefik0-rtr.tls=true"
       - "traefik.http.routers.traefik0-rtr.rule=Host(`traefik.$DOMAINNAME0`)"
       # - "traefik.http.routers.traefik1-rtr.entrypoints=https"
@@ -348,63 +376,64 @@ services:
       # - "traefik.http.routers.ping.tls=true"
       - "traefik.http.routers.ping.service=ping@internal"
       ## Middlewares
-      #- "traefik.http.routers.traefik0-rtr.middlewares=chain-basic-auth@file"
+      # - "traefik.http.routers.traefik0-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.traefik0-rtr.middlewares=chain-authelia0@file"
       # - "traefik.http.routers.traefik1-rtr.middlewares=chain-authelia1@file"
 
-  # Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
+  ## Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
   socket-proxy:
-    <<: *common-keys-core # See EXTENSION FIELDS at the top
+    <<: *common-keys-core  # See EXTENSION FIELDS at the top
     container_name: socket-proxy
     image: tecnativa/docker-socket-proxy
-    # image: fluencelabs/docker-socket-proxy
     networks:
       socket_proxy:
         ipv4_address: $SOCKET_PROXY_IPV4  # You can specify a static IP
     privileged: true
     ports:
-      - 127.0.0.1:2375:2375  # Port 2375 should only ever get exposed to the internal network. When possible use this line.
-      # I use the next line instead, as I want portainer to manage multiple docker endpoints within my home network.
+      ## Port 2375 should only ever get exposed to the internal network. When
+      ## possible use this line.
+      - 127.0.0.1:2375:2375
       # - 2375:2375
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       ## tecnativa
-      - LOG_LEVEL=warning # debug,info,notice,warning,err,crit,alert,emerg
-      ## Variables match the URL prefix (i.e. AUTH blocks access to /auth/* parts of the API, etc.).
-      # 0 to revoke access.
-      # 1 to grant access.
+      - LOG_LEVEL=warning  # debug,info,notice,warning,err,crit,alert,emerg
+      ## Variables match the URL prefix (i.e. AUTH blocks access to /auth/*
+      ## parts of the API, etc.).
+      ## 0 to revoke access.
+      ## 1 to grant access.
       ## Granted by Default
       - EVENTS=1
       - PING=1
       - VERSION=1
       ## Revoked by Default
-      # Security critical
+      ## Security critical
       - AUTH=0  # 0
       - SECRETS=0  # 0
-      - POST=1 # Watchtower
-      # Not always needed
+      - POST=1  # Watchtower
+      ## Not always needed
       - BUILD=0  # 0
       - COMMIT=0  # 0
       - CONFIGS=0  # 0
-      - CONTAINERS=1 # Traefik, portainer, etc.
+      - CONTAINERS=1  # Traefik, portainer, etc.
       - DISTRIBUTION=0  # 0
       - EXEC=0  # 0
-      - IMAGES=1 # Portainer
-      - INFO=1 # Portainer
-      - NETWORKS=1 # Portainer
+      - IMAGES=1  # Portainer
+      - INFO=1  # Portainer
+      - NETWORKS=1  # Portainer
       - NODES=0  # 0
       - PLUGINS=0  # 0
-      - SERVICES=1 # Portainer
+      - SERVICES=1  # Portainer
       - SESSION=0  # 0
       - SWARM=0  # 0
       - SYSTEM=0  # 0
-      - TASKS=1 # Portaienr
-      - VOLUMES=1 # Portainer
+      - TASKS=1  # Portaienr
+      - VOLUMES=1  # Portainer
 
-  # Heimdall - Application Dashboard
+  ## Heimdall - Application Dashboard
   heimdall:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
+    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: lscr.io/linuxserver/heimdall
     container_name: heimdall
     # ports:
@@ -425,9 +454,9 @@ services:
       - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
       - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
 
-  # # Organizr - Application Dashboard
+  # ## Organizr - Application Dashboard
   # organizr:
-  #   <<: *common-keys-apps # See EXTENSION FIELDS at the top
+  #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
   #   image: organizr/organizr
   #   container_name: organizr
   #   # ports:
@@ -452,30 +481,36 @@ services:
 
   ############################## SECURITY
 
-  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  ## Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
   authelia0:  # First instance for DOMAINNAME0
     <<: *common-keys-core
     container_name: authelia0
-    # Check this before upgrading: https://github.com/authelia/authelia#breaking-changes
+    ## Check this before upgrading:
+    ## https://github.com/authelia/authelia#breaking-changes
     image: ghcr.io/authelia/authelia:4.37
     # depends_on:
     #   - traefik
     # ports:
-    #    - "$AUTHELIA_PORT:$AUTHELIA_PORT"
-    #    - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
+    #   - "$AUTHELIA_PORT:$AUTHELIA_PORT"
+    #   - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
     volumes:
-      - $APPDIR/authelia/configuration0.yml:/config/configuration.yml  # Set the first configuration file
-      - $APPDIR/authelia/users_database.yml:/config/users_database.yml  # Set the users database
+      ## Set the first configuration file
+      - $APPDIR/authelia/configuration0.yml:/config/configuration.yml
+      ## Set the users database
+      - $APPDIR/authelia/users_database.yml:/config/users_database.yml
     environment:
-      # <<: *default-tz-puid-pgid  # Using PUID:PGID causes container to be unable to read secrets
+      ## Using PUID:PGID causes container to be unable to read secrets
+      # <<: *default-tz-puid-pgid
       TZ: $TZ
       AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
       AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      ## yamllint disable rule:line-length
       AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
       AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
       AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
       AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
       AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+      ## yamllint enable rule:line-length
     secrets:
       - authelia_jwt_secret
       - authelia_session_secret
@@ -496,7 +531,7 @@ services:
       - "traefik.http.routers.authelia0-rtr.service=authelia0-svc"
       - "traefik.http.services.authelia0-svc.loadbalancer.server.port=$AUTHELIA_PORT"
 
-  # Keycloak - Open Source Identity and Access Management
+  ## Keycloak - Open Source Identity and Access Management
   keycloak:
     <<: *common-keys-core
     container_name: keycloak
@@ -509,6 +544,7 @@ services:
         # ARG_KC_CACHE_STACK:
         ARG_KC_DB: "mariadb"
         ARG_KC_TRANSACTION_XA_ENABLED: "true"
+        ## yamllint disable-line rule:line-length
         ARG_KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
         # ARG_KC_HTTP_RELATIVE_PATH:
         ARG_KC_HEALTH_ENABLED: "true"
@@ -521,11 +557,15 @@ services:
     #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:
       - $APPDIR/keycloak/conf:/conf
-      - $APPDIR/keycloak/ObjectStore:/ObjectStore  # https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      - $APPDIR/keycloak/ObjectStore:/ObjectStore
       # Remember to `chmod +x` for all .sh scripts
-      - $APPDIR/keycloak/build/docker_secrets.sh:/build/docker_secrets.sh:ro  # Workaround to enable docker secrets
-      - $APPDIR/keycloak/build/entrypoint.sh:/build/entrypoint.sh:ro  # Workaround to enable docker secrets
-      - $APPDIR/keycloak/build/healthcheck.sh:/build/healthcheck.sh:ro  # Workaround to use healthcheck without `curl`
+      ## Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/docker_secrets.sh:/build/docker_secrets.sh:ro
+      ## Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/entrypoint.sh:/build/entrypoint.sh:ro
+      ## Workaround to use healthcheck without `curl`
+      - $APPDIR/keycloak/build/healthcheck.sh:/build/healthcheck.sh:ro
     environment:
       # KC_CACHE: local
       FILE__KEYCLOAK_ADMIN: /run/secrets/keycloak_admin
@@ -553,7 +593,8 @@ services:
       # KC_HEALTH_ENABLED: "true"
       # KC_METRICS_ENABLED: "true"
       KC_PROXY: edge
-      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"  # https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
     secrets:
       - keycloak_admin
       - keycloak_admin_password
@@ -561,30 +602,32 @@ services:
       - kc_db_username
     labels:
       - "traefik.enable=true"
-      ### Authentication routers and middlewares
+      #### Authentication routers and middlewares
       ## HTTP Routers
       - "traefik.http.routers.keycloak-rtr.entrypoints=https"
-      # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
+      ## https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
       - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && (Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`))"
       - "traefik.http.routers.keycloak-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.keycloak-rtr-bypass.priority=99"
       ## Middlewares
       - "traefik.http.routers.keycloak-rtr.middlewares=chain-keycloak@file"
-      ### Administration routers and middlewares
+      #### Administration routers and middlewares
       ## HTTP Routers
       - "traefik.http.routers.keycloak-admin-rtr.entrypoints=https"
       # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
       - "traefik.http.routers.keycloak-admin-rtr.rule=Host(`key.$DOMAINNAME0`) && ClientIP(`$LAN_NETWORK`)"  # Only allow admin paths on local network (or VPN)
       - "traefik.http.routers.keycloak-admin-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.keycloak-admin-rtr-bypass.priority=100"  # Give priority to bypass rule if matched
+      ## Give priority to bypass rule if matched
+      - "traefik.http.routers.keycloak-admin-rtr-bypass.priority=100"
       ## Middlewares
       - "traefik.http.routers.keycloak-admin-rtr.middlewares=chain-keycloak@file"
-      ### Combined services
+      #### Combined services
       ## HTTP Services
       - "traefik.http.routers.keycloak-admin-rtr.service=keycloak-admin-svc"
       - "traefik.http.services.keycloak-admin-svc.loadbalancer.server.port=$KEYCLOAK_PORT"
 
-  # Authentik - an open-source Identity Provider, focused on flexibility and versatility
+  ## Authentik - an open-source Identity Provider, focused on flexibility and
+  ## versatility
   authentik:
     <<: *common-keys-core
     container_name: authentik
@@ -596,9 +639,10 @@ services:
       - $APPDIR/authentik/media:/media
       - $APPDIR/authentik/templates:/templates
     environment:
-      # https://goauthentik.io/docs/installation/configuration
-      # Test configuration with `dcrun2 run --rm authentik-server dump_config`
-      # Use `file://` prefix to load from docker secret - https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
+      ## https://goauthentik.io/docs/installation/configuration
+      ## Test configuration with `dcrun2 run --rm authentik-server dump_config`
+      ## Use `file://` prefix to load from docker secret
+      ## https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
       COMPOSE_PORT_HTTP: $AUTHENTIK_PORT
       # COMPOSE_PORT_HTTPS:
       AUTHENTIK_POSTGRESQL__HOST: $POSTGRES_HOST
@@ -649,11 +693,11 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.authentik-rtr.entrypoints=https"
-      ### Base application rule
       - "traefik.http.routers.authentik-rtr.rule=Host(`authentik.$DOMAINNAME0`)"
       - "traefik.http.routers.authentik-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.authentik-rtr.middlewares=chain-no-auth@file"  # Do not use authentication, but use rate limiting and secure headers
+      ## Do not use authentication, but use rate limiting and secure headers
+      - "traefik.http.routers.authentik-rtr.middlewares=chain-no-auth@file"
       ## HTTP Services
       - "traefik.http.routers.authentik-rtr.service=authentik-svc"
       - "traefik.http.services.authentik-svc.loadbalancer.server.port=$AUTHENTIK_PORT"
@@ -663,12 +707,12 @@ services:
     container_name: authentik-worker
     image: ghcr.io/goauthentik/server:latest
     command: worker
-    # `user: root` and the docker socket volume are optional.
-    # See more for the docker socket integration here:
-    # https://goauthentik.io/docs/outposts/integrations/docker
-    # Removing `user: root` also prevents the worker from fixing the permissions
-    # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
-    # (1000:1000 by default)
+    ## `user: root` and the docker socket volume are optional.
+    ## See more for the docker socket integration here:
+    ## https://goauthentik.io/docs/outposts/integrations/docker
+    ## Removing `user: root` also prevents the worker from fixing the
+    ## permissions on the mounted folders, so when removing this make sure the
+    ## folders have the correct UID/GID (1000:1000 by default)
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -676,9 +720,10 @@ services:
       - $APPDIR/authentik/certs:/certs
       - $APPDIR/authentik/templates:/templates
     environment:
-      # https://goauthentik.io/docs/installation/configuration
-      # Test configuration with `dcrun2 run --rm authentik-server dump_config`
-      # Use `file://` prefix to load from docker secret - https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
+      ## https://goauthentik.io/docs/installation/configuration
+      ## Test configuration with `dcrun2 run --rm authentik-server dump_config`
+      ## Use `file://` prefix to load from docker secret
+      ## https://goauthentik.io/docs/installation/configuration#about-authentik-configurations
       AUTHENTIK_POSTGRESQL__HOST: $POSTGRES_HOST
       AUTHENTIK_POSTGRESQL__NAME: 'file:///run/secrets/authentik_postgresql__name'
       AUTHENTIK_POSTGRESQL__USER: 'file:///run/secrets/authentik_postgresql__user'
@@ -727,8 +772,9 @@ services:
 
   ############################## DATABASE
 
-  # MariaDB - MySQL Database
-  # After starting container for first time dexec and mysqladmin -u root password <password>
+  ## MariaDB - MySQL Database
+  ## After starting container for first time dexec and
+  ## `mysqladmin -u root password <password>`
   mariadb:
     <<: *common-keys-core
     container_name: mariadb
@@ -739,17 +785,18 @@ services:
       - $APPDIR/mariadb/data:/config
     environment:
       <<: *default-tz-puid-pgid
-      FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password  # Not taking this pw during initialization
+      ## Not taking this pw during initialization
+      FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password
     secrets:
       - mysql_root_password
 
-  # PostgreSQL - PostgreSQL Database
-  # Steps for adding a new user/database:
-  # 1. Log in to adminer.$DOMAINNAME0 with postgres root
-  # 1. Open `SQL command` and execute the following lines:
-  #     CREATE USER <username> WITH PASSWORD '<password>';
-  #     CREATE DATABASE <dbname> OWNER <username>;
-  #     GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <username>;
+  ## PostgreSQL - PostgreSQL Database
+  ## Steps for adding a new user/database:
+  ## 1. Log in to adminer.$DOMAINNAME0 with postgres root
+  ## 2. Open `SQL command` and execute the following lines:
+  ##     CREATE USER <username> WITH PASSWORD '<password>';
+  ##     CREATE DATABASE <dbname> OWNER <username>;
+  ##     GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <username>;
   postgres:
     <<: *common-keys-core
     container_name: postgres
@@ -779,8 +826,9 @@ services:
       - postgres_user
       - postgres_password
 
-  # phpMyAdmin - Database management
-  # Create a new user with admin privileges. Cannot login as MySQL root for some reason.
+  ## phpMyAdmin - Database management
+  ## Create a new user with admin privileges. Cannot login as MySQL root for
+  ## some reason.
   phpmyadmin:
     <<: *common-keys-apps
     image: phpmyadmin:latest
@@ -800,7 +848,7 @@ services:
       # PMA_PASSWORD_FILE: /run/secrets/pma_password
     secrets:
       - mysql_root_password
-      #- pma_password
+      # - pma_password
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -808,13 +856,13 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME0`)"
       - "traefik.http.routers.phpmyadmin-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      #- "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
 
-  # Adminer - Database management in a single PHP file.
+  ## Adminer - Database management in a single PHP file.
   adminer:
     <<: *common-keys-core
     container_name: adminer
@@ -822,7 +870,8 @@ services:
     # ports:
     #   - 8080:8080
     environment:
-      # ADMINER_DESIGN: 'nette'  # https://github.com/vrana/adminer/tree/master/designs
+      ## https://github.com/vrana/adminer/tree/master/designs
+      # ADMINER_DESIGN: 'nette'
       ADMINER_DEFAULT_SERVER: postgres
     labels:
       - "traefik.enable=true"
@@ -831,13 +880,13 @@ services:
       - "traefik.http.routers.adminer-rtr.rule=Host(`adminer.$DOMAINNAME0`)"
       - "traefik.http.routers.adminer-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      #- "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.adminer-rtr.service=adminer-svc"
       - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
 
-  # Redis - Key-value Store
+  ## Redis - Key-value Store
   redis:
     <<: *common-keys-core
     container_name: redis
@@ -860,7 +909,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  # Redis Commander - Redis Management Tool
+  ## Redis Commander - Redis Management Tool
   rediscommander:
     <<: *common-keys-apps
     container_name: rediscommander
@@ -872,7 +921,8 @@ services:
     environment:
       REDIS_HOST: $REDIS_HOST
       REDIS_PORT: $REDIS_PORT
-      # REDIS_PASSWORD_FILE: /run/secrets/redis_password  # Not currently working
+      ## Not currently working
+      # REDIS_PASSWORD_FILE: /run/secrets/redis_password
       REDIS_PASSWORD: $REDIS_PASSWORD
       PORT: $REDISCOMMANDER_PORT
     secrets:
@@ -892,7 +942,7 @@ services:
 
   ############################## MAINTENANCE
 
-  # Cloudflare DDNS - Dynamic DNS service to update Cloudflare DNS records
+  ## Cloudflare DDNS - Dynamic DNS service to update Cloudflare DNS records
   cf-ddns:
     <<: *common-keys-core
     container_name: cf-ddns
@@ -903,7 +953,7 @@ services:
       <<: *default-tz-puid-pgid
       CRON: "@daily"
 
-  # DuckDNS - Dynamic DNS service provided by duckdns.org
+  ## DuckDNS - Dynamic DNS service provided by duckdns.org
   duckdns:
     <<: *common-keys-core
     image: lscr.io/linuxserver/duckdns:latest
@@ -913,13 +963,15 @@ services:
     environment:
       <<: *default-tz-puid-pgid
       SUBDOMAINS: "$DOMAINNAME_DUCKDNS0,$DOMAINNAME_DUCKDNS1,$DOMAINNAME_DUCKDNS2,$DOMAINNAME_DUCKDNS3,$DOMAINNAME_DUCKDNS4"
-      FILE__TOKEN: /run/secrets/duckdns_token  # Note, MUST truncate EOF carriage return if present ("truncate -s -1 $SECRETSDIR/duckdns_token")
+      ## Note, MUST truncate EOF carriage return if present
+      ## `truncate -s -1 $SECRETSDIR/duckdns_token`
+      FILE__TOKEN: /run/secrets/duckdns_token
       # LOG_FILE: "true"  # Optional
     secrets:
       - duckdns_token
 
-  # Docker-GC - Automatic Docker Garbage Collection
-  # Create docker-gc-exclude file
+  ## Docker-GC - Automatic Docker Garbage Collection
+  ## Create docker-gc-exclude file
   docker-gc:
     <<: *common-keys-apps
     image: clockworksoul/docker-gc-cron:latest
@@ -929,11 +981,13 @@ services:
     depends_on:
       - socket-proxy
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock # Use Docker Socket Proxy instead for improved security
-      - $APPDIR/docker-gc/docker-gc-exclude:/etc/docker-gc-exclude  # must create this folder
+      ## Use Docker Socket Proxy instead for improved security
+      # - /var/run/docker.sock:/var/run/docker.sock
+      ## Must create this folder
+      - $APPDIR/docker-gc/docker-gc-exclude:/etc/docker-gc-exclude
     environment:
       <<: *default-tz-puid-pgid
-      CRON: "0 0 0 * * ?"  # Everyday at midnight. Previously 0 0 * * *
+      CRON: "0 0 0 * * ?"  # Everyday at midnight. Previously "0 0 * * *"
       FORCE_IMAGE_REMOVAL: 1
       FORCE_CONTAINER_REMOVAL: 0
       GRACE_PERIOD_SECONDS: 604800
@@ -942,7 +996,7 @@ services:
       TZ: $TZ
       DOCKER_HOST: tcp://socket-proxy:2375
 
-  # Watchtower - A process for automating Docker container base image updates
+  ## Watchtower - A process for automating Docker container base image updates
   watchtower:
     <<: *common-keys-core # See EXTENSION FIELDS at the top
     image: containrrr/watchtower:latest
@@ -956,7 +1010,8 @@ services:
     # depends_on:
     #   - socket-proxy
     # volumes:
-    #   - /var/run/docker.sock:/var/run/docker.sock # Use Docker Socket Proxy instead for improved security
+    #   ## Use Docker Socket Proxy instead for improved security
+    #   - /var/run/docker.sock:/var/run/docker.sock
     environment:
       ## Watchtower Settings
       <<: *default-tz-puid-pgid
@@ -966,12 +1021,14 @@ services:
       WATCHTOWER_TRACE: "false"
       NO_COLOR: "false"
       DOCKER_HOST: tcp://socket-proxy:2375
-      # DOCKER_HOST: unix:///var/run/docker.sock  # Replace with Socket Proxy if possible
+      ## Replace with Socket Proxy if possible
+      # DOCKER_HOST: unix:///var/run/docker.sock
       DOCKER_API_VERSION: "1.40"
       WATCHTOWER_INCLUDE_RESTARTING: "false"
       WATCHTOWER_INCLUDE_STOPPED: "true"
       WATCHTOWER_REVIVE_STOPPED: "false"
-      # WATCHTOWER_POLL_INTERVAL: 86400  # In seconds; can use either INTERVAL or SCHEDULE
+      ## In seconds; can use either INTERVAL or SCHEDULE
+      # WATCHTOWER_POLL_INTERVAL: 86400
       # WATCHTOWER_LABEL_ENABLE: "false"
       WATCHTOWER_MONITOR_ONLY: "false"
       WATCHTOWER_NO_RESTART: "false"
@@ -983,7 +1040,9 @@ services:
       # WATCHTOWER_HTTP_API_PERIODIC_POLLS: "false"
       # WATCHTOWER_SCOPE: ""
       # WATCHTOWER_HTTP_API_METRICS: "false"
-      WATCHTOWER_SCHEDULE: "0 30 0 * * *"  # 12:30 AM daily; "sec min hr day mon yr"; can use either INTERVAL or SCHEDULE
+      ## 12:30 AM daily; "sec min hr day mon yr"; can use either INTERVAL or
+      ## SCHEDULE
+      WATCHTOWER_SCHEDULE: "0 30 0 * * *"
       WATCHTOWER_ROLLING_RESTART: "false"
       WATCHTOWER_TIMEOUT: 30s  # Default 10s
       # DOCKER_TLS_VERIFY: "false"
@@ -1006,9 +1065,9 @@ services:
 
   ############################## UTILITIES
 
-  # VS Code - VS Code in the browser
+  ## VS Code - VS Code in the browser
   vscode:
-    <<: *common-keys-core # See EXTENSION FIELDS at the top
+    <<: *common-keys-core  # See EXTENSION FIELDS at the top
     image: lscr.io/linuxserver/code-server:latest
     container_name: vscode
     volumes:
@@ -1016,12 +1075,17 @@ services:
       - $USERDIR/server:/data/server
       - $DATADIR:/data/data
       - $APPDIR/vscode:/config
-      # - $APPDIR/vscode/.ssh:/config/ssh  # Ensure the user's GitHub ssh keys are added to be able to use VS Code git features
+      ## Ensure the user's GitHub ssh keys are added to be able to use VS Code
+      ## git features
+      - $APPDIR/vscode/.ssh:/config/ssh
     environment:
       <<: *default-tz-puid-pgid
-      ## Note: passwords can be set via hash if desired - https://github.com/coder/code-server/blob/main/docs/FAQ.md#can-i-store-my-password-hashed
-      FILE__PASSWORD: /run/secrets/vscode_password  # Note: must remove trailing \n using "truncate -s -1 file_name"
-      FILE__SUDO_PASSWORD: /run/secrets/vscode_sudo_password  # Note: must remove trailing \n using "truncate -s -1 file_name"
+      ## Note: passwords can be set via hash if desired
+      ## https://github.com/coder/code-server/blob/main/docs/FAQ.md#can-i-store-my-password-hashed
+      ## Note: must remove trailing \n using `truncate -s -1 file_name`
+      FILE__PASSWORD: /run/secrets/vscode_password
+      ## Note: must remove trailing \n using `truncate -s -1 file_name`
+      FILE__SUDO_PASSWORD: /run/secrets/vscode_sudo_password
       PROXY_DOMAIN: code.$DOMAINNAME0
       DEFAULT_WORKSPACE: /data/docker
     secrets:
@@ -1034,19 +1098,19 @@ services:
       - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME0`)"
       - "traefik.http.routers.vscode-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      #- "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
+      # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.vscode-rtr.service=vscode-svc"
       - "traefik.http.services.vscode-svc.loadbalancer.server.port=8443"
 
-  # File Browser - Explorer
+  ## File Browser - Explorer
   filebrowser:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: filebrowser/filebrowser:s6
     container_name: filebrowser
-    #ports:
-    #  - "$FILEBROWSER_PORT:80"
+    # ports:
+    #   - "$FILEBROWSER_PORT:80"
     volumes:
       - $DOCKERDIR/appdata/filebrowser:/config
       - $DOCKERDIR/appdata/filebrowser/filebrowser.db:/database/filebrowser.db
@@ -1066,8 +1130,9 @@ services:
       - "traefik.http.routers.filebrowser-rtr.service=filebrowser-svc"
       - "traefik.http.services.filebrowser-svc.loadbalancer.server.port=80"
 
-  # Guacamole - Remote desktop, SSH, on Telnet on any HTML5 Browser
-  # Create all databases and tables first - https://guacamole.apache.org/doc/1.4.0/gug/guacamole-docker.html?highlight=mysql#mysql-authentication
+  ## Guacamole - Remote desktop, SSH, on Telnet on any HTML5 Browser
+  ## Create all databases and tables first
+  ## https://guacamole.apache.org/doc/1.4.0/gug/guacamole-docker.html?highlight=mysql#mysql-authentication
   guacamole:
     <<: *common-keys-core
     image: guacamole/guacamole:latest
@@ -1080,9 +1145,10 @@ services:
       GUACD_HOSTNAME: guacd
       MYSQL_HOSTNAME: $MARIADB_HOST
       MYSQL_PORT: $MARIADB_PORT
-      MYSQL_DATABASE_FILE: /run/secrets/guac_db_name  # Secrets do not work with 600 secrets, must chmod 644
-      MYSQL_USER_FILE: /run/secrets/guac_mysql_user  # Secrets do not work with 600 secrets, must chmod 644
-      MYSQL_PASSWORD_FILE: /run/secrets/guac_mysql_password  # Secrets do not work with 600 secrets, must chmod 644
+      ## Secrets do not work with 600 secrets, must chmod 644
+      MYSQL_DATABASE_FILE: /run/secrets/guac_db_name
+      MYSQL_USER_FILE: /run/secrets/guac_mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/guac_mysql_password
     secrets:
       - guac_db_name
       - guac_mysql_user
@@ -1102,13 +1168,13 @@ services:
       - "traefik.http.routers.guacamole-rtr.service=guacamole-svc"
       - "traefik.http.services.guacamole-svc.loadbalancer.server.port=8080"
 
-  # Guacamole Daemon - Needed for Guacamole
+  ## Guacamole Daemon - Needed for Guacamole
   guacd:
     <<: *common-keys-core  # See EXTENSION FIELDS at the top
-    image: guacamole/guacd:latest  # Was 1.3.0 for compatibility
+    image: guacamole/guacd:latest
     container_name: guacd
 
-  # Dozzle - Real-time Docker Log Viewer
+  ## Dozzle - Real-time Docker Log Viewer
   dozzle:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: amir20/dozzle:latest
@@ -1130,10 +1196,12 @@ services:
       DOZZLE_ADDR: ":$DOZZLE_PORT"
       DOCKER_HOST: tcp://socket-proxy:2375
       DOZZLE_FILTER: "status=running"
-      # DOZZLE_FILTER: "label=log_me"  # limits logs displayed to containers with this label
+      ## limits logs displayed to containers with this label
+      # DOZZLE_FILTER: "label=log_me"
       DOZZLE_LEVEL: info
     # volumes:
-    #  - /var/run/docker.sock:/var/run/docker.sock  # Use Docker Socket Proxy instead for improved security
+    #   ## Use Docker Socket Proxy instead for improved security
+    #   - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -1146,7 +1214,7 @@ services:
       - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
       - "traefik.http.services.dozzle-svc.loadbalancer.server.port=$DOZZLE_PORT"
 
-  # Glances - System Information
+  ## Glances - System Information
   glances:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: nicolargo/glances:latest
@@ -1162,10 +1230,12 @@ services:
     #   - "$GLANCES_PORT:61208"
     pid: host
     volumes:
-      # - $APPDIR/glances/glances.conf:/glances/conf/glances.conf # Use this if you want to add a glances.conf file
+      ## Use this if you want to add a glances.conf file
+      # - $APPDIR/glances/glances.conf:/glances/conf/glances.conf
       - $USERDIR:/data/home:ro
       # - /media/hdd1:/data/hdd1:ro
-      # - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
+      ## Use Docker Socket Proxy instead for improved security
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       # GLANCES_OPT: "-C /glances/conf/glances.conf --quiet --export influxdb"
       # GLANCES_OPT: "--export influxdb"
@@ -1183,9 +1253,9 @@ services:
       - "traefik.http.routers.glances-rtr.service=glances-svc"
       - "traefik.http.services.glances-svc.loadbalancer.server.port=61208"
 
-  # DupeGuru - Duplicate File/Folder Remover
+  ## DupeGuru - Duplicate File/Folder Remover
   dupeguru:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
+    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: jlesage/dupeguru:latest
     container_name: dupeguru
     # ports:
@@ -1218,21 +1288,22 @@ services:
       - "traefik.http.routers.dupeguru-rtr.service=dupeguru-svc"
       - "traefik.http.services.dupeguru-svc.loadbalancer.server.port=$DUPEGURU_PORT"
 
-  # Tdarr - Distributed transcode automation
+  ## Tdarr - Distributed transcode automation
   tdarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
+    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: tdarr
     image: ghcr.io/haveagitgat/tdarr:latest
     privileged: true
     # devices:
-    #   - /dev/dri:/dev/dri  # AMD hardware transcoding?
+    #   ## AMD hardware transcoding?
+    #   - /dev/dri:/dev/dri
     #   - /dev/dri/renderD128:/dev/dri/renderD128
     #   - /dev/dri/card0:/dev/dri/card0
     ports:
-      # - $TDARR_WEBUI_PORT:$TDARR_WEBUI_PORT # webUI port
-      - $TDARR_SERVER_PORT:$TDARR_SERVER_PORT # server port
-      # - 8267:8267 # Internal node port
-      # - 8268:8268 # Example extra node port
+      # - $TDARR_WEBUI_PORT:$TDARR_WEBUI_PORT  # WebUI port
+      - $TDARR_SERVER_PORT:$TDARR_SERVER_PORT  # Server port
+      # - 8267:8267  # Internal node port
+      # - 8268:8268  # Example extra node port
     environment:
       UMASK_SET: 002
       serverIP: tdarr
@@ -1245,7 +1316,9 @@ services:
       - $APPDIR/tdarr/configs:/app/configs
       - $APPDIR/tdarr/logs:/app/logs
       - $APPDIR/tdarr/scripts:/home/Tdarr/scripts
-      - $DATADIR:/data  # Map single folder for /data and map /data/media and /data/temp/transcode to allow for move operation instead of copy
+      ## Map single folder for `/data` and use `/data/media` and
+      ## `/data/temp/transcode` to allow for move operation instead of copy
+      - $DATADIR:/data
       # - $DATADIR/temp/transcode:/data/temp/transcode
       # - /dev/shm:/temp  # Perform transcoding in RAM
     logging:
@@ -1264,14 +1337,15 @@ services:
       - "traefik.http.routers.tdarr-rtr.service=tdarr-svc"
       - "traefik.http.services.tdarr-svc.loadbalancer.server.port=$TDARR_WEBUI_PORT"
 
-  # Tdarr - Distributed transcode automation
+  ## Tdarr - Distributed transcode automation
   tdarr-node:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: tdarr-node
     image: ghcr.io/haveagitgat/tdarr_node:latest
     privileged: true
     devices:
-      - /dev/dri:/dev/dri  # AMD hardware transcoding
+      ## AMD hardware transcoding
+      - /dev/dri:/dev/dri
       # - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/dri/card0:/dev/dri/card0
     ports:
@@ -1286,7 +1360,9 @@ services:
     volumes:
       - $APPDIR/tdarr/configs:/app/configs
       - $APPDIR/tdarr/logs:/app/logs
-      - $DATADIR:/data  # Map single folder for /data and map /data/media and /data/temp/transcode to allow for move operation instead of copy
+      ## Map single folder for `/data` and use `/data/media` and
+      ## `/data/temp/transcode` to allow for move operation instead of copy
+      - $DATADIR:/data
       # - $DATADIR/temp/transcode:/data/temp/transcode
       # - /dev/shm:/temp  # Perform transcoding in RAM
     logging:
@@ -1304,7 +1380,7 @@ services:
     #   - "traefik.http.routers.tdarr-node-rtr.service=tdarr-node-svc"
     #   - "traefik.http.services.tdarr-node-svc.loadbalancer.server.port=$TDARR_NODE_PORT"
 
-  # Gotify - A simple server for sending and receiving messages
+  ## Gotify - A simple server for sending and receiving messages
   gotify:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: gotify
@@ -1313,7 +1389,8 @@ services:
     #   - $GOTIFY_PORT:9267  # Node port
     volumes:
       - $APPDIR/gotify/app:/app/data
-      - $APPDIR/gotify/config:/config:ro  # Allows passing the hijacked entrypoint.sh
+      ## Allows passing the hijacked entrypoint.sh
+      - $APPDIR/gotify/config:/config:ro
     environment:
       <<: *default-tz-puid-pgid
       GOTIFY_SERVER_PORT: $GOTIFY_SERVER_PORT
@@ -1337,11 +1414,14 @@ services:
       # GOTIFY_SERVER_STREAM_ALLOWEDORIGINS: "- \".+.example.com\"\n- \"otherdomain.com\""
       # GOTIFY_SERVER_STREAM_PINGPERIODSECONDS: 45
       GOTIFY_DATABASE_DIALECT: mysql
-      GOTIFY_DATABASE_CONNECTION__FILE: /run/secrets/gotify_database_connection  # Hijack default entrypoint to pass in Docker secrets
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DATABASE_CONNECTION__FILE: /run/secrets/gotify_database_connection
       # GOTIFY_DATABASE_CONNECTION: data/gotify.db
-      GOTIFY_DEFAULTUSER_NAME__FILE: /run/secrets/gotify_defaultuser_name  # Hijack default entrypoint to pass in Docker secrets
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DEFAULTUSER_NAME__FILE: /run/secrets/gotify_defaultuser_name
       # GOTIFY_DEFAULTUSER_NAME: admin
-      GOTIFY_DEFAULTUSER_PASS__FILE: /run/secrets/gotify_defaultuser_pass  # Hijack default entrypoint to pass in Docker secrets
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DEFAULTUSER_PASS__FILE: /run/secrets/gotify_defaultuser_pass
       # GOTIFY_DEFAULTUSER_PASS: admin
       GOTIFY_PASSSTRENGTH: 10
       GOTIFY_UPLOADEDIMAGESDIR: data/images
@@ -1368,19 +1448,22 @@ services:
 
   ############################## WEB
 
-  # Vaultwarden - Unofficial Bitwarden compatible server written in Rust
+  ## Vaultwarden - Unofficial Bitwarden compatible server written in Rust
   vaultwarden:
     <<: *common-keys-apps
     container_name: vaultwarden
     image: vaultwarden/server:latest
-    # user: $PUID:$PGID  # Run Vaultwarden as non-root user; Currently doesn't work with docker secrets
+    ## Run Vaultwarden as non-root user; Currently doesn't work with docker
+    ## secrets
+    # user: $PUID:$PGID
     # ports:
     #   - $VAULTWARDEN_PORT:$VAULTWARDEN_PORT
     #   - $VAULTWARDEN_WEBSOCKET_PORT:$VAULTWARDEN_WEBSOCKET_PORT
     # depends_on:
     #   - mariadb
     environment:
-      ## Note: can append '_FILE' to any env variable to read from a file (including /run/secrets/my_secret)
+      ## Note: can append '_FILE' to any env variable to read from a file
+      ## (including /run/secrets/my_secret)
       # DATA_FOLDER: data
       DATABASE_URL_FILE: /run/secrets/vaultwarden_mysql_url
       # DATABASE_MAX_CONNS: 10
@@ -1408,15 +1491,20 @@ services:
       # INCOMPLETE_2FA_SCHEDULE: "30 * * * * *"
       # EMERGENCY_NOTIFICATION_REMINDER_SCHEDULE: "0 5 * * * *"
       # EMERGENCY_REQUEST_TIMEOUT_SCHEDULE: "0 5 * * * *"
-      EXTENDED_LOGGING: "true"  # Enable extended logging, which shows timestamps and targets in the logs
+      ## Enable extended logging, which shows timestamps and targets in the logs
+      EXTENDED_LOGGING: "true"
       # LOG_TIMESTAMP_FORMAT: %Y-%m-%d %H:%M:%S.%3f
       # LOG_FILE: /data/vaultwarden.log
       # USE_SYSLOG: "false"
-      LOG_LEVEL: info # LOG_LEVEL options are: "trace", "debug", "info", "warn", "error" or "off"
+      ## LOG_LEVEL options are: trace, debug, info, warn, error, or off
+      LOG_LEVEL: info
       # ENABLE_DB_WAL: "true"
       # DB_CONNECTION_RETRIES: 15
       ICON_SERVICE: bitwarden  # internal, bitwarden, duckduckgo, google
-      ICON_REDIRECT_CODE: 308  # 301 (legacy permanent), 302 (legacy temporary), 307 (temporary), 308 (permanent); Currently legacy redirects work best with Vaultwarden. Consider permanent redirect for caching
+      ## 301 (legacy permanent), 302 (legacy temporary), 307 (temporary),
+      ## 308 (permanent); Currently legacy redirects work best with
+      ## Vaultwarden. Consider permanent redirect for caching
+      ICON_REDIRECT_CODE: 308
       # DISABLE_ICON_DOWNLOAD: "false"
       # ICON_DOWNLOAD_TIMEOUT: 10
       # ICON_BLACKLIST_REGEX: '^(192\.168\.0\.[0-9]+|192\.168\.1\.[0-9]+)$'
@@ -1426,7 +1514,7 @@ services:
       # EMAIL_EXPIRATION_TIME: 600
       EMAIL_TOKEN_SIZE: 12
       SIGNUPS_ALLOWED: "false"
-      SIGNUPS_VERIFY: "true"  # Controls if new users need to verify their email address upon registration
+      SIGNUPS_VERIFY: "true"
       # SIGNUPS_VERIFY_RESEND_TIME: 3600
       # SIGNUPS_VERIFY_RESEND_LIMIT: 6
       # ORG_CREATION_USERS:
@@ -1457,16 +1545,17 @@ services:
       ROCKET_PORT: $VAULTWARDEN_PORT
       # ROCKET_WORKERS: 10
       # ROCKET_TLS: {certs: "/path/to/certs.pem",key: "/path/to/key.pem"}
-      ## Mail specific settings, set SMTP_HOST and SMTP_FROM to enable the mail service.
+      ## Mail specific settings, set SMTP_HOST and SMTP_FROM to enable the mail
+      ## service.
       SMTP_HOST: $EMAIL_SERVER
       SMTP_FROM: admin@vault.$DOMAINNAME0
       SMTP_FROM_NAME: Vaultwarden
-      SMTP_SECURITY: force_tls  # ("starttls", "force_tls", "off") Enable a secure connection. Default is "starttls" (Explicit ports 587 or 25), "force_tls" (Implicit port 465) or "off", no encryption (port 25)
-      SMTP_PORT: $EMAIL_SERVER_PORT  # Ports 587 (submission) and 25 (smtp) are standard without encryption and with encryption via STARTTLS (Explicit TLS). Port 465 is outdated and used with Implicit TLS.
+      SMTP_SECURITY: force_tls  # starttls, force_tls, off; Default is starttls
+      SMTP_PORT: $EMAIL_SERVER_PORT
       SMTP_USERNAME: $EMAIL_ADDRESS
       SMTP_PASSWORD_FILE: /run/secrets/vaultwarden_smtp_password
       # SMTP_TIMEOUT: 15
-      SMTP_AUTH_MECHANISM: Plain  # ["Plain", "Login", "Xoauth2"].
+      SMTP_AUTH_MECHANISM: Plain  # Plain, Login, Xoauth2
       # HELO_NAME:
       # SMTP_DEBUG: "false"
       SMTP_ACCEPT_INVALID_HOSTNAMES: "false"
@@ -1508,7 +1597,7 @@ services:
       - "traefik.http.routers.vaultwarden-websocket-rtr.service=vaultwarden-websocket-svc"
       - "traefik.http.services.vaultwarden-websocket-svc.loadbalancer.server.port=$VAULTWARDEN_WEBSOCKET_PORT"
 
-  # Nextcloud - A safe home for all your data
+  ## Nextcloud - A safe home for all your data
   nextcloud:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: nextcloud
@@ -1531,14 +1620,17 @@ services:
       MYSQL_PASSWORD_FILE: /run/secrets/nextcloud_mysql_password
       MYSQL_DATABASE: nextcloud
       MYSQL_HOST: $MARIADB_HOST
-      # REDIS_HOST: redis  # Have to set manually in the config.php for whatever reason, setting this with environmental variables messes things up
+      ## Have to set manually in the config.php for whatever reason, setting
+      ## this with environmental variables messes things up
+      # REDIS_HOST: redis
       REDIS_HOST_PORT: $REDIS_PORT
       REDIS_HOST_PASSWORD_FILE: /run/secrets/redis_password
       SMTP_HOST: $EMAIL_SERVER
       SMTP_SECURE: ssl
       SMTP_PORT: $EMAIL_SERVER_PORT
       SMTP_AUTHTYPE: PLAIN
-      # SMTP_NAME_FILE: /run/secrets/nextcloud_smtp_name  # Currently unsupported
+      ## Currently unsupported
+      # SMTP_NAME_FILE: /run/secrets/nextcloud_smtp_name
       SMTP_NAME: $EMAIL_SERVER_USER
       SMTP_PASSWORD_FILE: /run/secrets/nextcloud_smtp_password
       MAIL_FROM_ADDRESS: admin@drive.$DOMAINNAME0
@@ -1569,8 +1661,8 @@ services:
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
   ## Firefly III - Finance Manager
-  # ## Create a unique App Key which is a random 32 character string
-  #   ## date +%s | sha256sum | base64 | head -c 32 ; echo
+  ## Create a unique App Key which is a random 32 character string
+  ## `date +%s | sha256sum | base64 | head -c 32 ; echo`
   firefly:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: firefly
@@ -1581,35 +1673,43 @@ services:
     volumes:
       - $APPDIR/firefly/export:/var/www/firefly-iii/storage/export
       - $APPDIR/firefly/upload:/var/www/firefly-iii/storage/upload
-    environment:  # https://github.com/firefly-iii/firefly-iii/blob/main/.env.example
+    environment:
+      ## https://github.com/firefly-iii/firefly-iii/blob/main/.env.example
       <<: *default-tz-puid-pgid
       APP_ENV: local  # testing, local, production
       APP_DEBUG: "false"
       SITE_OWNER: admin@money.$DOMAINNAME0
       APP_KEY: $FIREFLY_APP_KEY
-      DEFAULT_LANGUAGE: en_US  # https://github.com/firefly-iii/firefly-iii/tree/main/resources/lang
-      DEFAULT_LOCALE: equal  # equal or language from above
-      TRUSTED_PROXIES: "**"  # TRUSTED_PROXIES is a useful variable when using Docker and/or a reverse proxy. Set it to ** and reverse proxies work just fine.
-      LOG_CHANNEL: stack  # "single" for one big fat error log (not recommended); "syslog", "errorlog" and "stdout" which will log to the system itself; "daily", creates 5 files that (surprise) rotate; "papertrail" for cloud logging; "stack" will log to "daily" and to "stdout" at the same time
+      DEFAULT_LANGUAGE: en_US
+      DEFAULT_LOCALE: equal
+      ## TRUSTED_PROXIES is a useful variable when using Docker and/or a
+      ## reverse proxy. Set it to ** and reverse proxies work just fine.
+      TRUSTED_PROXIES: "**"
+      ## "single" for one big fat error log (not recommended); "syslog",
+      ## "errorlog" and "stdout" which will log to the system itself; "daily",
+      ## creates 5 files that (surprise) rotate; "papertrail" for cloud
+      ## logging; "stack" will log to "daily" and to "stdout" at the same time
+      LOG_CHANNEL: stack
       # PAPERTRAIL_HOST:
       # PAPERTRAIL_PORT:
-      APP_LOG_LEVEL: debug  # debug, info, notice, warning, error, critical, alert, emergency
+      ## debug, info, notice, warning, error, critical, alert, emergency
+      APP_LOG_LEVEL: debug
       AUDIT_LOG_LEVEL: debug  # info, emergency
-      DB_CONNECTION: mysql  # "pgsql", "mysql", "sqlite"
+      DB_CONNECTION: mysql  # pgsql, mysql, sqlite
       DB_HOST: $MARIADB_HOST
       DB_PORT: $MARIADB_PORT
       DB_DATABASE_FILE: /run/secrets/firefly_mysql_db_name
       DB_USERNAME_FILE: /run/secrets/firefly_mysql_user
       DB_PASSWORD_FILE: /run/secrets/firefly_mysql_password
-      # DB_SOCKET:  # leave empty or omit when not using a socket connection
-      # MYSQL_USE_SSL:  # MySQL supports SSL. You can configure it here.
+      # DB_SOCKET:
+      # MYSQL_USE_SSL:
       # MYSQL_SSL_VERIFY_SERVER_CERT:
       # MYSQL_SSL_CAPATH: /etc/ssl/certs/
       # MYSQL_SSL_CA:
       # MYSQL_SSL_CERT:
       # MYSQL_SSL_KEY:
       # MYSQL_SSL_CIPHER:
-      # PGSQL_SSL_MODE: prefer  # PostgreSQL supports SSL. You can configure it here.
+      # PGSQL_SSL_MODE: prefer
       # PGSQL_SSL_ROOT_CERT: null
       # PGSQL_SSL_CERT: null
       # PGSQL_SSL_KEY: null
@@ -1628,7 +1728,8 @@ services:
       # COOKIE_DOMAIN: $DOMAINNAME0
       # COOKIE_SECURE: false
       # COOKIE_SAMESITE: lax
-      MAIL_MAILER: smtp  # https://docs.firefly-iii.org/firefly-iii/advanced-installation/email/
+      ## https://docs.firefly-iii.org/firefly-iii/advanced-installation/email/
+      MAIL_MAILER: smtp
       MAIL_HOST: $EMAIL_SERVER
       MAIL_PORT: $EMAIL_SERVER_PORT
       MAIL_FROM: server@money.$DOMAINNAME0
@@ -1648,7 +1749,8 @@ services:
       MAP_DEFAULT_LAT: $DEFAULT_LATITUDE
       MAP_DEFAULT_LONG: $DEFAULT_LONGITUDE
       # MAP_DEFAULT_ZOOM: 6
-      AUTHENTICATION_GUARD: web  # "web", "remote_user_guard"; https://docs.firefly-iii.org/advanced-installation/authentication
+      ## https://docs.firefly-iii.org/advanced-installation/authentication
+      AUTHENTICATION_GUARD: web
       AUTHENTICATION_GUARD_HEADER: HTTP_REMOTE_USER
       AUTHENTICATION_GUARD_EMAIL: HTTP_REMOTE_EMAIL
       # CUSTOM_LOGOUT_URL:
@@ -1657,15 +1759,19 @@ services:
       # TRACKER_SITE_ID:
       # TRACKER_URL:
       ALLOW_WEBHOOKS: "true"  # default false
-      # STATIC_CRON_TOKEN_FILE:  # https://docs.firefly-iii.org/firefly-iii/advanced-installation/cron/
-      # DKR_BUILD_LOCALE:  # Use this at your own risk. Disabling certain checks and features may result in lost of inconsistent data.
+      ## https://docs.firefly-iii.org/firefly-iii/advanced-installation/cron/
+      # STATIC_CRON_TOKEN_FILE:
+      ## Use this at your own risk. Disabling certain checks and features may
+      ## result in lost of inconsistent data.
+      # DKR_BUILD_LOCALE:
       # DKR_CHECK_SQLITE:
       # DKR_RUN_MIGRATION:
       # DKR_RUN_UPGRADE:
       # DKR_RUN_VERIFY:
       # DKR_RUN_REPORT:
       # DKR_RUN_PASSPORT_INSTALL:
-      # Leave the following configuration vars as is. Unless you like to tinker and know what you're doing.
+      ## Leave the following configuration vars as is. Unless you like to
+      ## tinker and know what you're doing.
       # APP_NAME: FireflyIII
       # BROADCAST_DRIVER: log
       # QUEUE_DRIVER: sync
@@ -1692,7 +1798,10 @@ services:
       - "traefik.http.routers.firefly-rtr.rule=Host(`money.$DOMAINNAME0`)"
       - "traefik.http.routers.firefly-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia0@file"  # Note: possible issue before using Authelia, would need to configure /path for importer to bypass Authelia (/api/v1) - or just use http://firefly:$FIREFLY_PORT
+      ## Note: possible issue before using Authelia, would need to configure
+      ## /path for importer to bypass Authelia (/api/v1) - or just use
+      ## http://firefly:$FIREFLY_PORT
+      - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.firefly-rtr.service=firefly-svc"
       - "traefik.http.services.firefly-svc.loadbalancer.server.port=8080"
@@ -1732,8 +1841,11 @@ services:
       # APP_ENV: local  # These three are good for debugging
       APP_DEBUG: "false"
       # LOG_CHANNEL: stack
-      LOG_LEVEL: info  # debug, info, notice, warning, error, critical, alert, emergency
-      TRUSTED_PROXIES: "**"  # TRUSTED_PROXIES is a useful variable when using Docker and/or a reverse proxy. Set it to ** and reverse proxies work just fine.
+      ## debug, info, notice, warning, error, critical, alert, emergency
+      LOG_LEVEL: info
+      ## TRUSTED_PROXIES is a useful variable when using Docker and/or a
+      ## reverse proxy. Set it to ** and reverse proxies work just fine.
+      TRUSTED_PROXIES: "**"
       # ASSET_URL:
       ENABLE_MAIL_REPORT: "true"
       EXPECT_SECURE_URL: "true"
@@ -1777,8 +1889,10 @@ services:
       - "traefik.http.services.firefly-importer-svc.loadbalancer.server.port=8080"
 
   ## Portfolio Performance
-  ## Issue with installation - /startapp.sh: cd: line 2: can't cd to /opt/portfolio/workspace: No such file or directory
-  ## Need to change the startapp.sh to reference something other than /workspace because /opt/portfolio exists
+  ## Issue with installation - /startapp.sh: cd: line 2: can't cd to
+  ## /opt/portfolio/workspace: No such file or directory
+  ## Need to change the startapp.sh to reference something other than
+  ## /workspace because /opt/portfolio exists
   # portfolio:
   #   <<: *common-keys-apps
   #   image: ghcr.io/devben-io/docker-portfolio/docker-portfolio:latest
@@ -1806,13 +1920,15 @@ services:
   #     - "traefik.http.routers.portfolio-rtr.service=portfolio-svc"
   #     - "traefik.http.services.portfolio-svc.loadbalancer.server.port=$PORTFOLIO_PORT"
 
-  ## Whoami - Tiny Go webserver that prints os information and HTTP request to output
+  ## Whoami
+  ## Tiny Go webserver that prints os information and HTTP request to output
   whoami:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top
     container_name: whoami
     image: containous/whoami
     environment:
-      WHOAMI_PORT_NUMBER: $WHOAMI_PORT  # Not currently working on port other than 80
+      ## Not currently working on port other than 80
+      WHOAMI_PORT_NUMBER: $WHOAMI_PORT
       WHOAMI_NAME: WhoAmI
     labels:
       - "traefik.enable=true"
@@ -1836,9 +1952,10 @@ services:
       - "traefik.http.routers.whoami-authentik-rtr.service=whoami-svc"
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=$WHOAMI_PORT"
 
+
   ############################## VPN
 
-  # Wireguard - Fast, modern, secure VPN tunnel
+  ## Wireguard - Fast, modern, secure VPN tunnel
   wireguard:
     <<: *common-keys-core  # See EXTENSION FIELDS at the top
     container_name: wireguard
@@ -1874,14 +1991,16 @@ services:
       - "traefik.enable=true"
       ## UDP Routers
       - "traefik.udp.routers.wireguard-udp.entrypoints=wireguard"
-      # - "traefik.udp.routers.wireguard-udp.rule=Host(`vpn.$DOMAINNAME0`)"  # Rules cannot be used with UDP routers at this time - https://doc.traefik.io/traefik/routing/routers/#configuring-udp-routers
+      ## Rules cannot be used with UDP routers at this time
+      ## https://doc.traefik.io/traefik/routing/routers/#configuring-udp-routers
+      # - "traefik.udp.routers.wireguard-udp.rule=Host(`vpn.$DOMAINNAME0`)"
       ## Middlewares
       # - "traefik.udp.routers.wireguard-udp.middlewares=chain-no-auth@file"
       ## UDP Services
       - "traefik.udp.routers.wireguard-udp.service=wireguard-udp-svc"
       - "traefik.udp.services.wireguard-udp-svc.loadbalancer.server.port=$WIREGUARD_PORT"
 
-  # Gluetun - VPN client in a thin Docker container
+  ## Gluetun - VPN client in a thin Docker container
   gluetun:
     image: ghcr.io/qdm12/gluetun:latest
     container_name: gluetun
@@ -1894,7 +2013,8 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - $GLUETUN_HTTP_CONTROL_SERVER_PORT:$GLUETUN_HTTP_CONTROL_SERVER_PORT
-      - $QBITTORRENT_PORT:$QBITTORRENT_PORT  # qBittorrent web UI
+      ## qBittorrent web UI
+      - $QBITTORRENT_PORT:$QBITTORRENT_PORT
     volumes:
       - $APPDIR/gluetun:/gluetun
     environment:
@@ -1904,7 +2024,9 @@ services:
       # OpenVPN:
       OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
-      OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
+      ## Fix "WARN [openvpn] 'link-mtu' is used inconsistently"
+      ## See https://github.com/qdm12/gluetun/discussions/666
+      OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       # Wireguard:
@@ -1914,16 +2036,18 @@ services:
       SERVER_CITIES: $GLUETUN_SERVER_CITIES
       SERVER_HOSTNAMES: $GLUETUN_SERVER_HOSTNAMES
       TZ: $TZ
-      UPDATER_PERIOD: "24h"  # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_HTTP_CONTROL_SERVER_PORT"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
     labels:
-      - "com.centurylinklabs.watchtower.enable=false"  # Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      ## Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      - "com.centurylinklabs.watchtower.enable=false"
 
-  # Gluetun - VPN client in a thin Docker container
-  # gluetun-private is used for private trackers
+  ## Gluetun - VPN client in a thin Docker container
+  ## gluetun-private is used for private trackers
   gluetun-private:
     image: ghcr.io/qdm12/gluetun:latest
     container_name: gluetun-private
@@ -1937,7 +2061,8 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - $GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT:$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT
-      - $QBITTORRENT_PRIVATE_PORT:$QBITTORRENT_PRIVATE_PORT  # qBittorrent web UI
+      ## qBittorrent web UI
+      - $QBITTORRENT_PRIVATE_PORT:$QBITTORRENT_PRIVATE_PORT
     volumes:
       - $APPDIR/gluetun:/gluetun
     environment:
@@ -1947,7 +2072,9 @@ services:
       # OpenVPN:
       OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
-      OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
+      ## Fix "WARN [openvpn] 'link-mtu' is used inconsistently"
+      ## See https://github.com/qdm12/gluetun/discussions/666
+      OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_PRIVATE_VPN_SERVICE_PROVIDER
       # Wireguard:
@@ -1957,16 +2084,18 @@ services:
       SERVER_CITIES: $GLUETUN_PRIVATE_SERVER_CITIES
       SERVER_HOSTNAMES: $GLUETUN_PRIVATE_SERVER_HOSTNAMES
       TZ: $TZ
-      UPDATER_PERIOD: "24h"  # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
     labels:
-      - "com.centurylinklabs.watchtower.enable=false"  # Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      ## Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      - "com.centurylinklabs.watchtower.enable=false"
 
-  # Gluetun - VPN client in a thin Docker container
-  # gluetun-private is used for private trackers
+  ## Gluetun - VPN client in a thin Docker container
+  ## gluetun-temp is used for temporary files
   gluetun-temp:
     image: ghcr.io/qdm12/gluetun:latest
     container_name: gluetun-temp
@@ -1980,7 +2109,8 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT:$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
-      - $QBITTORRENT_TEMP_PORT:$QBITTORRENT_TEMP_PORT  # qBittorrent web UI
+      ## qBittorrent web UI
+      - $QBITTORRENT_TEMP_PORT:$QBITTORRENT_TEMP_PORT
     volumes:
       - $APPDIR/gluetun:/gluetun
     environment:
@@ -1990,7 +2120,9 @@ services:
       # OpenVPN:
       OPENVPN_USER_SECRETFILE: /run/secrets/gluetun_openvpn_user
       OPENVPN_PASSWORD_SECRETFILE: /run/secrets/gluetun_openvpn_password
-      OPENVPN_FLAGS: "--comp-lzo"  # Fix "WARN [openvpn] 'link-mtu' is used inconsistently"; See https://github.com/qdm12/gluetun/discussions/666
+      ## Fix "WARN [openvpn] 'link-mtu' is used inconsistently"
+      ## See https://github.com/qdm12/gluetun/discussions/666
+      OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_TEMP_VPN_SERVICE_PROVIDER
       # Wireguard:
@@ -2000,52 +2132,20 @@ services:
       SERVER_CITIES: $GLUETUN_TEMP_SERVER_CITIES
       SERVER_HOSTNAMES: $GLUETUN_TEMP_SERVER_HOSTNAMES
       TZ: $TZ
-      UPDATER_PERIOD: "24h"  # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
     labels:
-      - "com.centurylinklabs.watchtower.enable=false"  # Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
-
-
-  ############################## SERVICES
-
-  ## Homebridge - Bringing HomeKit support where there is none
-  ## Note: currently not in use, only used for Nest thermostat
-  # homebridge:
-  #   image: oznu/homebridge:latest
-  #   container_name: homebridge
-  #   restart: unless-stopped
-  #   # ports:
-  #   #   - $HOMEBRIDGE_PORT:$HOMEBRIDGE_PORT
-  #   network_mode: host
-  #   # networks:
-  #   #   - t2_proxy  # Does not play nicely with Traefik
-  #   security_opt:
-  #     - no-new-privileges=true
-  #   volumes:
-  #     - $APPDIR/homebridge:/homebridge
-  #   environment:
-  #     <<: *default-tz-puid-pgid
-  #     HOMEBRIDGE_CONFIG_UI: 1
-  #     HOMEBRIDGE_CONFIG_UI_PORT: $HOMEBRIDGE_PORT
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.homebridge-rtr.entrypoints=https"
-  #     - "traefik.http.routers.homebridge-rtr.rule=Host(`home.$DOMAINNAME0`)"
-  #     ## Middlewares
-  #     #- "traefik.http.routers.homebridge-rtr.middlewares=chain-basic-auth@file"
-  #     - "traefik.http.routers.homebridge-rtr.middlewares=chain-authelia0@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.homebridge-rtr.service=homebridge-svc"
-  #     - "traefik.http.services.homebridge-svc.loadbalancer.server.port=$HOMEBRIDGE_PORT"
+      ## Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      - "com.centurylinklabs.watchtower.enable=false"
 
 
   ############################## NETWORK SERVICES
 
-  # Pi-Hole - Network-wide ad blocking
+  ## Pi-Hole - Network-wide ad blocking
   # pihole:
   #   ## Note: several steps must be taken to ensure compatability
   #   ## https://www.smarthomebeginner.com/run-pihole-in-docker-on-ubuntu-with-reverse-proxy/
@@ -2059,7 +2159,8 @@ services:
   #   volumes:
   #     - $APPDIR/pihole/etc/pihole:/etc/pihole
   #     - $APPDIR/pihole/etc/dnsmasq.d:/etc/dnsmasq.d
-  #     - $APPDIR/pihole/var/log/pihole.log:/var/log/pihole.log  # touch pihole.log first
+  #     ## touch pihole.log first
+  #     - $APPDIR/pihole/var/log/pihole.log:/var/log/pihole.log
   #   # cap_add:
   #   #   - NET_ADMIN
   #   environment:
@@ -2083,7 +2184,7 @@ services:
   #     - "traefik.http.routers.pihole-rtr.service=pihole-svc"
   #     - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
 
-  # Unbound - A validating, recursive, and caching DNS resolver
+  ## Unbound - A validating, recursive, and caching DNS resolver
   unbound:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: klutchell/unbound:latest
@@ -2093,8 +2194,8 @@ services:
       - $UNBOUND_PORT:53/udp
     volumes:
       - $APPDIR/unbound/config:/opt/unbound/etc/unbound/
-      ## Update $APPDIR/unbound/config/root.hints using (from $DOCKERDIR)
-      ##   wget https://www.internic.net/domain/named.cache -O ./appdata/unbound/config/root.hints
+      ## Update $APPDIR/unbound/config/root.hints (from $DOCKERDIR) using
+      ## `wget https://www.internic.net/domain/named.cache -O ./appdata/unbound/config/root.hints`
     healthcheck:
       test: ["CMD", "dig", "ietf.org", "@127.0.0.1", "-p", "53"]
       interval: 30s
@@ -2102,15 +2203,17 @@ services:
       retries: 3
       start_period: 10s
 
-  # NTP - NTP server running in a Docker container (without the priviledged flag)
+  ## NTP - NTP server running in a Docker container (without the priviledged flag)
+  ## NTP server
+  ## Query the NTP server: ntpdate -q mint.home.arpa
+  ## Check sources: docker exec ntp chronyc sources
+  ## View source stats: docker exec ntp chronyc sourcestats
+  ## View NPT status: docker exec ntp chronyc tracking
+  ## Automatically update system time (Linux):
+  ## https://winaero.com/how-to-set-time-from-the-internet-ntp-in-linux-mint-17/
+  ## Automatically update system time (Windows):
+  ## https://winaero.com/configure-internet-time-ntp-options-in-windows-10/
   ntp:
-    ## NTP server
-    ## Query the NTP server: ntpdate -q mint.home.arpa
-    ## Check sources: docker exec ntp chronyc sources
-    ## View source stats: docker exec ntp chronyc sourcestats
-    ## View NPT status: docker exec ntp chronyc tracking
-    ## Automatically update system time (Linux): https://winaero.com/how-to-set-time-from-the-internet-ntp-in-linux-mint-17/
-    ## Automatically update system time (Windows): https://winaero.com/configure-internet-time-ntp-options-in-windows-10/
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: cturra/ntp:latest
     container_name: ntp
@@ -2119,11 +2222,13 @@ services:
       - $NTP_PORT:123/udp
     environment:
       NTP_SERVERS: $NTP_SERVERS
-      LOG_LEVEL: 1  # 0 (informational), 1 (warning), 2 (non-fatal error), and 3 (fatal error)
+      ## 0 (info), 1 (warning), 2 (non-fatal error), and 3 (fatal error)
+      LOG_LEVEL: 1
 
 
   ############################## MINECRAFT
 
+  ## Minecraft - Minecraft server
   # minecraft:
   #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
   #   image: itzg/minecraft-server:java8
@@ -2139,25 +2244,31 @@ services:
   #     - default
   #   volumes:
   #     - $APPDIR/minecraft/technic/data:/data
-  #     - $APPDIR/minecraft/technic/worlds:/worlds:ro # Mount as read-only to ensure integrity
-  #     ## Ensure you specify different volumes for different worlds: https://github.com/itzg/docker-minecraft-server/blob/master/README.md#data-directory
+  #     ## Mount as read-only to ensure integrity
+  #     - $APPDIR/minecraft/technic/worlds:/worlds:ro
+  #     ## Ensure you specify different volumes for different worlds:
+  #     ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#data-directory
   #   environment:
   #     # UID: $PUID
   #     # GID: $PGID
   #     TZ: $TZ
   #     EULA: TRUE
   #     # MEMORY: 6G
-  #     INIT_MEMORY: 1G  # independently sets the initial heap size
-  #     MAX_MEMORY: 6G  # independently sets the max heap size
+  #     INIT_MEMORY: 1G  # Independently sets the initial heap size
+  #     MAX_MEMORY: 6G  # Independently sets the max heap size
   #     VERSION: 1.12.2  # LATEST, SNAPSHOT, <SPECIFIC VERSION #>
   #     TYPE: FORGE
   #     FORGEVERSION: 14.23.5.2855
   #     # OVERRIDE_SERVER_PROPERTIES: true
-  #     # FORCE_WORLD_COPY: TRUE  # Will overwrite the world on server start
-  #     # WORLD: /worlds/backups/world_backup  # Read the world from the folder my_world
-  #     # WORLD: http://www.example.com/worlds/MySave.zip  # Read the world from a URL
+  #     ## Will overwrite the world on server start
+  #     # FORCE_WORLD_COPY: TRUE
+  #     ## Read the world from the folder my_world
+  #     # WORLD: /worlds/backups/world_backup
+  #     ## Read the world from a URL
+  #     # WORLD: http://www.example.com/worlds/MySave.zip
   #     SERVER_NAME: NUC_Server
-  #     # SERVER_PORT: $MINECRAFT_PORT  # Dangerous to change if you don't know what you're doing
+  #     ## Dangerous to change if you don't know what you're doing
+  #     # SERVER_PORT: $MINECRAFT_PORT
   #     DIFFICULTY: 1  # peaceful, easy, normal, hard
   #     WHITELIST: $MINECRAFT_USER_LIST  # Allow-listed players
   #     OPS: $MINECRAFT_USER_LIST  # Op/Administrator players
@@ -2165,33 +2276,50 @@ services:
   #     # OVERRIDE_ICON: TRUE  # Override the icon on server startup
   #     MAX_PLAYERS: 10  # Default :  20
   #     # MAX_WORLD_SIZE: 10000  # Max world radius in chunks
-  #     # ALLOW_NETHER: true  # Allow or disallow nether
-  #     ANNOUNCE_PLAYER_ACHIEVEMENTS: true  # Set server to announce player achievements
-  #     ENABLE_COMMAND_BLOCK: false  # Allow or disallow command blocks
-  #     # FORCE_GAMEMODE: false  # Force players to join in the default game mode. false Players will join in the gamemode they left in. true Players will always join in the default gamemode.
-  #     GENERATE_STRUCTURES: true  # Defines whether structures (such as villages) will be generated
-  #     HARDCORE: false  # If set to true, players will be set to spectator mode if they die
-  #     SNOOPER_ENABLED: false  # If set to false, the server will not send data to snoop.minecraft.net server.
-  #     MAX_BUILD_HEIGHT: 256  # Terrain may still naturally generate above a low height limit
-  #     MAX_TICK_TIME: -1  # In milliseconds, -1 to disable. Should be max 50 (0.05s). Considering it to be crashed, server will forcibly shutdown.
-  #     SPAWN_ANIMALS: true  # Determines if animals will be able to spawn
-  #     SPAWN_MONSTERS: true  # Determines if monsters will be spawned
-  #     SPAWN_NPCS: true  # Determines if villagers will be spawned
-  #     SPAWN_PROTECTION: 50  # Sets the area that non-ops can not edit (0 to disable)
-  #     VIEW_DISTANCE: 10  # Sets the amount of world data the server sends the client, measured in chunks in each direction of the player (radius, not diameter). It determines the server-side viewing distance.
-  #     SEED: -9075357542416790126  # Ensure quotes are used if negative
+  #     # ALLOW_NETHER: true
+  #     ANNOUNCE_PLAYER_ACHIEVEMENTS: true
+  #     ENABLE_COMMAND_BLOCK: false
+  #     # FORCE_GAMEMODE: false
+  #     GENERATE_STRUCTURES: true
+  #     ## If set to true, players will be set to spectator mode if they die
+  #     HARDCORE: false
+  #     ## If set to false, the server will not send data to snoop.minecraft.net
+  #     ## server.
+  #     SNOOPER_ENABLED: false
+  #     ## Terrain may still naturally generate above a low height limit
+  #     MAX_BUILD_HEIGHT: 256
+  #     ## In milliseconds, -1 to disable. Should be max 50 (0.05s). Considering
+  #     ## it to be crashed, server will forcibly shutdown.
+  #     MAX_TICK_TIME: -1
+  #     SPAWN_ANIMALS: true
+  #     SPAWN_MONSTERS: true
+  #     SPAWN_NPCS: true
+  #     SPAWN_PROTECTION: 50
+  #     ## Sets the amount of world data the server sends the client, measured in
+  #     ## chunks in each direction of the player (radius, not diameter). It
+  #     ## determines the server-side viewing distance.
+  #     VIEW_DISTANCE: 10
+  #     SEED: "-9075357542416790126"  # Ensure quotes are used if negative
   #     # MODE: survival  # creative, survival, adventure. Default: survival
-  #     MOTD: "The §c§lspiceest§r Minecraft server"  # The message of the day, shown below each server entry in the UI
-  #     PVP: true  # Default: true. Set to false to disable PVP
-  #     LEVEL_TYPE: BIOMESOP  # DEFAULT, FLAT, LARGEBIOMES, AMPLIFIED, CUSTOMIZED, BUFFET
+  #     MOTD: "The §c§lspiceest§r Minecraft server"
+  #     PVP: true
+  #     ## DEFAULT, FLAT, LARGEBIOMES, AMPLIFIED, CUSTOMIZED, BUFFET
+  #     LEVEL_TYPE: BIOMESOP
   #     ## Can be paired with GENERATOR_SETTINGS for further customization
   #     # GENERATOR_SETTINGS: '3;minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;2;'
-  #     # RESOURCE_PACK: 'http\://link.com/to/pack.zip?\: 1'  # NOTE: : and :  must be escaped using \. The checksum is plain-text hexadecimal
+  #     ## NOTE: : and :  must be escaped using \. The checksum is plain-text
+  #     ## hexadecimal
+  #     # RESOURCE_PACK: 'http\://link.com/to/pack.zip?\: 1'
   #     # RESOURCE_PACK_SHA1: 'd5db29cd03a2ed055086cef9c31c252b4587d6d0'
-  #     ## Use the LEVEL option to specify multiple worlds. NOTE: if running multiple containers be sure to specify a different -v host directory for each LEVEL
-  #     LEVEL: world  # Default: world. You can either switch between world saves or run multiple containers with different saves by using the LEVEL option, where the default is "world"
-  #     ONLINE_MODE: TRUE  # If you want to create an offline server or your server is not connected to the internet, you can disable the server to try connecting to minecraft.net to authenticate players.
-  #     ALLOW_FLIGHT: TRUE  # Allow or disallow flight
+  #     ## Use the LEVEL option to specify multiple worlds. NOTE: if running
+  #     ## multiple containers be sure to specify a different -v host directory
+  #     ## for each LEVEL
+  #     ## Default: world. You can either switch between world saves or run
+  #     ## multiple containers with different saves by using the LEVEL option,
+  #     ## where the default is "world"
+  #     LEVEL: world
+  #     ONLINE_MODE: TRUE
+  #     ALLOW_FLIGHT: TRUE
   #     ## Set RCON settings
   #     ENABLE_RCON: true
   #     RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
@@ -2215,14 +2343,24 @@ services:
   #     # STOP_SERVER_ANNOUNCE_DELAY: 30
   #     ENABLE_ROLLING_LOGS: true
   #     ## Set up autopause for server usage optimization
-  #     ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#autopause for more information
-  #     ## MAX_TICK_TIME must be set to an arbitrarily large number or disabled (-1) to allow for autopause
+  #     ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#autopause
+  #     ## MAX_TICK_TIME must be set to an arbitrarily large number or disabled
+  #     ## (-1) to allow for autopause
   #     ENABLE_AUTOPAUSE: TRUE
-  #     # AUTOPAUSE_TIMEOUT_EST: 3600  # Default: 3600. Time between the last client disconnect and the pausing of the process
-  #     # AUTOPAUSE_TIMEOUT_INIT: 600  # Default: 600. Time between server start and the pausing of the process, when no client connects inbetween
-  #     # AUTOPAUSE_TIMEOUT_KN: 120  # Default: 120. Time between knocking of the port (e.g. by the main menu ping) and the pausing of the process, when no client connects inbetween
-  #     # AUTOPAUSE_PERIOD: 10  # Default: 10. Period of the daemonized state machine, that handles the pausing of the process (resuming is done independently)
-  #     # AUTOPAUSE_KNOCK_INTERFACE: eth0  # See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#enabling-autopause for more information
+  #     ## Default: 3600. Time between the last client disconnect and the pausing
+  #     ## of the process
+  #     # AUTOPAUSE_TIMEOUT_EST: 3600
+  #     ## Default: 600. Time between server start and the pausing of the
+  #     ## process, when no client connects inbetween
+  #     # AUTOPAUSE_TIMEOUT_INIT: 600
+  #     ## Default: 120. Time between knocking of the port (e.g. by the main menu
+  #     # ping) and the pausing of the process, when no client connects inbetween
+  #     # AUTOPAUSE_TIMEOUT_KN: 120
+  #     ## Default: 10. Period of the daemonized state machine, that handles the
+  #     ## pausing of the process (resuming is done independently)
+  #     # AUTOPAUSE_PERIOD: 10
+  #     ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#enabling-autopause
+  #     # AUTOPAUSE_KNOCK_INTERFACE: eth0
   #     ## enp4s0, eth0, lo, eno1, docker0, br-ab276aa20945, br-4d480c1adff5, t2_proxy
   #   # labels:
   #   #   - "traefik.enable=true"
@@ -2237,6 +2375,7 @@ services:
   #   #   - "traefik.http.routers.minecraft-rtr.service=minecraft-svc"
   #   #   - "traefik.http.services.minecraft-svc.loadbalancer.server.port=$MINECRAFT_PORT"
 
+  ## Minecraft Backup - Backup Minecraft worlds
   # mc-backup:
   #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
   #   image: itzg/mc-backup:latest
@@ -2260,6 +2399,8 @@ services:
   #     - $APPDIR/minecraft/technic/data:/data:ro
   #     - $APPDIR/minecraft/mc-backups:/backups
 
+  ## Minecraft RCON
+  ## Issue commands issued to the server via a "remote console", or RCON
   # minecraft-rcon:
   #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
   #   image: itzg/rcon:latest
@@ -2292,8 +2433,8 @@ services:
   #     - "traefik.http.routers.minecraft-rcon-websocket-rtr.service=minecraft-rcon-websocket-svc"
   #     - "traefik.http.services.minecraft-rcon-websocket-svc.loadbalancer.server.port=4327"
 
-  # BlueBubbles - Bringing iMessage to Windows, Linux, and Android
-  # Stopped due to issues with keeping the container alive and usable
+  ## BlueBubbles - Bringing iMessage to Windows, Linux, and Android
+  ## Stopped due to issues with keeping the container alive and usable
   # bluebubbles-setup:
   #   <<: *common-keys-apps
   #   security_opt:
@@ -2322,8 +2463,8 @@ services:
   #     - /tmp/.X11-unix:/tmp/.X11-unix
   #     - $DATADIR/docker/bluebubbles/maindisk.qcow2:/image
 
-  # BlueBubbles - Bringing iMessage to Windows, Linux, and Android
-  # Stopped due to issues with keeping the container alive and usable
+  ## BlueBubbles - Bringing iMessage to Windows, Linux, and Android
+  ## Stopped due to issues with keeping the container alive and usable
   # bluebubbles:
   #   <<: *common-keys-apps
   #   security_opt:
@@ -2338,7 +2479,8 @@ services:
   #   devices:
   #     - /dev/kvm
   #   ports:
-  #     - $BLUEBUBBLES_VNC_PORT:$BLUEBUBBLES_VNC_PORT  # Must connect to the server via VPN to have access to VNC
+  #     ## Must connect to the server via VPN to have access to VNC
+  #     - $BLUEBUBBLES_VNC_PORT:$BLUEBUBBLES_VNC_PORT
   #     - $BLUEBUBBLES_SERVER_PORT:$BLUEBUBBLES_SERVER_PORT
   #     - 50922:10022
   #   # dns:
@@ -2372,9 +2514,11 @@ services:
 
   ############################## MEDIA SERVER
 
-  # qBittorrent - an open-source software alternative to µTorrent
+  ## qBittorrent - an open-source software alternative to µTorrent
   qbit:
-    # <<: *common-keys-apps  # We do not want this to be able to communicate locally (except as specified)
+    ## We do not want this to be able to communicate locally (except as
+    ## specified)
+    # <<: *common-keys-apps
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbit
     security_opt:
@@ -2392,22 +2536,30 @@ services:
       GLUETUN_HTTP_CONTROL_SERVER_PORT: $GLUETUN_HTTP_CONTROL_SERVER_PORT
     volumes:
       - $APPDIR/qbittorrent/config:/config
-      - $APPDIR/qbittorrent/scripts:/scripts:ro  # Add scripts
-      - $APPDIR/qbittorrent/persistent:/persistent  # Space for persistent storage
-      - $APPDIR/qbittorrent/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
+      ## Add scripts
+      - $APPDIR/qbittorrent/scripts:/scripts:ro
+      ## Space for persistent storage
+      - $APPDIR/qbittorrent/persistent:/persistent
+      ## Add init scripts
+      - $APPDIR/qbittorrent/custom-cont-init.d:/custom-cont-init.d:ro
       - $APPDIR/qbittorrent/custom-services.d:/custom-services.d:ro
-      - $DATADIR/torrents:/data/torrents  # Final home for data
-      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
+      ## Final home for data
+      - $DATADIR/torrents:/data/torrents
+      ## Allows for local download before transfer
+      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents
     secrets:
       - qbittorrent_user
       - qbittorrent_pass
-    labels:  # Define connection via traefik rules
-      - "com.centurylinklabs.watchtower.enable=false"  # Ensure constant connectivity is prioritized for trackers
+    labels:
+      ## Ensure constant connectivity is prioritized for trackers
+      - "com.centurylinklabs.watchtower.enable=false"
 
-  # qBittorrent - an open-source software alternative to µTorrent
-  # qbit-private is used for private trackers
+  ## qBittorrent - an open-source software alternative to µTorrent
+  ## qbit-private is used for private trackers
   qbit-private:
-    # <<: *common-keys-apps  # We do not want this to be able to communicate locally (except as specified)
+    ## We do not want this to be able to communicate locally (except as
+    ## specified)
+    # <<: *common-keys-apps
     image: lscr.io/linuxserver/qbittorrent:4.6.2
     container_name: qbit-private
     security_opt:
@@ -2425,22 +2577,30 @@ services:
       GLUETUN_HTTP_CONTROL_SERVER_PORT: $GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT
     volumes:
       - $APPDIR/qbittorrent-private/config:/config
-      - $APPDIR/qbittorrent-private/scripts:/scripts:ro  # Add scripts
-      - $APPDIR/qbittorrent-private/persistent:/persistent  # Space for persistent storage
-      - $APPDIR/qbittorrent-private/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
+      ## Add scripts
+      - $APPDIR/qbittorrent-private/scripts:/scripts:ro
+      ## Space for persistent storage
+      - $APPDIR/qbittorrent-private/persistent:/persistent
+      ## Add init scripts
+      - $APPDIR/qbittorrent-private/custom-cont-init.d:/custom-cont-init.d:ro
       - $APPDIR/qbittorrent-private/custom-services.d:/custom-services.d:ro
-      - $DATADIR/torrents-private:/data/torrents-private  # Final home for data
-      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
+      ## Final home for data
+      - $DATADIR/torrents-private:/data/torrents-private
+      ## Allows for local download before transfer
+      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents
     secrets:
       - qbittorrent_user
       - qbittorrent_pass
-    labels:  # Define connection via traefik rules
-      - "com.centurylinklabs.watchtower.enable=false"  # Ensure constant connectivity is prioritized for trackers
+    labels:
+      ## Ensure constant connectivity is prioritized for trackers
+      - "com.centurylinklabs.watchtower.enable=false"
 
-  # qBittorrent - an open-source software alternative to µTorrent
-  # qbit-private is used for private trackers
+  ## qBittorrent - an open-source software alternative to µTorrent
+  ## qbit-private is used for private trackers
   qbit-temp:
-    # <<: *common-keys-apps  # We do not want this to be able to communicate locally (except as specified)
+    ## We do not want this to be able to communicate locally (except as
+    ## specified)
+    # <<: *common-keys-apps
     image: lscr.io/linuxserver/qbittorrent:4.6.2
     container_name: qbit-temp
     security_opt:
@@ -2458,19 +2618,25 @@ services:
       GLUETUN_HTTP_CONTROL_SERVER_PORT: $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
     volumes:
       - $APPDIR/qbittorrent-temp/config:/config
-      - $APPDIR/qbittorrent-temp/scripts:/scripts:ro  # Add scripts
-      - $APPDIR/qbittorrent-temp/persistent:/persistent  # Space for persistent storage
-      - $APPDIR/qbittorrent-temp/custom-cont-init.d:/custom-cont-init.d:ro  # Add init scripts
+      ## Add scripts
+      - $APPDIR/qbittorrent-temp/scripts:/scripts:ro
+      ## Space for persistent storage
+      - $APPDIR/qbittorrent-temp/persistent:/persistent
+      ## Add init scripts
+      - $APPDIR/qbittorrent-temp/custom-cont-init.d:/custom-cont-init.d:ro
       - $APPDIR/qbittorrent-temp/custom-services.d:/custom-services.d:ro
-      - $DATADIR/torrents-private:/data/torrents-private  # Final home for data
-      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents  # Allows for local download before transfer
+      ## Final home for data
+      - $DATADIR/torrents-private:/data/torrents-private
+      ## Allows for local download before transfer
+      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents
     secrets:
       - qbittorrent_user
       - qbittorrent_pass
-    labels:  # Define connection via traefik rules
-      - "com.centurylinklabs.watchtower.enable=false"  # Ensure constant connectivity is prioritized for trackers
+    labels:
+      ## Ensure constant connectivity is prioritized for trackers
+      - "com.centurylinklabs.watchtower.enable=false"
 
-  # Tautulli - Plex Media Server monitoring, analytics, and notifications
+  ## Tautulli - Plex Media Server monitoring, analytics, and notifications
   tautulli:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top
     image: lscr.io/linuxserver/tautulli:latest

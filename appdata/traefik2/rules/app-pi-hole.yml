@@ -1,3 +1,4 @@
+---
 http:
   routers:
     pi-hole-rtr:
@@ -18,4 +19,6 @@ http:
     pi-hole-svc:
       loadBalancer:
         servers:
+          ## Or whatever your external host's IP:port is
           - url: 'http://pihole.home.arpa'
+...

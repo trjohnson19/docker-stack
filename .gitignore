@@ -172,8 +172,8 @@ appdata/unbound/config/*
 !.github/*
 
 # Include the .vscode directory
-.vscode
-.vscode/*
+!.vscode
+!.vscode/*
 
 # Exclude the secrets directory
 secrets

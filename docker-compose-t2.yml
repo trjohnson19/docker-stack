@@ -1604,7 +1604,6 @@ services:
     image: nextcloud:28
     # ports:
     #   - 443:443
-    hostname: drive.$DOMAINNAME0
     volumes:
       - $APPDIR/nextcloud:/var/www/html
       - $APPDIR/nextcloud/custom_apps:/var/www/html/custom_apps

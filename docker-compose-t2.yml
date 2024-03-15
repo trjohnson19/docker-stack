@@ -41,8 +41,8 @@ networks:
 secrets:
   authelia_duo_api_secret_key:
     file: $SECRETSDIR/authelia_duo_api_secret_key
-  authelia_jwt_secret:  # https://www.grc.com/passwords.htm
-    file: $SECRETSDIR/authelia_jwt_secret
+  authelia_identity_validation_reset_password_jwt_secret_file:  # https://www.grc.com/passwords.htm
+    file: $SECRETSDIR/authelia_identity_validation_reset_password_jwt_secret_file
   authelia_notifier_smtp_password:
     file: $SECRETSDIR/authelia_notifier_smtp_password
   authelia_session_redis_password:
@@ -482,37 +482,39 @@ services:
   ############################## SECURITY
 
   ## Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  ## For configuration file template see
+  ## https://github.com/authelia/authelia/blob/master/config.template.yml
   authelia:  # First instance for DOMAINNAME0
     <<: *common-keys-core
     container_name: authelia
     ## Check this before upgrading:
     ## https://github.com/authelia/authelia#breaking-changes
-    image: ghcr.io/authelia/authelia:4.37
-    # depends_on:
-    #   - traefik
+    image: ghcr.io/authelia/authelia:4.38
     # ports:
     #   - "$AUTHELIA_PORT:$AUTHELIA_PORT"
     #   - "$AUTHELIA_TELEMETRY_PORT:$AUTHELIA_TELEMETRY_PORT"  # Telemetry data
+    ## Allow for separate configuration and acl configuration files
+    ## See https://www.authelia.com/configuration/methods/files/#docker-compose
     volumes:
-      ## Set the first configuration file
-      - $APPDIR/authelia/configuration0.yml:/config/configuration.yml
-      ## Set the users database
+      - $APPDIR/authelia/configuration.yml:/config/configuration.yml
+      - $APPDIR/authelia/configuration.acl.yml:/config/configuration.acl.yml
       - $APPDIR/authelia/users_database.yml:/config/users_database.yml
     environment:
       ## Using PUID:PGID causes container to be unable to read secrets
       # <<: *default-tz-puid-pgid
       TZ: $TZ
-      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
       AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
       ## yamllint disable rule:line-length
-      AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
-      AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
-      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
+      X_AUTHELIA_CONFIG: /config/configuration.yml,/config/configuration.acl.yml
       AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/secrets/authelia_identity_validation_reset_password_jwt_secret_file
+      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
+      AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
       AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+      AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
       ## yamllint enable rule:line-length
     secrets:
-      - authelia_jwt_secret
+      - authelia_identity_validation_reset_password_jwt_secret_file
       - authelia_session_secret
       - authelia_session_redis_password
       - authelia_storage_mysql_password

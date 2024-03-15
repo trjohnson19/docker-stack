@@ -49,16 +49,22 @@ http:
           server: ""
 
 
+    ## Documentation: https://www.authelia.com/integration/proxies/traefik/
     middlewares-authelia:
       forwardAuth:
         ## yamllint disable-line rule:line-length
-        address: 'http://authelia0:9091/api/verify?rd=https://auth.{{env "DOMAINNAME0"}}'
+        address: 'http://authelia:9091/api/authz/forward-auth'
+        ## The following commented line is for configuring the Authelia URL in the proxy. We strongly suggest this is
+        ## configured in the Session Cookies section of the Authelia configuration.
+        # address: 'https://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2Fauth.{{env "DOMAINNAME0"}}%2F'
         trustForwardHeader: true
         authResponseHeaders:
+          - "Authorization"
+          - "Proxy-Authorization"
           - "Remote-User"
           - "Remote-Groups"
-          - "Remote-Name"
           - "Remote-Email"
+          - "Remote-Name"
 
 
     middlewares-keycloak:

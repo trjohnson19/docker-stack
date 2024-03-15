@@ -95,7 +95,7 @@ access_control:
       policy: bypass
 
     # Add extra security to Vaultwarden admin page
-    - domain: 
+    - domain:
         - vault.example.com
       resources:
         - "admin"
@@ -114,7 +114,7 @@ access_control:
       policy: bypass
 
     # Bypass to allow healthcheck to work
-    - domain: 
+    - domain:
         - traefik.example.com
       resources:
         - "ping"

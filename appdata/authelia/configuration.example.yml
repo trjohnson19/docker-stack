@@ -260,7 +260,7 @@ duo_api:
   hostname: 'api-12345678.duosecurity.com'
   integration_key: 'ABCDEF'
   ## Secret can also be set using a secret: https://www.authelia.com/c/secrets
-  # secret_key: '1234567890abcdefghifjkl'
+  # secret_key: '1234567890abcdefghifjkl'  #gitleaks:allow
   enable_self_enrollment: false
 
 ##
@@ -430,7 +430,7 @@ authentication_backend:
       ## The private key used with the certificate_chain if the server requests TLS Client Authentication
       ## i.e. Mutual TLS.
       # private_key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh
@@ -767,7 +767,7 @@ session:
       ## The private key used with the certificate_chain if the server requests TLS Client Authentication
       ## i.e. Mutual TLS.
       # private_key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh
@@ -912,7 +912,7 @@ storage:
       ## The private key used with the certificate_chain if the server requests TLS Client Authentication
       ## i.e. Mutual TLS.
       # private_key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh
@@ -995,7 +995,7 @@ storage:
       ## The private key used with the certificate_chain if the server requests TLS Client Authentication
       ## i.e. Mutual TLS.
       # private_key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh
@@ -1113,7 +1113,7 @@ notifier:
       ## The private key used with the certificate_chain if the server requests TLS Client Authentication
       ## i.e. Mutual TLS.
       # private_key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh
@@ -1136,7 +1136,7 @@ notifier:
   # oidc:
     ## The hmac_secret is used to sign OAuth2 tokens (authorization code, access tokens and refresh tokens).
     ## HMAC Secret can also be set using a secret: https://www.authelia.com/c/secrets
-    # hmac_secret: 'this_is_a_secret_abc123abc123abc'
+    # hmac_secret: 'this_is_a_secret_abc123abc123abc'  #gitleaks:allow
 
     ## The JWK's issuer option configures multiple JSON Web Keys. It's required that at least one of the JWK's
     ## configured has the RS256 algorithm. For RSA keys (RS or PS) the minimum is a 2048 bit key.
@@ -1154,7 +1154,7 @@ notifier:
 
       ## Required Private Key in PEM DER form.
       # key: |
-        # -----BEGIN RSA PRIVATE KEY-----
+        # -----BEGIN RSA PRIVATE KEY-----  #gitleaks:allow
         # MIIBPAIBAAJBAK2i7RlJEYo/Xa6mQmv9zmT0XUj3DcEhRJGPVw2qMyadUFxNg/ZF
         # p7aTcToHMf00z6T3b7mwdBkCFQOL3Kb7WRcCAwEAAQJBAJdpB0+RQ9ZFwy9Uk38P
         # 5zZpUB8cL8ZFeEFluQeVbt0vyNa+cPLvDLouY87onduXtMz5AKIatLaTOjuG2thh

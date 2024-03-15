@@ -6,7 +6,7 @@ http:
       entryPoints:
         - https
       middlewares:
-        # - chain-authelia0
+        # - chain-authelia
         - chain-no-auth
       service: home-assistant-svc
       tls:

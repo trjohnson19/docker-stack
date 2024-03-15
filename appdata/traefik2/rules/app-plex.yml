@@ -13,7 +13,7 @@ http:
       entryPoints:
         - https
       middlewares:
-        - chain-authelia0
+        - chain-authelia
         - plex-stripprefix
       service: plex-svc
       tls:

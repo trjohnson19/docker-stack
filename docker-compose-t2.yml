@@ -484,7 +484,7 @@ services:
   ## Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
   ## For configuration file template see
   ## https://github.com/authelia/authelia/blob/master/config.template.yml
-  authelia:  # First instance for DOMAINNAME0
+  authelia:
     <<: *common-keys-core
     container_name: authelia
     ## Check this before upgrading:

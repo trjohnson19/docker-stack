@@ -377,7 +377,7 @@ services:
       - "traefik.http.routers.ping.service=ping@internal"
       ## Middlewares
       # - "traefik.http.routers.traefik0-rtr.middlewares=chain-basic-auth@file"
-      - "traefik.http.routers.traefik0-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.traefik0-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik1-rtr.middlewares=chain-authelia1@file"
 
   ## Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
@@ -449,7 +449,7 @@ services:
       - "traefik.http.routers.heimdall-rtr.rule=Host(`dash.$DOMAINNAME0`) || Host(`heimdall.$DOMAINNAME0`)"
       - "traefik.http.routers.heimdall-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.heimdall-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.heimdall-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
       - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
@@ -482,9 +482,9 @@ services:
   ############################## SECURITY
 
   ## Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
-  authelia0:  # First instance for DOMAINNAME0
+  authelia:  # First instance for DOMAINNAME0
     <<: *common-keys-core
-    container_name: authelia0
+    container_name: authelia
     ## Check this before upgrading:
     ## https://github.com/authelia/authelia#breaking-changes
     image: ghcr.io/authelia/authelia:4.37
@@ -522,14 +522,14 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.authelia0-rtr.entrypoints=https"
-      - "traefik.http.routers.authelia0-rtr.rule=Host(`auth.$DOMAINNAME0`)"
-      - "traefik.http.routers.authelia0-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.authelia-rtr.entrypoints=https"
+      - "traefik.http.routers.authelia-rtr.rule=Host(`auth.$DOMAINNAME0`)"
+      - "traefik.http.routers.authelia-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.authelia0-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
-      - "traefik.http.routers.authelia0-rtr.service=authelia0-svc"
-      - "traefik.http.services.authelia0-svc.loadbalancer.server.port=$AUTHELIA_PORT"
+      - "traefik.http.routers.authelia-rtr.service=authelia-svc"
+      - "traefik.http.services.authelia-svc.loadbalancer.server.port=$AUTHELIA_PORT"
 
   ## Keycloak - Open Source Identity and Access Management
   keycloak:
@@ -857,7 +857,7 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.tls.options=tls-opts@file"
       ## Middlewares
       # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
@@ -881,7 +881,7 @@ services:
       - "traefik.http.routers.adminer-rtr.tls.options=tls-opts@file"
       ## Middlewares
       # - "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.adminer-rtr.service=adminer-svc"
       - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
@@ -934,7 +934,7 @@ services:
       - "traefik.http.routers.rediscommander-rtr.rule=Host(`rediscom.$DOMAINNAME0`)"
       - "traefik.http.routers.rediscommander-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.rediscommander-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.rediscommander-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.rediscommander-rtr.service=rediscommander-svc"
       - "traefik.http.services.rediscommander-svc.loadbalancer.server.port=$REDISCOMMANDER_PORT"
@@ -1099,7 +1099,7 @@ services:
       - "traefik.http.routers.vscode-rtr.tls.options=tls-opts@file"
       ## Middlewares
       # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
-      - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.vscode-rtr.service=vscode-svc"
       - "traefik.http.services.vscode-svc.loadbalancer.server.port=8443"
@@ -1125,7 +1125,7 @@ services:
       - "traefik.http.routers.filebrowser-rtr.rule=Host(`fb.$DOMAINNAME0`)"
       - "traefik.http.routers.filebrowser-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.filebrowser-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.filebrowser-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.filebrowser-rtr.service=filebrowser-svc"
       - "traefik.http.services.filebrowser-svc.loadbalancer.server.port=80"
@@ -1160,7 +1160,7 @@ services:
       - "traefik.http.routers.guacamole-rtr.rule=Host(`guac.$DOMAINNAME0`)"
       - "traefik.http.routers.guacamole-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.guacamole-rtr.middlewares=chain-authelia0@file,guacamole-remove-bypass-cache,add-guacamole"
+      - "traefik.http.routers.guacamole-rtr.middlewares=chain-authelia@file,guacamole-remove-bypass-cache,add-guacamole"
       - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
       - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.forceSlash=false"
       - "traefik.http.middlewares.add-guacamole.addPrefix.prefix=/guacamole"
@@ -1209,7 +1209,7 @@ services:
       - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$DOMAINNAME0`)"
       - "traefik.http.routers.dozzle-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
       - "traefik.http.services.dozzle-svc.loadbalancer.server.port=$DOZZLE_PORT"
@@ -1248,7 +1248,7 @@ services:
       - "traefik.http.routers.glances-rtr.rule=Host(`glances.$DOMAINNAME0`)"
       - "traefik.http.routers.glances-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.glances-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.glances-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.glances-rtr.service=glances-svc"
       - "traefik.http.services.glances-svc.loadbalancer.server.port=61208"
@@ -1282,7 +1282,7 @@ services:
       - "traefik.http.routers.dupeguru-rtr.rule=Host(`dupe.$DOMAINNAME0`)"
       - "traefik.http.routers.dupeguru-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.dupeguru-rtr.middlewares=chain-authelia0@file,dupeguru-remove-bypass-cache"
+      - "traefik.http.routers.dupeguru-rtr.middlewares=chain-authelia@file,dupeguru-remove-bypass-cache"
       - "traefik.http.middlewares.dupeguru-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
       ## HTTP Services
       - "traefik.http.routers.dupeguru-rtr.service=dupeguru-svc"
@@ -1332,7 +1332,7 @@ services:
       - "traefik.http.routers.tdarr-rtr.rule=Host(`tdarr.$DOMAINNAME0`)"
       - "traefik.http.routers.tdarr-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.tdarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.tdarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.tdarr-rtr.service=tdarr-svc"
       - "traefik.http.services.tdarr-svc.loadbalancer.server.port=$TDARR_WEBUI_PORT"
@@ -1375,7 +1375,7 @@ services:
     #   - "traefik.http.routers.tdarr-node-rtr.entrypoints=https"
     #   - "traefik.http.routers.tdarr-node-rtr.rule=Host(`tdarr-node.$DOMAINNAME0`)"
     #   ## Middlewares
-    #   - "traefik.http.routers.tdarr-node-rtr.middlewares=chain-authelia0@file"
+    #   - "traefik.http.routers.tdarr-node-rtr.middlewares=chain-authelia@file"
     #   ## HTTP Services
     #   - "traefik.http.routers.tdarr-node-rtr.service=tdarr-node-svc"
     #   - "traefik.http.services.tdarr-node-svc.loadbalancer.server.port=$TDARR_NODE_PORT"
@@ -1440,7 +1440,7 @@ services:
       - "traefik.http.routers.gotify-rtr.rule=Host(`gotify.$DOMAINNAME0`)"
       - "traefik.http.routers.gotify-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.gotify-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.gotify-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.gotify-rtr.service=gotify-svc"
       - "traefik.http.services.gotify-svc.loadbalancer.server.port=$GOTIFY_SERVER_PORT"
@@ -1582,7 +1582,7 @@ services:
       - "traefik.http.routers.vaultwarden-rtr.rule=Host(`vault.$DOMAINNAME0`)"
       - "traefik.http.routers.vaultwarden-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.vaultwarden-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.vaultwarden-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.vaultwarden-rtr.service=vaultwarden-svc"
       - "traefik.http.services.vaultwarden-svc.loadbalancer.server.port=$VAULTWARDEN_PORT"
@@ -1800,7 +1800,7 @@ services:
       ## Note: possible issue before using Authelia, would need to configure
       ## /path for importer to bypass Authelia (/api/v1) - or just use
       ## http://firefly:$FIREFLY_PORT
-      - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.firefly-rtr.service=firefly-svc"
       - "traefik.http.services.firefly-svc.loadbalancer.server.port=8080"
@@ -1882,7 +1882,7 @@ services:
       - "traefik.http.routers.firefly-importer-rtr.rule=Host(`import.$DOMAINNAME0`)"
       - "traefik.http.routers.firefly-importer-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.firefly-importer-rtr.middlewares=chain-authelia0@file"  # Note: issue when using Authelia, default buffer size of 4096 not large enough, currently set to 8192
+      - "traefik.http.routers.firefly-importer-rtr.middlewares=chain-authelia@file"  # Note: issue when using Authelia, default buffer size of 4096 not large enough, currently set to 8192
       ## HTTP Services
       - "traefik.http.routers.firefly-importer-rtr.service=firefly-importer-svc"
       - "traefik.http.services.firefly-importer-svc.loadbalancer.server.port=8080"
@@ -1914,7 +1914,7 @@ services:
   #     - "traefik.http.routers.portfolio-rtr.entrypoints=https"
   #     - "traefik.http.routers.portfolio-rtr.rule=Host(`portfolio.$DOMAINNAME0`)"
   #     ## Middlewares
-  #     - "traefik.http.routers.portfolio-rtr.middlewares=chain-authelia0@file"
+  #     - "traefik.http.routers.portfolio-rtr.middlewares=chain-authelia@file"
   #     ## HTTP Services
   #     - "traefik.http.routers.portfolio-rtr.service=portfolio-svc"
   #     - "traefik.http.services.portfolio-svc.loadbalancer.server.port=$PORTFOLIO_PORT"
@@ -1932,9 +1932,9 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers  # Set to respond on multiple `whoami` domains
-      - "traefik.http.routers.whoami-authelia0-rtr.entrypoints=https"
-      - "traefik.http.routers.whoami-authelia0-rtr.rule=Host(`whoami-authelia.$DOMAINNAME0`)"
-      - "traefik.http.routers.whoami-authelia0-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.whoami-authelia-rtr.entrypoints=https"
+      - "traefik.http.routers.whoami-authelia-rtr.rule=Host(`whoami-authelia.$DOMAINNAME0`)"
+      - "traefik.http.routers.whoami-authelia-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.whoami-keycloak-rtr.entrypoints=https"
       - "traefik.http.routers.whoami-keycloak-rtr.rule=Host(`whoami-keycloak.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami-keycloak-rtr.tls.options=tls-opts@file"
@@ -1942,11 +1942,11 @@ services:
       - "traefik.http.routers.whoami-authentik-rtr.rule=Host(`whoami-authentik.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami-authentik-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.whoami-authelia0-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.whoami-authelia-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.whoami-keycloak-rtr.middlewares=chain-keycloak@file"
       - "traefik.http.routers.whoami-authentik-rtr.middlewares=chain-authentik@file"
       ## HTTP Services
-      - "traefik.http.routers.whoami-authelia0-rtr.service=whoami-svc"
+      - "traefik.http.routers.whoami-authelia-rtr.service=whoami-svc"
       - "traefik.http.routers.whoami-keycloak-rtr.service=whoami-svc"
       - "traefik.http.routers.whoami-authentik-rtr.service=whoami-svc"
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=$WHOAMI_PORT"
@@ -2178,7 +2178,7 @@ services:
   #     - "traefik.http.routers.pihole-rtr.tls.options=tls-opts@file"
   #     ## Middlewares
   #     #- "traefik.http.routers.pihole-rtr.middlewares=chain-basic-auth@file"
-  #     - "traefik.http.routers.pihole-rtr.middlewares=chain-authelia0@file"
+  #     - "traefik.http.routers.pihole-rtr.middlewares=chain-authelia@file"
   #     ## HTTP Services
   #     - "traefik.http.routers.pihole-rtr.service=pihole-svc"
   #     - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
@@ -2664,7 +2664,7 @@ services:
       - "traefik.http.routers.tautulli-rtr-bypass.priority=99"
       ## Middlewares
       - "traefik.http.routers.tautulli-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.tautulli-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.tautulli-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.tautulli-rtr-bypass.service=tautulli-svc"
       - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
@@ -2702,7 +2702,7 @@ services:
       - "traefik.http.routers.prowlarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.prowlarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.prowlarr-rtr-bypass.service=prowlarr-svc"
       - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
@@ -2763,7 +2763,7 @@ services:
       - "traefik.http.routers.radarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
       - "traefik.http.routers.radarr-rtr.service=radarr-svc"
@@ -2802,7 +2802,7 @@ services:
       - "traefik.http.routers.radarr-4k-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.radarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.radarr-4k-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.radarr-4k-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.radarr-4k-rtr-bypass.service=radarr-4k-svc"
       - "traefik.http.routers.radarr-4k-rtr.service=radarr-4k-svc"
@@ -2841,7 +2841,7 @@ services:
       - "traefik.http.routers.sonarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.sonarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.sonarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.sonarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
       - "traefik.http.routers.sonarr-rtr-bypass.service=sonarr-svc"
@@ -2880,7 +2880,7 @@ services:
       - "traefik.http.routers.sonarr-4k-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.sonarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.sonarr-4k-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.sonarr-4k-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.sonarr-4k-rtr.service=sonarr-4k-svc"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.service=sonarr-4k-svc"
@@ -2916,7 +2916,7 @@ services:
       - "traefik.http.routers.readarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.readarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.readarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.readarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.readarr-rtr.service=readarr-svc"
       - "traefik.http.routers.readarr-rtr-bypass.service=readarr-svc"
@@ -2954,7 +2954,7 @@ services:
       - "traefik.http.routers.lidarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.lidarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.lidarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.lidarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
       - "traefik.http.routers.lidarr-rtr-bypass.service=lidarr-svc"
@@ -2980,7 +2980,7 @@ services:
       - "traefik.http.routers.overseerr-rtr.rule=Host(`overseerr.$DOMAINNAME0`) || Host(`request.$DOMAINNAME0`)"
       - "traefik.http.routers.overseerr-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
       - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"
@@ -3006,7 +3006,7 @@ services:
       - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME0`)"
       - "traefik.http.routers.ombi-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
@@ -3061,7 +3061,7 @@ services:
       - "traefik.http.routers.jellyfin-rtr.rule=Host(`jellyfin.$DOMAINNAME0`)"
       - "traefik.http.routers.jellyfin-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia0@file,jellyfin-remove-bypass-cache"
+      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia@file,jellyfin-remove-bypass-cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.forceSlash=false"
       # - "traefik.http.middlewares.jellyfin-add-slash.addPrefix.prefix=/"
@@ -3107,7 +3107,7 @@ services:
   #     - "traefik.http.routers.plex-rtr.entrypoints=https"
   #     - "traefik.http.routers.plex-rtr.rule=Host(`plex.$DOMAINNAME0`)"
   #     ## Middlewares
-  #     - "traefik.http.routers.plex-rtr.middlewares=chain-authelia0@file,plex-remove-bypass-cache"
+  #     - "traefik.http.routers.plex-rtr.middlewares=chain-authelia@file,plex-remove-bypass-cache"
   #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
   #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.forceSlash=false"
   #     ## HTTP Services
@@ -3149,7 +3149,7 @@ services:
       - "traefik.http.routers.calibre-rtr.rule=Host(`calibre.$DOMAINNAME0`)"
       - "traefik.http.routers.calibre-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.calibre-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.calibre-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.calibre-rtr.service=calibre-svc"
       - "traefik.http.services.calibre-svc.loadbalancer.server.port=$CALIBRE_PORT"
@@ -3202,7 +3202,7 @@ services:
       - "traefik.http.routers.audiobookshelf-rtr.rule=Host(`abs.$DOMAINNAME0`)"
       - "traefik.http.routers.audiobookshelf-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.audiobookshelf-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.audiobookshelf-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.audiobookshelf-rtr.service=audiobookshelf-svc"
       - "traefik.http.services.audiobookshelf-svc.loadbalancer.server.port=$AUDIOBOOKSHELF_PORT"
@@ -3239,7 +3239,7 @@ services:
       - "traefik.http.routers.bazarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.bazarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.bazarr-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.bazarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.bazarr-rtr-bypass.service=bazarr-svc"
       - "traefik.http.routers.bazarr-rtr.service=bazarr-svc"
@@ -3275,7 +3275,7 @@ services:
       - "traefik.http.routers.handbrake-rtr.rule=Host(`handbrake.$DOMAINNAME0`)"
       - "traefik.http.routers.handbrake-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.handbrake-rtr.middlewares=chain-authelia0@file"
+      - "traefik.http.routers.handbrake-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.handbrake-rtr.service=handbrake-svc"
       - "traefik.http.services.handbrake-svc.loadbalancer.server.port=$HANDBRAKE_PORT"

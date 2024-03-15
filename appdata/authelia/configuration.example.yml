@@ -213,17 +213,17 @@ totp:
 
   ## The allowed algorithms for a user to pick from.
   allowed_algorithms:
-  - 'SHA1'
-  - 'SHA512'
+    - 'SHA1'
+    - 'SHA512'
 
   ## The allowed digits for a user to pick from.
   allowed_digits:
-  - 6
-  - 8
+    - 6
+    - 8
 
   ## The allowed periods for a user to pick from.
   allowed_periods:
-  - 30
+    - 30
 
   ## Disable the reuse security policy which prevents replays of one-time password code values.
   # disable_reuse_security_policy: false

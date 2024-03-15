@@ -11,7 +11,7 @@ http:
       entryPoints:
         - https
       middlewares:
-        - chain-authelia0
+        - chain-authelia
         - nas-stripprefix
       service: nas-svc
       tls:

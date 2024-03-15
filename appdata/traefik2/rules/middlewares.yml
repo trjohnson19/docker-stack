@@ -49,7 +49,7 @@ http:
           server: ""
 
 
-    middlewares-authelia0:
+    middlewares-authelia:
       forwardAuth:
         ## yamllint disable-line rule:line-length
         address: 'http://authelia0:9091/api/verify?rd=https://auth.{{env "DOMAINNAME0"}}'

@@ -16,12 +16,12 @@ http:
           - middlewares-basic-auth
 
 
-    chain-authelia0:
+    chain-authelia:
       chain:
         middlewares:
           - middlewares-rate-limit
           - middlewares-secure-headers
-          - middlewares-authelia0
+          - middlewares-authelia
 
 
     chain-keycloak:

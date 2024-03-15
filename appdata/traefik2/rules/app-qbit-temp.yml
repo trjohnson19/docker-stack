@@ -6,7 +6,7 @@ http:
       entryPoints:
         - https
       middlewares:
-        - chain-authelia0
+        - chain-authelia
       service: qbittorrent-temp-svc
       tls:
         options: tls-opts@file

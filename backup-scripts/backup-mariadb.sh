@@ -8,7 +8,7 @@ function help_function() {
 	echo -e "\t-p MariaDB root password. Default ''"
 	echo -e "\t-d Backup directory. Default \"\${PWD}\""
 	echo -e "\t-f Backup filename. Default 'dump.sql'"
-	exit 1  # Exit script after printing help
+	exit 1 # Exit script after printing help
 }
 
 while getopts u:p:d:f: flag; do

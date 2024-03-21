@@ -14,11 +14,11 @@ function help_function() {
 while getopts u:p:d:f: flag
 do
 	case "${flag}" in
-	u) mariadb_root_user="${OPTARG:-root}";;
-	p) mariadb_root_password="${OPTARG}";;
-	d) backup_dir="${OPTARG:-/tmp}";;
-	f) backup_filename="${OPTARG:-dump.sql}";;
-	*) help_function
+	u) mariadb_root_user="${OPTARG:-root}" ;;
+	p) mariadb_root_password="${OPTARG}" ;;
+	d) backup_dir="${OPTARG:-/tmp}" ;;
+	f) backup_filename="${OPTARG:-dump.sql}" ;;
+	*) help_function ;;
 	esac
 done
 

@@ -1,7 +1,6 @@
 #!/usr/bin/bash
 
-function help_function()
-{
+function help_function() {
 	echo "Error parsing arguments"
 	echo ""
 	echo "Usage: $0 -u 'root' -p 'password' -d '/tmp' -f 'dump.sql'"
@@ -15,11 +14,11 @@ function help_function()
 while getopts u:p:d:f: flag
 do
 	case "${flag}" in
-		u) mariadb_root_user="${OPTARG:-root}";;
-		p) mariadb_root_password="${OPTARG}";;
-		d) backup_dir="${OPTARG:-/tmp}";;
-		f) backup_filename="${OPTARG:-dump.sql}";;
-		*) help_function
+	u) mariadb_root_user="${OPTARG:-root}";;
+	p) mariadb_root_password="${OPTARG}";;
+	d) backup_dir="${OPTARG:-/tmp}";;
+	f) backup_filename="${OPTARG:-dump.sql}";;
+	*) help_function
 	esac
 done
 
@@ -37,4 +36,4 @@ if [[ -n $mariadb_root_password ]]; then
 fi
 
 /usr/bin/docker exec --user root mariadb /usr/bin/mariadb-dump \
-	"${mariadb_dump_params[@]}" > "${backup_dir}/${backup_filename}"
+	"${mariadb_dump_params[@]}" >"${backup_dir}/${backup_filename}"

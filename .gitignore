@@ -171,6 +171,13 @@ appdata/unbound/config/*
 !appdata/unbound/config/root.hints.example.cron
 !appdata/unbound/config/unbound.conf
 
+!backup-scripts
+backup-scripts/*
+!backup-scripts/backup-*.sh
+
+!backups
+backups/*
+
 # Include the .github directory
 !.github
 !.github/*

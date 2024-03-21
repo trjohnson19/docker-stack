@@ -28,7 +28,7 @@ mariadb_dump_params=(
 	--verbose
 )
 
-if [[ -n $mariadb_root_password ]]; then
+if [[ -v "${mariadb_root_password}" ]]; then
 	mariadb_dump_params+=(
 		--password="${mariadb_root_password}"
 	)

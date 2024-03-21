@@ -22,17 +22,19 @@ while getopts u:p:d:f: flag; do
 done
 
 postgres_dump_params=(
-	--user="${postgres_root_user}"
-	--all-databases
-	--lock-all-tables
+	--username="${postgres_root_user}"
 	--verbose
 )
 
-if [[ -n $postgres_root_password ]]; then
+if [[ -v "${postgres_root_password}" ]]; then
 	postgres_dump_params+=(
 		--password="${postgres_root_password}"
 	)
+else
+	postgres_dump_params+=(
+		--no-password
+	)
 fi
 
-/usr/bin/docker exec --user root postgres /usr/bin/pg_dump \
+/usr/bin/docker exec --user root postgres /usr/bin/pg_dumpall \
 	"${postgres_dump_params[@]}" >"${backup_dir}/${backup_filename}"

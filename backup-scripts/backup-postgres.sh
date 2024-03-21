@@ -11,8 +11,7 @@ function help_function() {
 	exit 1 # Exit script after printing help
 }
 
-while getopts u:p:d:f: flag
-do
+while getopts u:p:d:f: flag; do
 	case "${flag}" in
 	u) postgres_root_user="${OPTARG:-root}" ;;
 	p) postgres_root_password="${OPTARG}" ;;

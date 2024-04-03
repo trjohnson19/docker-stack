@@ -11,12 +11,17 @@ function help_function() {
 	exit 1 # Exit script after printing help
 }
 
-while getopts u:p:d:f: flag; do
+if [[ "$#" -eq 0 ]]; then
+	help_function
+fi
+
+while getopts u:p:d:f:h: flag; do
 	case "${flag}" in
 	u) mariadb_root_user="${OPTARG}" ;;
 	p) mariadb_root_password="${OPTARG}" ;;
 	d) backup_dir="${OPTARG}" ;;
 	f) backup_filename="${OPTARG}" ;;
+	h) help_function ;;
 	*) help_function ;;
 	esac
 done

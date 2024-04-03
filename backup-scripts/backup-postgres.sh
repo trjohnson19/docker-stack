@@ -3,42 +3,36 @@
 function help_function() {
 	echo "Error parsing arguments"
 	echo ""
-	echo "Usage: $0 -u 'root' -p 'password' -d '.' -f 'dump.sql'"
-	echo -e "\t-u Postgres root username. Default 'root'"
-	echo -e "\t-p Postgres root password. Default ''"
+	echo "Usage: $0 -u 'postgres' -d '.' -f 'dump.sql'"
+	echo -e "\t-u Postgres root username. Default 'postgres'"
 	echo -e "\t-d Backup directory. Default \"\${PWD}\""
 	echo -e "\t-f Backup filename. Default 'dump.sql'"
-	exit 1 # Exit script after printing help
+	exit 0 # Exit script after printing help
 }
 
-while getopts u:p:d:f: flag; do
+if [[ "$#" -eq 0 ]]; then
+	help_function
+fi
+
+while getopts u:d:f:h: flag; do
 	case "${flag}" in
 	u) postgres_root_user="${OPTARG}" ;;
-	p) postgres_root_password="${OPTARG}" ;;
 	d) backup_dir="${OPTARG}" ;;
 	f) backup_filename="${OPTARG}" ;;
+	h) help_function ;;
 	*) help_function ;;
 	esac
 done
 
-postgres_root_user="${postgres_root_user:-root}"
+postgres_root_user="${postgres_root_user:-postgres}"
 backup_dir="${backup_dir:-${PWD}}"
 backup_filename="${backup_filename:-dump.sql}"
 
 postgres_dump_params=(
 	--username="${postgres_root_user}"
+	--no-password
 	--verbose
 )
-
-if [[ -v postgres_root_password ]]; then
-	postgres_dump_params+=(
-		--password="${postgres_root_password}"
-	)
-else
-	postgres_dump_params+=(
-		--no-password
-	)
-fi
 
 /usr/bin/docker exec --user root postgres /usr/bin/pg_dumpall \
 	"${postgres_dump_params[@]}" >"${backup_dir}/${backup_filename}"

@@ -2561,7 +2561,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.4
+    image: lscr.io/linuxserver/qbittorrent:4.6.2
     container_name: qbit-private
     security_opt:
       - no-new-privileges:true
@@ -2602,7 +2602,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.4
+    image: lscr.io/linuxserver/qbittorrent:4.6.2
     container_name: qbit-temp
     security_opt:
       - no-new-privileges:true
@@ -3051,7 +3051,7 @@ services:
       - $DATADIR/downloads:/data/downloads
       - $DATADIR/media:/data/media
       # - /dev/shm:/data/transcode  # Perform transcoding in RAM
-      - /$APPDIR/jellyfin/config/transcodes:/data/transcode  # Perform transcoding on SSD
+      - /$APPDIR/jellyfin/transcodes:/data/transcode  # Perform transcoding on SSD
     environment:
       <<: *default-tz-puid-pgid
       UMASK: 022

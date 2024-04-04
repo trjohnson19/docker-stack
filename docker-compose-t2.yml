@@ -2016,8 +2016,8 @@ services:
       - $GLUETUN_HTTP_CONTROL_SERVER_PORT:$GLUETUN_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_PORT:$QBITTORRENT_PORT
-    volumes:
-      - $APPDIR/gluetun:/gluetun
+    # volumes:
+    #   - $APPDIR/gluetun:/gluetun
     environment:
       <<: *default-tz-puid-pgid
       VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER

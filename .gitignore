@@ -64,8 +64,10 @@ appdata/*
 appdata/authelia/*
 !appdata/authelia/assets
 appdata/authelia/assets/*
-!appdata/authelia/configuration.example.yml
-!appdata/authelia/configuration.example.acl.yml
+!appdata/authelia/config
+appdata/authelia/config/*
+!appdata/authelia/config/configuration.example.yml
+!appdata/authelia/config/configuration.example.acl.yml
 
 !appdata/authentik
 appdata/authentik/*

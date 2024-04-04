@@ -2896,7 +2896,7 @@ services:
     # ports:
     #   - "$READARR_PORT:8787"
     volumes:
-      - $APPDIR/readarr:/config
+      - $APPDIR/readarr/config:/config
       - $DATADIR:/data
       - "/etc/localtime:/etc/localtime:ro"
     environment:

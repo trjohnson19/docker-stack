@@ -64,8 +64,10 @@ appdata/*
 appdata/authelia/*
 !appdata/authelia/assets
 appdata/authelia/assets/*
-!appdata/authelia/configuration.example.yml
-!appdata/authelia/configuration.example.acl.yml
+!appdata/authelia/config
+appdata/authelia/config/*
+!appdata/authelia/config/configuration.example.yml
+!appdata/authelia/config/configuration.example.acl.yml
 
 !appdata/authentik
 appdata/authentik/*
@@ -75,7 +77,9 @@ appdata/authentik/config/*
 
 !appdata/cf-ddns
 appdata/cf-ddns/*
-!appdata/cf-ddns/config.example.yaml
+!appdata/cf-ddns/config
+appdata/cf-ddns/config/*
+!appdata/cf-ddns/config/config.example.yaml
 
 !appdata/gotify
 appdata/gotify/*
@@ -155,7 +159,11 @@ appdata/recyclarr/config/*
 
 !appdata/redis
 appdata/redis/*
-!appdata/redis/healthcheck.example.sh
+!appdata/redis/data
+appdata/redis/data/*
+!appdata/redis/config
+appdata/redis/config/*
+!appdata/redis/config/healthcheck.example.sh
 
 !appdata/traefik2
 appdata/traefik2/*

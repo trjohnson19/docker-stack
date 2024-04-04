@@ -2,7 +2,6 @@
 # yamllint disable rule:line-length
 ## Line length rules do not make sense for this file. Comments have still
 ## been limited to 80 character line length whenever possible.
-version: "3.9"
 
 
 ############################## NETWORKS
@@ -439,7 +438,7 @@ services:
     # ports:
     #  - "$HEIMDALL_PORT:80"
     volumes:
-      - $APPDIR/heimdall:/config
+      - $APPDIR/heimdall/config:/config
     environment:
       <<: *default-tz-puid-pgid
     labels:
@@ -462,7 +461,7 @@ services:
   #   # ports:
   #   #  - "$ORGANIZR_PORT:80"
   #   volumes:
-  #     - $APPDIR/organizr:/config
+  #     - $APPDIR/organizr/config:/config
   #   environment:
   #     <<: *default-tz-puid-pgid
   #     fpm: "true"
@@ -496,9 +495,9 @@ services:
     ## Allow for separate configuration and acl configuration files
     ## See https://www.authelia.com/configuration/methods/files/#docker-compose
     volumes:
-      - $APPDIR/authelia/configuration.yml:/config/configuration.yml
-      - $APPDIR/authelia/configuration.acl.yml:/config/configuration.acl.yml
-      - $APPDIR/authelia/users_database.yml:/config/users_database.yml
+      - $APPDIR/authelia/config/configuration.yml:/config/configuration.yml
+      - $APPDIR/authelia/config/configuration.acl.yml:/config/configuration.acl.yml
+      - $APPDIR/authelia/config/users_database.yml:/config/users_database.yml
     environment:
       ## Using PUID:PGID causes container to be unable to read secrets
       # <<: *default-tz-puid-pgid
@@ -558,7 +557,7 @@ services:
     # ports:
     #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:
-      - $APPDIR/keycloak/conf:/conf
+      - $APPDIR/keycloak/config:/conf
       ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
       - $APPDIR/keycloak/ObjectStore:/ObjectStore
       # Remember to `chmod +x` for all .sh scripts
@@ -816,7 +815,7 @@ services:
       retries: 5
       timeout: 5s
     volumes:
-      - $APPDIR/postgres:/config
+      - $APPDIR/postgres/config:/config
       - $DATADIR/postgres/data:/var/lib/postgresql/data
     environment:
       <<: *default-tz-puid-pgid
@@ -907,7 +906,7 @@ services:
       - "$REDIS_PORT:$REDIS_PORT"
     volumes:
       - $APPDIR/redis/data:/data
-      - $APPDIR/redis/healthcheck.sh:/healthcheck.sh:ro
+      - $APPDIR/redis/config/healthcheck.sh:/healthcheck.sh:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
@@ -950,7 +949,7 @@ services:
     container_name: cf-ddns
     image: joshava/cloudflare-ddns  # oznu/docker-cloudflare-ddns out of date
     volumes:
-      - $APPDIR/cf-ddns/config.yaml:/app/config.yaml:ro
+      - $APPDIR/cf-ddns/config/config.yaml:/app/config.yaml:ro
     environment:  # Environmental variables deprecated
       <<: *default-tz-puid-pgid
       CRON: "@daily"
@@ -961,7 +960,7 @@ services:
     image: lscr.io/linuxserver/duckdns:latest
     container_name: duckdns
     # volumes:
-    #   - $APPDIR/duckdns:/config # Optional
+    #   - $APPDIR/duckdns/config:/config # Optional
     environment:
       <<: *default-tz-puid-pgid
       SUBDOMAINS: "$DOMAINNAME_DUCKDNS0,$DOMAINNAME_DUCKDNS1,$DOMAINNAME_DUCKDNS2,$DOMAINNAME_DUCKDNS3,$DOMAINNAME_DUCKDNS4"
@@ -986,7 +985,7 @@ services:
       ## Use Docker Socket Proxy instead for improved security
       # - /var/run/docker.sock:/var/run/docker.sock
       ## Must create this folder
-      - $APPDIR/docker-gc/docker-gc-exclude:/etc/docker-gc-exclude
+      - $APPDIR/docker-gc/config/docker-gc-exclude:/etc/docker-gc-exclude
     environment:
       <<: *default-tz-puid-pgid
       CRON: "0 0 0 * * ?"  # Everyday at midnight. Previously "0 0 * * *"
@@ -1074,12 +1073,11 @@ services:
     container_name: vscode
     volumes:
       - $DOCKERDIR:/data/docker
-      - $USERDIR/server:/data/server
       - $DATADIR:/data/data
-      - $APPDIR/vscode:/config
+      - $APPDIR/vscode/config:/config
       ## Ensure the user's GitHub ssh keys are added to be able to use VS Code
       ## git features
-      - $APPDIR/vscode/.ssh:/config/ssh
+      - $APPDIR/vscode/config/.ssh:/config/ssh
     environment:
       <<: *default-tz-puid-pgid
       ## Note: passwords can be set via hash if desired
@@ -1114,8 +1112,8 @@ services:
     # ports:
     #   - "$FILEBROWSER_PORT:80"
     volumes:
-      - $DOCKERDIR/appdata/filebrowser:/config
-      - $DOCKERDIR/appdata/filebrowser/filebrowser.db:/database/filebrowser.db
+      - $DOCKERDIR/appdata/filebrowser/config/settings.json:/config/settings.json
+      - $DOCKERDIR/appdata/filebrowser/db/filebrowser.db:/database/filebrowser.db
       - $DATADIR:/srv
       - $USERDIR:/data/home
     environment:
@@ -1233,7 +1231,7 @@ services:
     pid: host
     volumes:
       ## Use this if you want to add a glances.conf file
-      # - $APPDIR/glances/glances.conf:/glances/conf/glances.conf
+      # - $APPDIR/glances/config/glances.conf:/glances/conf/glances.conf
       - $USERDIR:/data/home:ro
       # - /media/hdd1:/data/hdd1:ro
       ## Use Docker Socket Proxy instead for improved security
@@ -2016,8 +2014,8 @@ services:
       - $GLUETUN_HTTP_CONTROL_SERVER_PORT:$GLUETUN_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_PORT:$QBITTORRENT_PORT
-    volumes:
-      - $APPDIR/gluetun:/gluetun
+    # volumes:
+    #   - $APPDIR/gluetun:/gluetun
     environment:
       <<: *default-tz-puid-pgid
       VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
@@ -2686,8 +2684,7 @@ services:
     # ports:
     #   - "$PROWLARR_PORT:9696"
     volumes:
-      - $APPDIR/prowlarr:/config
-      - "/etc/localtime:/etc/localtime:ro"
+      - $APPDIR/prowlarr/config:/config
     environment:
       <<: *default-tz-puid-pgid
     labels:
@@ -2744,7 +2741,7 @@ services:
     # ports:
     #   - "$RADARR_PORT:7878"
     volumes:
-      - $APPDIR/radarr:/config
+      - $APPDIR/radarr/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
@@ -2783,7 +2780,7 @@ services:
     # ports:
     #   - "$RADARR_PORT:7878"
     volumes:
-      - $APPDIR/radarr-4k:/config
+      - $APPDIR/radarr-4k/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
@@ -2822,7 +2819,7 @@ services:
     # ports:
     #   - "$SONARR_PORT:8989"
     volumes:
-      - $APPDIR/sonarr:/config
+      - $APPDIR/sonarr/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
@@ -2861,7 +2858,7 @@ services:
     # ports:
     #   - "$SONARR_PORT:8989"
     volumes:
-      - $APPDIR/sonarr-4k:/config
+      - $APPDIR/sonarr-4k/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
@@ -2897,7 +2894,7 @@ services:
     # ports:
     #   - "$READARR_PORT:8787"
     volumes:
-      - $APPDIR/readarr:/config
+      - $APPDIR/readarr/config:/config
       - $DATADIR:/data
       - "/etc/localtime:/etc/localtime:ro"
     environment:
@@ -2935,9 +2932,8 @@ services:
     # ports:
     #   - "$LIDARR_PORT:8686"
     volumes:
-      - $APPDIR/lidarr:/config
+      - $APPDIR/lidarr/config:/config
       - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
     environment:
       <<: *default-tz-puid-pgid
       UMASK: 002
@@ -3051,7 +3047,7 @@ services:
       - $DATADIR/downloads:/data/downloads
       - $DATADIR/media:/data/media
       # - /dev/shm:/data/transcode  # Perform transcoding in RAM
-      - /$APPDIR/jellyfin/config/transcodes:/data/transcode  # Perform transcoding on SSD
+      - /$APPDIR/jellyfin/transcodes:/data/transcode  # Perform transcoding on SSD
     environment:
       <<: *default-tz-puid-pgid
       UMASK: 022
@@ -3223,7 +3219,7 @@ services:
     # ports:
     #   - $BAZARR_PORT:6767
     volumes:
-      - $APPDIR/bazarr:/config
+      - $APPDIR/bazarr/config:/config
       - $DATADIR/media:/data/media
     environment:
       <<: *default-tz-puid-pgid
@@ -3257,7 +3253,7 @@ services:
     volumes:
       - $DATADIR:/data
       - $APPDIR/handbrake/config:/config
-      - $APPDIR/handbrake/watch:/watch
+      # - $APPDIR/handbrake/watch:/watch
     environment:
       <<: *default-tz-puid-pgid
       USER_ID: $PUID

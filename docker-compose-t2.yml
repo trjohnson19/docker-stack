@@ -3223,7 +3223,7 @@ services:
     # ports:
     #   - $BAZARR_PORT:6767
     volumes:
-      - $APPDIR/bazarr:/config
+      - $APPDIR/bazarr/config:/config
       - $DATADIR/media:/data/media
     environment:
       <<: *default-tz-puid-pgid

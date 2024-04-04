@@ -2,7 +2,6 @@
 # yamllint disable rule:line-length
 ## Line length rules do not make sense for this file. Comments have still
 ## been limited to 80 character line length whenever possible.
-version: "3.9"
 
 
 ############################## NETWORKS

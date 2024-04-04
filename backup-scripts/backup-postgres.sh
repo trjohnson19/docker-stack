@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #TODO(trjohnson19): rewrite in Python for maintainability
 

@@ -961,7 +961,7 @@ services:
     image: lscr.io/linuxserver/duckdns:latest
     container_name: duckdns
     # volumes:
-    #   - $APPDIR/duckdns:/config # Optional
+    #   - $APPDIR/duckdns/config:/config # Optional
     environment:
       <<: *default-tz-puid-pgid
       SUBDOMAINS: "$DOMAINNAME_DUCKDNS0,$DOMAINNAME_DUCKDNS1,$DOMAINNAME_DUCKDNS2,$DOMAINNAME_DUCKDNS3,$DOMAINNAME_DUCKDNS4"

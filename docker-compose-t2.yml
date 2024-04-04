@@ -2821,7 +2821,7 @@ services:
     # ports:
     #   - "$SONARR_PORT:8989"
     volumes:
-      - $APPDIR/sonarr:/config
+      - $APPDIR/sonarr/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
@@ -2860,7 +2860,7 @@ services:
     # ports:
     #   - "$SONARR_PORT:8989"
     volumes:
-      - $APPDIR/sonarr-4k:/config
+      - $APPDIR/sonarr-4k/config:/config
       # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
       - $DATADIR:/data

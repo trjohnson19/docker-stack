@@ -3257,7 +3257,7 @@ services:
     volumes:
       - $DATADIR:/data
       - $APPDIR/handbrake/config:/config
-      - $APPDIR/handbrake/watch:/watch
+      # - $APPDIR/handbrake/watch:/watch
     environment:
       <<: *default-tz-puid-pgid
       USER_ID: $PUID

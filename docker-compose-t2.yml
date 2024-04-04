@@ -2686,8 +2686,7 @@ services:
     # ports:
     #   - "$PROWLARR_PORT:9696"
     volumes:
-      - $APPDIR/prowlarr:/config
-      - "/etc/localtime:/etc/localtime:ro"
+      - $APPDIR/prowlarr/config:/config
     environment:
       <<: *default-tz-puid-pgid
     labels:

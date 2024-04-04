@@ -496,9 +496,9 @@ services:
     ## Allow for separate configuration and acl configuration files
     ## See https://www.authelia.com/configuration/methods/files/#docker-compose
     volumes:
-      - $APPDIR/authelia/configuration.yml:/config/configuration.yml
-      - $APPDIR/authelia/configuration.acl.yml:/config/configuration.acl.yml
-      - $APPDIR/authelia/users_database.yml:/config/users_database.yml
+      - $APPDIR/authelia/config/configuration.yml:/config/configuration.yml
+      - $APPDIR/authelia/config/configuration.acl.yml:/config/configuration.acl.yml
+      - $APPDIR/authelia/config/users_database.yml:/config/users_database.yml
     environment:
       ## Using PUID:PGID causes container to be unable to read secrets
       # <<: *default-tz-puid-pgid

@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+#TODO(trjohnson19): rewrite in Python for maintainability
+
 function help_function() {
 	echo "Error parsing arguments"
 	echo ""

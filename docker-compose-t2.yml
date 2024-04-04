@@ -986,7 +986,7 @@ services:
       ## Use Docker Socket Proxy instead for improved security
       # - /var/run/docker.sock:/var/run/docker.sock
       ## Must create this folder
-      - $APPDIR/docker-gc/docker-gc-exclude:/etc/docker-gc-exclude
+      - $APPDIR/docker-gc/config/docker-gc-exclude:/etc/docker-gc-exclude
     environment:
       <<: *default-tz-puid-pgid
       CRON: "0 0 0 * * ?"  # Everyday at midnight. Previously "0 0 * * *"

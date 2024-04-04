@@ -16,12 +16,12 @@ if [[ "$#" -eq 0 ]]; then
 	help_function
 fi
 
-while getopts u:d:f:h: flag; do
+while getopts d:f:h:u: flag; do
 	case "${flag}" in
-	u) postgres_root_user="${OPTARG}" ;;
 	d) backup_dir="${OPTARG}" ;;
 	f) backup_filename="${OPTARG}" ;;
 	h) help_function ;;
+	u) postgres_root_user="${OPTARG}" ;;
 	*) help_function ;;
 	esac
 done

@@ -1074,12 +1074,11 @@ services:
     container_name: vscode
     volumes:
       - $DOCKERDIR:/data/docker
-      - $USERDIR/server:/data/server
       - $DATADIR:/data/data
-      - $APPDIR/vscode:/config
+      - $APPDIR/vscode/config:/config
       ## Ensure the user's GitHub ssh keys are added to be able to use VS Code
       ## git features
-      - $APPDIR/vscode/.ssh:/config/ssh
+      - $APPDIR/vscode/config/.ssh:/config/ssh
     environment:
       <<: *default-tz-puid-pgid
       ## Note: passwords can be set via hash if desired

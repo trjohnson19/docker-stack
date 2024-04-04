@@ -439,7 +439,7 @@ services:
     # ports:
     #  - "$HEIMDALL_PORT:80"
     volumes:
-      - $APPDIR/heimdall:/config
+      - $APPDIR/heimdall/config:/config
     environment:
       <<: *default-tz-puid-pgid
     labels:

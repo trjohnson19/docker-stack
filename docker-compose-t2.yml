@@ -558,7 +558,7 @@ services:
     # ports:
     #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:
-      - $APPDIR/keycloak/conf:/conf
+      - $APPDIR/keycloak/config:/conf
       ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
       - $APPDIR/keycloak/ObjectStore:/ObjectStore
       # Remember to `chmod +x` for all .sh scripts

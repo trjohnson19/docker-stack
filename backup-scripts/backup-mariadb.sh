@@ -10,7 +10,7 @@ function help_function() {
 	echo -e "\t-p MariaDB root password. Default ''"
 	echo -e "\t-d Backup directory. Default \"\${PWD}\""
 	echo -e "\t-f Backup filename. Default 'dump.sql'"
-	exit 1 # Exit script after printing help
+	exit 0 # Exit script after printing help
 }
 
 if [[ "$#" -eq 0 ]]; then

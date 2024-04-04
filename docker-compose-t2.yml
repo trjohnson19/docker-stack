@@ -1233,7 +1233,7 @@ services:
     pid: host
     volumes:
       ## Use this if you want to add a glances.conf file
-      # - $APPDIR/glances/glances.conf:/glances/conf/glances.conf
+      # - $APPDIR/glances/config/glances.conf:/glances/conf/glances.conf
       - $USERDIR:/data/home:ro
       # - /media/hdd1:/data/hdd1:ro
       ## Use Docker Socket Proxy instead for improved security

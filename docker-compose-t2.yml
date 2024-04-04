@@ -950,7 +950,7 @@ services:
     container_name: cf-ddns
     image: joshava/cloudflare-ddns  # oznu/docker-cloudflare-ddns out of date
     volumes:
-      - $APPDIR/cf-ddns/config.yaml:/app/config.yaml:ro
+      - $APPDIR/cf-ddns/config/config.yaml:/app/config.yaml:ro
     environment:  # Environmental variables deprecated
       <<: *default-tz-puid-pgid
       CRON: "@daily"

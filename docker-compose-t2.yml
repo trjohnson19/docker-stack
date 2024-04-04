@@ -2935,9 +2935,8 @@ services:
     # ports:
     #   - "$LIDARR_PORT:8686"
     volumes:
-      - $APPDIR/lidarr:/config
+      - $APPDIR/lidarr/config:/config
       - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
     environment:
       <<: *default-tz-puid-pgid
       UMASK: 002

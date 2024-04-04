@@ -159,7 +159,11 @@ appdata/recyclarr/config/*
 
 !appdata/redis
 appdata/redis/*
-!appdata/redis/healthcheck.example.sh
+!appdata/redis/data
+appdata/redis/data/*
+!appdata/redis/config
+appdata/redis/config/*
+!appdata/redis/config/healthcheck.example.sh
 
 !appdata/traefik2
 appdata/traefik2/*

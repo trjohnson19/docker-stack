@@ -907,7 +907,7 @@ services:
       - "$REDIS_PORT:$REDIS_PORT"
     volumes:
       - $APPDIR/redis/data:/data
-      - $APPDIR/redis/healthcheck.sh:/healthcheck.sh:ro
+      - $APPDIR/redis/config/healthcheck.sh:/healthcheck.sh:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 

@@ -182,6 +182,7 @@ appdata/unbound/config/*
 !backup-scripts
 backup-scripts/*
 !backup-scripts/backup-*.sh
+!backup-scripts/borg-patternfile.example.lst
 
 !backups
 backups/*

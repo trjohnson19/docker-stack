@@ -9,9 +9,9 @@ mariadb_backup_dir="${BACKUPDIR}"
 mariadb_backup_file_name='mariadb_dump.sql'
 
 backup_mariadb_opts=(
-	-u "${mariadb_root_user}" \
-	-p "${mariadb_root_password}" \
-	-d "${mariadb_backup_dir}" \
+	-u "${mariadb_root_user}"
+	-p "${mariadb_root_password}"
+	-d "${mariadb_backup_dir}"
 	-f "${mariadb_backup_file_name}"
 )
 

@@ -16,6 +16,6 @@
         "/appdata/tdarr/server": true,
         "/appdata/vaultwarden/data/icon_cache": true,
         "/appdata/vscode/config": true,
-        "**/MediaCover": true,
-    },
+        "**/MediaCover": true
+    }
 }

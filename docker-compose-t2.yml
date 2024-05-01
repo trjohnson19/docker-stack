@@ -895,7 +895,7 @@ services:
     networks:
       t2_proxy:
         ipv4_address: $REDIS_IPV4
-    entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
+    entrypoint: redis-server --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
     healthcheck:
       test: ["CMD-SHELL", "/healthcheck.sh"]
       start_period: 5s

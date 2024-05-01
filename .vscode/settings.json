@@ -1,3 +1,21 @@
 {
-    "git.enableCommitSigning": true
+    "git.enableCommitSigning": true,
+    "files.watcherExclude": {
+        "/appdata/bazarr/config/cache": true,
+        "/appdata/calibre/config": true,
+        "/appdata/jellyfin/config/data": true,
+        "/appdata/jellyfin/config/metadata": true,
+        "/appdata/jellyfin/transcodes": true,
+        "/appdata/mariadb/data": true,
+        "/appdata/nextcloud": true,
+        "/appdata/nextcloud/config*/**": false,
+        "/appdata/postgres/data": true,
+        "/appdata/qbittorrent*/config/qBittorrent": true,
+        "/appdata/recyclarr/config/repo*/**": true,
+        "/appdata/redis/data": true,
+        "/appdata/tdarr/server": true,
+        "/appdata/vaultwarden/data/icon_cache": true,
+        "/appdata/vscode/config": true,
+        "**/MediaCover": true
+    }
 }

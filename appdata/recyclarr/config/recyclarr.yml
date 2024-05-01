@@ -1,5 +1,6 @@
 ---
 ## yamllint disable-line rule:line-length
+## jscpd:ignore-start
 ## yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/config-schema.json
 ##
 ## A starter config to use with Recyclarr. Most values are set to "reasonable
@@ -813,3 +814,5 @@ radarr:
         quality_profiles:
           - name: 0 - Own-Ultra-HD - Anime
             reset_unmatched_scores: true
+
+## jscpd:ignore-end

@@ -9,6 +9,10 @@ fi
 # shellcheck source=/dev/null
 source ../.env
 
+# Full, absolute path to `backup-scripts` dir
+backup_scripts_dir="${DOCKERDIR}/backup-scripts"
+
+mariadb_backup_script="${backup_scripts_dir}/backup-mariadb.sh"
 mariadb_root_user='root'
 mariadb_root_password='weak_password'
 mariadb_backup_dir="${BACKUPDIR}"
@@ -21,4 +25,4 @@ backup_mariadb_opts=(
 	-f "${mariadb_backup_file_name}"
 )
 
-./backup-mariadb.sh "${backup_mariadb_opts[@]}"
+./"${mariadb_backup_script}" "${backup_mariadb_opts[@]}"

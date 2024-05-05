@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+if [[ $EUID -ne 0 ]]; then
+	echo "'$0' must be run as root"
+	echo "Aborting"
+	exit 1
+fi
+
 # shellcheck source=/dev/null
 source ../.env
 

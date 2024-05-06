@@ -26,7 +26,7 @@ jobs:
 
       - name: Differential ShellCheck
         # yamllint disable-line rule:line-length
-        uses: redhat-plumbers-in-action/differential-shellcheck@52bab0caa5249d6acd8bcd5bc7a68e69ac9319f9  #@v5.1.2
+        uses: redhat-plumbers-in-action/differential-shellcheck@227e1622ed4ea0cb0ec188f1db0a8cfe9c87e8df  #@v5.2.0
         with:
           severity: warning
           token: ${{ secrets.GITHUB_TOKEN }}

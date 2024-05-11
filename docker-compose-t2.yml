@@ -1043,7 +1043,7 @@ services:
       # WATCHTOWER_HTTP_API_METRICS: "false"
       ## 12:30 AM daily; "sec min hr day mon yr"; can use either INTERVAL or
       ## SCHEDULE
-      WATCHTOWER_SCHEDULE: "0 30 0 * * *"
+      WATCHTOWER_SCHEDULE: "0 30 0 * * 6"
       WATCHTOWER_ROLLING_RESTART: "false"
       WATCHTOWER_TIMEOUT: 30s  # Default 10s
       # DOCKER_TLS_VERIFY: "false"
@@ -2038,6 +2038,8 @@ services:
       ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_HTTP_CONTROL_SERVER_PORT"
+      HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
@@ -2086,6 +2088,8 @@ services:
       ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT"
+      HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
@@ -2134,6 +2138,8 @@ services:
       ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT"
+      HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
       - gluetun_openvpn_password

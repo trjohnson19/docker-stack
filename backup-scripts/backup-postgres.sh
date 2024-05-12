@@ -37,8 +37,14 @@ postgres_dump_params=(
 )
 
 /usr/bin/docker exec --user root postgres /usr/bin/pg_dumpall \
-	"${postgres_dump_params[@]}" >"${backup_dir}/${backup_filename}"
+	"${postgres_dump_params[@]}" >"${backup_dir}/${backup_filename}"; \
+	backup_exit=$?
 
-echo "Postgres dump saved to: ${backup_dir}/${backup_filename}"
-
-exit 0
+if [[ "${backup_exit}" ]]; then
+	echo "[ERROR] Unknown error occurred, backup cannot be relied upon"
+	echo "[ERROR] Erroneous Postgres dump saved to: ${backup_dir}/${backup_filename}"
+	exit "${backup_exit}"
+else
+	echo "Postgres dump saved to: ${backup_dir}/${backup_filename}"
+	exit 0
+fi

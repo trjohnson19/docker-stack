@@ -19,7 +19,7 @@ function help_function() {
 	echo "Error parsing arguments"
 	echo ""
 	echo "Usage: $0 -e \"\${PWD}/.env\""
-	echo -e "\t-e\tEnvironment file"
+	echo -e "\t-e\tPath to environment file"
 	exit 0 # Exit script after printing help
 }
 
@@ -39,7 +39,7 @@ done
 #######################################
 
 # shellcheck source=/dev/null
-source "${env_file}"
+source "$(realpath "${env_file}")"
 
 # Full, absolute path to `backup-scripts` dir
 backup_scripts_dir="${DOCKERDIR}/backup-scripts"
@@ -49,8 +49,8 @@ backup_scripts_dir="${DOCKERDIR}/backup-scripts"
 #######################################
 
 mariadb_backup_script="${backup_scripts_dir}/backup-mariadb.sh"
-mariadb_root_user=''
-mariadb_root_password=''
+mariadb_root_user='root'
+mariadb_root_password='vertigo-saved-untoasted-idiom5-embellish-earring-marshy-alike'
 mariadb_backup_dir="${BACKUPDIR}"
 mariadb_backup_file_name='mariadb_dump.sql'
 
@@ -71,7 +71,7 @@ echo "backup-mariadb.sh exit: ${mariadb_backup_exit}"
 #######################################
 
 postgres_backup_script="${backup_scripts_dir}/backup-postgres.sh"
-postgres_root_user=''
+postgres_root_user='postgres'
 postgres_backup_dir="${BACKUPDIR}"
 postgres_backup_file_name='postgres_dump.sql'
 

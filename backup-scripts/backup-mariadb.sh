@@ -46,8 +46,8 @@ if [[ -v mariadb_root_password ]]; then
 fi
 
 /usr/bin/docker exec --user root mariadb /usr/bin/mariadb-dump \
-	"${mariadb_dump_params[@]}" >"${backup_dir}/${backup_filename}"; \
-	backup_exit=$?
+	"${mariadb_dump_params[@]}" >"${backup_dir}/${backup_filename}"
+backup_exit=$?
 
 if [[ "${backup_exit}" ]]; then
 	echo "[ERROR] Unknown error occurred, backup cannot be relied upon"

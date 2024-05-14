@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# TODO(trjohnson19): Rewrite in Python for maintainability
+
 #######################################
 # Root check ##########################
 #######################################

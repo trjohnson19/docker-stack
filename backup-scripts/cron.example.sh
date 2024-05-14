@@ -89,7 +89,7 @@ backup_postgres_opts=(
 "${postgres_backup_script}" "${backup_postgres_opts[@]}"
 postgres_backup_exit=$?
 
-echo "backup-mariadb.sh exit: ${postgres_backup_exit}"
+echo "backup-postgres.sh exit: ${postgres_backup_exit}"
 
 if [[ ${mariadb_backup_exit} || ${postgres_backup_exit} ]]; then
 	echo "[ERROR] One or more backup scripts had an error."

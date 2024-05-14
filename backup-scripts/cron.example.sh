@@ -1,10 +1,36 @@
 #!/usr/bin/env bash
 
+#######################################
+# Root check ##########################
+#######################################
+
 if [[ $EUID -ne 0 ]]; then
-	echo "'$0' must be run as root"
-	echo "Aborting"
+	echo -e '[Error]: %s must be run as root.\nAborting.' "$0"
 	exit 1
 fi
+
+#######################################
+# Arg parsing #########################
+#######################################
+
+function help_function() {
+	echo "Error parsing arguments"
+	echo ""
+	echo "Usage: $0 -e \"\${PWD}/.env\""
+	echo -e "\t-e\tEnvironment file"
+	exit 0 # Exit script after printing help
+}
+
+if [[ "$#" -eq 0 ]]; then
+	help_function
+fi
+
+while getopts e: flag; do
+	case "${flag}" in
+	e) env_file="${OPTARG}" ;;
+	*) help_function ;;
+	esac
+done
 
 # shellcheck source=/dev/null
 source ../.env

@@ -91,11 +91,16 @@ postgres_backup_exit=$?
 
 echo "backup-postgres.sh exit: ${postgres_backup_exit}"
 
-if [[ ${mariadb_backup_exit} || ${postgres_backup_exit} ]]; then
+if [[ "${mariadb_backup_exit}" && "${postgres_backup_exit}" -ne 0 ]]; then
 	echo "[ERROR] One or more backup scripts had an error."
 	echo "[ERROR] Backup cannot be relied upon."
 	echo "[ERROR] Backup script exit codes:"
 	echo -e "[ERROR] \t'${postgres_backup_script}' exit: ${postgres_backup_exit}"
 	echo -e "[ERROR] \t'${mariadb_backup_script}' exit: ${mariadb_backup_exit}"
 	exit 1
+else
+	echo "[INFO] All backup scripts completed successfully."
+	echo "[INFO] Backup script exit codes:"
+	echo -e "[INFO] \t'${postgres_backup_script}' exit: ${postgres_backup_exit}"
+	echo -e "[INFO] \t'${mariadb_backup_script}' exit: ${mariadb_backup_exit}"
 fi

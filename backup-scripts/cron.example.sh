@@ -18,8 +18,9 @@ fi
 function help_function() {
 	echo "Error parsing arguments"
 	echo ""
-	echo "Usage: $0 -e \"\${PWD}/.env\""
+	echo "Usage: $0 -e \"\${PWD}/.env\" -p \"\${PWD}/.passwords.env\""
 	echo -e "\t-e\tPath to environment file"
+	echo -e "\t-p\tPath to passwords file"
 	exit 0 # Exit script after printing help
 }
 
@@ -27,9 +28,10 @@ if [[ "$#" -eq 0 ]]; then
 	help_function
 fi
 
-while getopts e: flag; do
+while getopts e:p: flag; do
 	case "${flag}" in
 	e) env_file="${OPTARG}" ;;
+	p) pass_file="${OPTARG}" ;;
 	*) help_function ;;
 	esac
 done
@@ -41,6 +43,12 @@ done
 # shellcheck source=/dev/null
 source "$(realpath "${env_file}")"
 
+# shellcheck source=/dev/null
+source "$(realpath "${pass_file}")"
+mariadb_root_user="${MARIADB_ROOT_USER:-root}"
+mariadb_root_password="${MARIADB_ROOT_PASSWORD:-}"
+postgres_root_user="${POSTGRES_ROOT_USER:-postgres}"
+
 # Full, absolute path to `backup-scripts` dir
 backup_scripts_dir="${DOCKERDIR}/backup-scripts"
 
@@ -49,8 +57,6 @@ backup_scripts_dir="${DOCKERDIR}/backup-scripts"
 #######################################
 
 mariadb_backup_script="${backup_scripts_dir}/backup-mariadb.sh"
-mariadb_root_user=''
-mariadb_root_password=''
 mariadb_backup_dir="${BACKUPDIR}"
 mariadb_backup_file_name='mariadb_dump.sql'
 
@@ -71,7 +77,6 @@ echo "backup-mariadb.sh exit: ${mariadb_backup_exit}"
 #######################################
 
 postgres_backup_script="${backup_scripts_dir}/backup-postgres.sh"
-postgres_root_user=''
 postgres_backup_dir="${BACKUPDIR}"
 postgres_backup_file_name='postgres_dump.sql'
 

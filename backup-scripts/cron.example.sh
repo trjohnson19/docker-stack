@@ -61,3 +61,5 @@ backup_mariadb_opts=(
 
 "${mariadb_backup_script}" "${backup_mariadb_opts[@]}"
 mariadb_backup_exit=$?
+
+echo "backup-mariadb.sh exit: ${mariadb_backup_exit}"

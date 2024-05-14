@@ -32,8 +32,12 @@ while getopts e: flag; do
 	esac
 done
 
+#######################################
+# Environment setup ###################
+#######################################
+
 # shellcheck source=/dev/null
-source ../.env
+source "${env_file}"
 
 # Full, absolute path to `backup-scripts` dir
 backup_scripts_dir="${DOCKERDIR}/backup-scripts"

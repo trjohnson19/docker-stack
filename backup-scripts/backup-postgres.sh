@@ -40,7 +40,7 @@ postgres_dump_params=(
 	"${postgres_dump_params[@]}" >"${backup_dir}/${backup_filename}"
 backup_exit=$?
 
-if "${backup_exit}"; then
+if [[ $backup_exit -ne 0 ]]; then
 	echo "[ERROR] Unknown error occurred, backup cannot be relied upon"
 	echo "[ERROR] Erroneous Postgres dump saved to: ${backup_dir}/${backup_filename}"
 	exit "${backup_exit}"

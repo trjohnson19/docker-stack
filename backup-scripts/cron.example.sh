@@ -63,3 +63,23 @@ backup_mariadb_opts=(
 mariadb_backup_exit=$?
 
 echo "backup-mariadb.sh exit: ${mariadb_backup_exit}"
+
+#######################################
+# PostgreSQL backup ###################
+#######################################
+
+postgres_backup_script="${backup_scripts_dir}/backup-postgres.sh"
+postgres_root_user=''
+postgres_backup_dir="${BACKUPDIR}"
+postgres_backup_file_name='postgres_dump.sql'
+
+backup_postgres_opts=(
+	-u "${postgres_root_user}"
+	-d "${postgres_backup_dir}"
+	-f "${postgres_backup_file_name}"
+)
+
+"${postgres_backup_script}" "${backup_postgres_opts[@]}"
+postgres_backup_exit=$?
+
+echo "backup-mariadb.sh exit: ${postgres_backup_exit}"

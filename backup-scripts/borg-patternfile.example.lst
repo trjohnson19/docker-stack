@@ -28,34 +28,40 @@ R /home/<USER>/docker
 ############################################################
 # Include .env and docker-compose for convenience (and small
 # file size)
-- .bash_aliases.example
-- .bash_rc.example
-+ .env
-- .env.example
-- .gitignore
-+ docker-compose-t2.yml
-- LICENSE
-- README.md
+- /home/<USER>/docker/.bash_aliases.example
+- /home/<USER>/docker/.bash_rc.example
++ /home/<USER>/docker/.env
+- /home/<USER>/docker/.env.example
+- /home/<USER>/docker/.gitignore
++ /home/<USER>/docker/docker-compose-t2.yml
+- /home/<USER>/docker/LICENSE
+- /home/<USER>/docker/README.md
+
+
+############################################################
+## .git ####################################################
+############################################################
+! /home/<USER>/docker/.git
 
 
 ############################################################
 ## .github #################################################
 ############################################################
 # Included in GitHub, so does not needed to be backed up
-! .github
+! /home/<USER>/docker/.github
 
 
 ############################################################
 ## .venv ###################################################
 ############################################################
-! .venv
+! /home/<USER>/docker/.venv
 
 
 ############################################################
 ## .vscode #################################################
 ############################################################
 # Included in GitHub, so does not needed to be backed up
-! .vscode
+! /home/<USER>/docker/.vscode
 
 
 ############################################################
@@ -65,522 +71,524 @@ R /home/<USER>/docker
 
 ## Audiobookshelf ######################
 ########################################
-+ appdata/audiobookshelf/config
-+ appdata/audiobookshelf/metadata/authors
-+ appdata/audiobookshelf/metadata/backups
-+ appdata/audiobookshelf/metadata/logs
++ /home/<USER>/docker/appdata/audiobookshelf/config
++ /home/<USER>/docker/appdata/audiobookshelf/metadata/authors
++ /home/<USER>/docker/appdata/audiobookshelf/metadata/backups
++ /home/<USER>/docker/appdata/audiobookshelf/metadata/logs
 
-- appdata/audiobookshelf/**
+- /home/<USER>/docker/appdata/audiobookshelf/**
 
 
 ## Authelia ############################
 ########################################
-+ appdata/authelia/assets
-+ appdata/authelia/config
++ /home/<USER>/docker/appdata/authelia/assets
++ /home/<USER>/docker/appdata/authelia/config
 
-- appdata/authelia/**
+- /home/<USER>/docker/appdata/authelia/**
 
 
 ## Authentik ###########################
 ########################################
-+ appdata/authentik/certs
-+ appdata/authentik/config
-+ appdata/authentik/media
-+ appdata/authentik/templates
++ /home/<USER>/docker/appdata/authentik/certs
++ /home/<USER>/docker/appdata/authentik/config
++ /home/<USER>/docker/appdata/authentik/media
++ /home/<USER>/docker/appdata/authentik/templates
 
-- appdata/authentik/**
+- /home/<USER>/docker/appdata/authentik/**
 
 
 ## Bazarr ##############################
 ########################################
-+ appdata/bazarr/config/backup
-! appdata/bazarr/config/cache
-+ appdata/bazarr/config/config
-+ appdata/bazarr/config/db
-+ appdata/bazarr/config/log
-+ appdata/bazarr/config/restore
++ /home/<USER>/docker/appdata/bazarr/config/backup
+! /home/<USER>/docker/appdata/bazarr/config/cache
++ /home/<USER>/docker/appdata/bazarr/config/config
++ /home/<USER>/docker/appdata/bazarr/config/db
++ /home/<USER>/docker/appdata/bazarr/config/log
++ /home/<USER>/docker/appdata/bazarr/config/restore
 
-- appdata/bazarr/**
+- /home/<USER>/docker/appdata/bazarr/**
 
 
 ## Calibre #############################
 ########################################
 # Calibre library already stored on NAS
-! appdata/calibre
+! /home/<USER>/docker/appdata/calibre
 
 
 ## Calibre Web #########################
 ########################################
-+ appdata/calibre-web/config
++ /home/<USER>/docker/appdata/calibre-web/config
 
-- appdata/calibre-web/**
+- /home/<USER>/docker/appdata/calibre-web/**
 
 
 ## cf-ddns #############################
 ########################################
-+ appdata/cf-ddns/config
++ /home/<USER>/docker/appdata/cf-ddns/config
 
-- appdata/cf-ddns/**
+- /home/<USER>/docker/appdata/cf-ddns/**
 
 
 ## docker-gc ###########################
 ########################################
-! appdata/docker-gc
+! /home/<USER>/docker/appdata/docker-gc
 
 
 ## duckdns #############################
 ########################################
-! appdata/duckdns
+! /home/<USER>/docker/appdata/duckdns
 
 
 ## dupeguru ############################
 ########################################
-! appdata/dupeguru
+! /home/<USER>/docker/appdata/dupeguru
 
 
 ## Filebrowser #########################
 ########################################
-+ appdata/filebrowser/config
-+ appdata/filebrowser/db
-+ appdata/filebrowser/settings.json
++ /home/<USER>/docker/appdata/filebrowser/config
++ /home/<USER>/docker/appdata/filebrowser/db
++ /home/<USER>/docker/appdata/filebrowser/settings.json
 
-- appdata/filebrowser/**
+- /home/<USER>/docker/appdata/filebrowser/**
 
 
 ## Firefly #############################
 ########################################
 # Data stored in DB
-! appdata/firefly
+! /home/<USER>/docker/appdata/firefly
 
 
 ## Glances #############################
 ########################################
-! appdata/glances
+! /home/<USER>/docker/appdata/glances
 
 
 ## Gluetun #############################
 ########################################
-! appdata/gluetun
+! /home/<USER>/docker/appdata/gluetun
 
 
 ## Gotify ##############################
 ########################################
-+ appdata/gotify/config
-! appdata/gotify/app
++ /home/<USER>/docker/appdata/gotify/config
+! /home/<USER>/docker/appdata/gotify/app
 
-- appdata/gotify/**
+- /home/<USER>/docker/appdata/gotify/**
 
 
 ## Handbrake ###########################
 ########################################
-! appdata/handbrake
+! /home/<USER>/docker/appdata/handbrake
 
 
 ## Heimdall ############################
 ########################################
-+ appdata/heimdall/config
++ /home/<USER>/docker/appdata/heimdall/config
 
-- appdata/heimdall/**
+- /home/<USER>/docker/appdata/heimdall/**
 
 
 ## Jellyfin ############################
 ########################################
-+ appdata/jellyfin/config/config
++ /home/<USER>/docker/appdata/jellyfin/config/config
 
-+ appdata/jellyfin/config/data/collections
-! appdata/jellyfin/config/data/keyframes
-+ appdata/jellyfin/config/data/playlists
-+ appdata/jellyfin/config/data/ScheduledTasks
-! appdata/jellyfin/config/data/subtitles
-+ appdata/jellyfin/config/data
++ /home/<USER>/docker/appdata/jellyfin/config/data/collections
+! /home/<USER>/docker/appdata/jellyfin/config/data/keyframes
++ /home/<USER>/docker/appdata/jellyfin/config/data/playlists
++ /home/<USER>/docker/appdata/jellyfin/config/data/ScheduledTasks
+! /home/<USER>/docker/appdata/jellyfin/config/data/subtitles
++ /home/<USER>/docker/appdata/jellyfin/config/data
 
-+ appdata/jellyfin/config/log
++ /home/<USER>/docker/appdata/jellyfin/config/log
 
-+ appdata/jellyfin/config/plugins/configurations
-- appdata/jellyfin/config/plugins
++ /home/<USER>/docker/appdata/jellyfin/config/plugins/configurations
+- /home/<USER>/docker/appdata/jellyfin/config/plugins
 
-+ appdata/jellyfin/config/root
++ /home/<USER>/docker/appdata/jellyfin/config/root
 
-+ appdata/jellyfin/config
++ /home/<USER>/docker/appdata/jellyfin/config
 
-! appdata/jellyfin/transcodes
+! /home/<USER>/docker/appdata/jellyfin/transcodes
 
-- appdata/jellyfin/**
+- /home/<USER>/docker/appdata/jellyfin/**
 
 
 ## Keycloak ############################
 ########################################
-+ appdata/keycloak/build
-+ appdata/keycloak/config
-+ appdata/keycloak/ObjectStore
++ /home/<USER>/docker/appdata/keycloak/build
++ /home/<USER>/docker/appdata/keycloak/config
++ /home/<USER>/docker/appdata/keycloak/ObjectStore
 
-- appdata/keycloak/**
+- /home/<USER>/docker/appdata/keycloak/**
 
 
 ## Lidarr ##############################
 ########################################
-- appdata/lidarr/config/asp
-+ appdata/lidarr/config/Backups
-+ appdata/lidarr/config/logs
-! appdata/lidarr/config/MediaCover
-- appdata/lidarr/config/lidarr.pid
+- /home/<USER>/docker/appdata/lidarr/config/asp
++ /home/<USER>/docker/appdata/lidarr/config/Backups
++ /home/<USER>/docker/appdata/lidarr/config/logs
+! /home/<USER>/docker/appdata/lidarr/config/MediaCover
+- /home/<USER>/docker/appdata/lidarr/config/lidarr.pid
 
-+ appdata/lidarr/config
++ /home/<USER>/docker/appdata/lidarr/config
 
-- appdata/lidarr/**
+- /home/<USER>/docker/appdata/lidarr/**
 
 
 ## MariaDB #############################
 ########################################
-+ appdata/mariadb/config
-+ appdata/mariadb/data
++ /home/<USER>/docker/appdata/mariadb/config
++ /home/<USER>/docker/appdata/mariadb/data
 
-- appdata/mariadb/**
+- /home/<USER>/docker/appdata/mariadb/**
 
 
 ## Minecraft ###########################
 ########################################
-+ appdata/minecraft/mc-backups
-+ appdata/minecraft/technic
++ /home/<USER>/docker/appdata/minecraft/mc-backups
++ /home/<USER>/docker/appdata/minecraft/technic
 
-- appdata/minecraft/**
+- /home/<USER>/docker/appdata/minecraft/**
 
 
 ## Nextcloud ###########################
 ########################################
-+ appdata/nextcloud/3rdparty
-+ appdata/nextcloud/apps
-+ appdata/nextcloud/config
-+ appdata/nextcloud/core
-+ appdata/nextcloud/custom_apps
-+ appdata/nextcloud/data
-- appdata/nextcloud/dist
-- appdata/nextcloud/lib
-- appdata/nextcloud/ocs
-- appdata/nextcloud/ocs-provider
-- appdata/nextcloud/resources
-+ appdata/nextcloud/themes
++ /home/<USER>/docker/appdata/nextcloud/3rdparty
++ /home/<USER>/docker/appdata/nextcloud/apps
++ /home/<USER>/docker/appdata/nextcloud/config
++ /home/<USER>/docker/appdata/nextcloud/core
++ /home/<USER>/docker/appdata/nextcloud/custom_apps
++ /home/<USER>/docker/appdata/nextcloud/data
+- /home/<USER>/docker/appdata/nextcloud/dist
+- /home/<USER>/docker/appdata/nextcloud/lib
+- /home/<USER>/docker/appdata/nextcloud/ocs
+- /home/<USER>/docker/appdata/nextcloud/ocs-provider
+- /home/<USER>/docker/appdata/nextcloud/resources
++ /home/<USER>/docker/appdata/nextcloud/themes
 
-+ appdata/nextcloud/*
++ /home/<USER>/docker/appdata/nextcloud/*
 
-- appdata/nextcloud/**
+- /home/<USER>/docker/appdata/nextcloud/**
 
 
 ## Ombi ################################
 ########################################
-- appdata/ombi/config/.aspnet
-- appdata/ombi/config/.dotnet
-+ appdata/ombi/config/Logs
-+ appdata/ombi/config/database.json
+- /home/<USER>/docker/appdata/ombi/config/.aspnet
+- /home/<USER>/docker/appdata/ombi/config/.dotnet
++ /home/<USER>/docker/appdata/ombi/config/Logs
++ /home/<USER>/docker/appdata/ombi/config/database.json
 
-- appdata/ombi/**
+- /home/<USER>/docker/appdata/ombi/**
 
 
 ## Organizr ############################
 ########################################
-+ appdata/organizr/config
++ /home/<USER>/docker/appdata/organizr/config
 
-- appdata/organizr/**
+- /home/<USER>/docker/appdata/organizr/**
 
 
 ## Overseerr ###########################
 ########################################
-- appdata/overseerr/.cache
-- appdata/overseerr/.yarn
-+ appdata/overseerr/db
-+ appdata/overseerr/config
-+ appdata/overseerr/settings.json
+- /home/<USER>/docker/appdata/overseerr/.cache
+- /home/<USER>/docker/appdata/overseerr/.yarn
++ /home/<USER>/docker/appdata/overseerr/db
++ /home/<USER>/docker/appdata/overseerr/config
++ /home/<USER>/docker/appdata/overseerr/settings.json
 
-- appdata/overseerr/**
+- /home/<USER>/docker/appdata/overseerr/**
 
 
 ## Portfolio ###########################
 ########################################
-! appdata/portfolio
+! /home/<USER>/docker/appdata/portfolio
 
 
 ## Postgres ############################
 ########################################
-+ appdata/postgres/config
-+ appdata/postgres/data
++ /home/<USER>/docker/appdata/postgres/config
++ /home/<USER>/docker/appdata/postgres/data
 
-- appdata/postgres/**
+- /home/<USER>/docker/appdata/postgres/**
 
 
 ## Prowlarr ############################
 ########################################
-! appdata/prowlarr/config/asp
-+ appdata/prowlarr/config/Backups
-! appdata/prowlarr/config/
-+ appdata/prowlarr/config/logs
-+ appdata/prowlarr/config/config.xml
-+ appdata/prowlarr/config/logs.db
-+ appdata/prowlarr/config/prowlarr.db
-- appdata/prowlarr/config/prowlarr.db-shm
-+ appdata/prowlarr/config/prowlarr.db-wal
-- appdata/prowlarr/config/prowlarr.pid
+! /home/<USER>/docker/appdata/prowlarr/config/asp
++ /home/<USER>/docker/appdata/prowlarr/config/Backups
+! /home/<USER>/docker/appdata/prowlarr/config/
++ /home/<USER>/docker/appdata/prowlarr/config/logs
++ /home/<USER>/docker/appdata/prowlarr/config/config.xml
++ /home/<USER>/docker/appdata/prowlarr/config/logs.db
++ /home/<USER>/docker/appdata/prowlarr/config/prowlarr.db
+- /home/<USER>/docker/appdata/prowlarr/config/prowlarr.db-shm
++ /home/<USER>/docker/appdata/prowlarr/config/prowlarr.db-wal
+- /home/<USER>/docker/appdata/prowlarr/config/prowlarr.pid
 
-- appdata/prowlarr/**
+- /home/<USER>/docker/appdata/prowlarr/**
 
 
 ## qBittorrent #########################
 ########################################
-- appdata/qbittorrent/config/.cache
-+ appdata/qbittorrent/config/qBittorrent
-! appdata/qbittorrent/custom-cont-init.d
-! appdata/qbittorrent/custom-services.d
-+ appdata/qbittorrent/persistent
-! appdata/qbittorrent/scripts
+- /home/<USER>/docker/appdata/qbittorrent/config/.cache
++ /home/<USER>/docker/appdata/qbittorrent/config/qBittorrent
+! /home/<USER>/docker/appdata/qbittorrent/custom-cont-init.d
+! /home/<USER>/docker/appdata/qbittorrent/custom-services.d
++ /home/<USER>/docker/appdata/qbittorrent/persistent
+! /home/<USER>/docker/appdata/qbittorrent/scripts
 
-- appdata/qbittorrent/**
+- /home/<USER>/docker/appdata/qbittorrent/**
 
 
 ## qBittorrent-private #################
 ########################################
-- appdata/qbittorrent-private/config/.cache
-+ appdata/qbittorrent-private/config/qBittorrent
-! appdata/qbittorrent-private/custom-cont-init.d
-! appdata/qbittorrent-private/custom-services.d
-+ appdata/qbittorrent-private/persistent
-! appdata/qbittorrent-private/scripts
+- /home/<USER>/docker/appdata/qbittorrent-private/config/.cache
++ /home/<USER>/docker/appdata/qbittorrent-private/config/qBittorrent
+! /home/<USER>/docker/appdata/qbittorrent-private/custom-cont-init.d
+! /home/<USER>/docker/appdata/qbittorrent-private/custom-services.d
++ /home/<USER>/docker/appdata/qbittorrent-private/persistent
+! /home/<USER>/docker/appdata/qbittorrent-private/scripts
 
-- appdata/qbittorrent-private/**
+- /home/<USER>/docker/appdata/qbittorrent-private/**
 
 
 ## qBittorrent-temp ####################
 ########################################
-- appdata/qbittorrent-temp/config/.cache
-+ appdata/qbittorrent-temp/config/qBittorrent
-! appdata/qbittorrent-temp/custom-cont-init.d
-! appdata/qbittorrent-temp/custom-services.d
-+ appdata/qbittorrent-temp/persistent
-! appdata/qbittorrent-temp/scripts
+- /home/<USER>/docker/appdata/qbittorrent-temp/config/.cache
++ /home/<USER>/docker/appdata/qbittorrent-temp/config/qBittorrent
+! /home/<USER>/docker/appdata/qbittorrent-temp/custom-cont-init.d
+! /home/<USER>/docker/appdata/qbittorrent-temp/custom-services.d
++ /home/<USER>/docker/appdata/qbittorrent-temp/persistent
+! /home/<USER>/docker/appdata/qbittorrent-temp/scripts
 
-- appdata/qbittorrent-temp/**
+- /home/<USER>/docker/appdata/qbittorrent-temp/**
 
 
 ## Radarr ##############################
 ########################################
-! appdata/radarr/config/asp
-+ appdata/radarr/config/Backups
-+ appdata/radarr/config/logs
-! appdata/radarr/config/MediaCover
-+ appdata/radarr/config/config.xml
-+ appdata/radarr/config/logs.db
-- appdata/radarr/config/logs.db-shm
-+ appdata/radarr/config/logs.db-wal
-+ appdata/radarr/config/radarr.db
-- appdata/radarr/config/radarr.db-shm
-+ appdata/radarr/config/radarr.db-wal
-- appdata/radarr/config/radarr.pid
+! /home/<USER>/docker/appdata/radarr/config/asp
++ /home/<USER>/docker/appdata/radarr/config/Backups
++ /home/<USER>/docker/appdata/radarr/config/logs
+! /home/<USER>/docker/appdata/radarr/config/MediaCover
++ /home/<USER>/docker/appdata/radarr/config/config.xml
++ /home/<USER>/docker/appdata/radarr/config/logs.db
+- /home/<USER>/docker/appdata/radarr/config/logs.db-shm
++ /home/<USER>/docker/appdata/radarr/config/logs.db-wal
++ /home/<USER>/docker/appdata/radarr/config/radarr.db
+- /home/<USER>/docker/appdata/radarr/config/radarr.db-shm
++ /home/<USER>/docker/appdata/radarr/config/radarr.db-wal
+- /home/<USER>/docker/appdata/radarr/config/radarr.pid
 
-- appdata/radarr/**
+- /home/<USER>/docker/appdata/radarr/**
 
 
 ## Radarr-4k ###########################
 ########################################
-! appdata/radarr-4k/config/asp
-+ appdata/radarr-4k/config/Backups
-+ appdata/radarr-4k/config/logs
-! appdata/radarr-4k/config/MediaCover
-+ appdata/radarr-4k/config/config.xml
-+ appdata/radarr-4k/config/logs.db
-- appdata/radarr-4k/config/logs.db-shm
-+ appdata/radarr-4k/config/logs.db-wal
-+ appdata/radarr-4k/config/radarr.db
-- appdata/radarr-4k/config/radarr.db-shm
-+ appdata/radarr-4k/config/radarr.db-wal
-- appdata/radarr-4k/config/radarr.pid
+! /home/<USER>/docker/appdata/radarr-4k/config/asp
++ /home/<USER>/docker/appdata/radarr-4k/config/Backups
++ /home/<USER>/docker/appdata/radarr-4k/config/logs
+! /home/<USER>/docker/appdata/radarr-4k/config/MediaCover
++ /home/<USER>/docker/appdata/radarr-4k/config/config.xml
++ /home/<USER>/docker/appdata/radarr-4k/config/logs.db
+- /home/<USER>/docker/appdata/radarr-4k/config/logs.db-shm
++ /home/<USER>/docker/appdata/radarr-4k/config/logs.db-wal
++ /home/<USER>/docker/appdata/radarr-4k/config/radarr.db
+- /home/<USER>/docker/appdata/radarr-4k/config/radarr.db-shm
++ /home/<USER>/docker/appdata/radarr-4k/config/radarr.db-wal
+- /home/<USER>/docker/appdata/radarr-4k/config/radarr.pid
 
-- appdata/radarr-4k/**
+- /home/<USER>/docker/appdata/radarr-4k/**
 
 ## Readarr #############################
 ########################################
-! appdata/readarr/config/asp
-+ appdata/readarr/config/Backups
-+ appdata/readarr/config/logs
-! appdata/readarr/config/MediaCover
-- appdata/readarr/config/cache.db
-+ appdata/readarr/config/config.xml
-+ appdata/readarr/config/logs.db
-- appdata/readarr/config/logs.db-shm
-+ appdata/readarr/config/logs.db-wal
-+ appdata/readarr/config/readarr.db
-- appdata/readarr/config/readarr.db-shm
-+ appdata/readarr/config/readarr.db-wal
-- appdata/readarr/config/readarr.pid
+! /home/<USER>/docker/appdata/readarr/config/asp
++ /home/<USER>/docker/appdata/readarr/config/Backups
++ /home/<USER>/docker/appdata/readarr/config/logs
+! /home/<USER>/docker/appdata/readarr/config/MediaCover
+- /home/<USER>/docker/appdata/readarr/config/cache.db
++ /home/<USER>/docker/appdata/readarr/config/config.xml
++ /home/<USER>/docker/appdata/readarr/config/logs.db
+- /home/<USER>/docker/appdata/readarr/config/logs.db-shm
++ /home/<USER>/docker/appdata/readarr/config/logs.db-wal
++ /home/<USER>/docker/appdata/readarr/config/readarr.db
+- /home/<USER>/docker/appdata/readarr/config/readarr.db-shm
++ /home/<USER>/docker/appdata/readarr/config/readarr.db-wal
+- /home/<USER>/docker/appdata/readarr/config/readarr.pid
 
-- appdata/readarr/**
+- /home/<USER>/docker/appdata/readarr/**
 
 ## Recyclarr ###########################
 ########################################
-! appdata/recyclarr/config/cache
-+ appdata/recyclarr/config/configs
-+ appdata/recyclarr/config/logs
-! appdata/recyclarr/config/repo
-! appdata/recyclarr/config/repositories
-+ appdata/recyclarr/config/recyclarr.yml
-+ appdata/recyclarr/config/secrets.yml
-+ appdata/recyclarr/config/settings.yml
+! /home/<USER>/docker/appdata/recyclarr/config/cache
++ /home/<USER>/docker/appdata/recyclarr/config/configs
++ /home/<USER>/docker/appdata/recyclarr/config/logs
+! /home/<USER>/docker/appdata/recyclarr/config/repo
+! /home/<USER>/docker/appdata/recyclarr/config/repositories
++ /home/<USER>/docker/appdata/recyclarr/config/recyclarr.yml
++ /home/<USER>/docker/appdata/recyclarr/config/secrets.yml
++ /home/<USER>/docker/appdata/recyclarr/config/settings.yml
 
-- appdata/recyclarr/**
+- /home/<USER>/docker/appdata/recyclarr/**
 
 ## Redis ###############################
 ########################################
 # Redis `data` intended to be short-term, cache data
-+ appdata/redis/config
-! appdata/redis/data
++ /home/<USER>/docker/appdata/redis/config
+! /home/<USER>/docker/appdata/redis/data
 
-- appdata/redis/**
+- /home/<USER>/docker/appdata/redis/**
 
 ## Sonarr ##############################
 ########################################
-! appdata/sonarr/config/.config
-! appdata/sonarr/config/asp
-+ appdata/sonarr/config/Backups
-+ appdata/sonarr/config/logs
-! appdata/sonarr/config/MediaCover
-! appdata/sonarr/config/Sentry
-+ appdata/sonarr/config/config.xml
-+ appdata/sonarr/config/logs.db
-- appdata/sonarr/config/logs.db-shm
-+ appdata/sonarr/config/logs.db-wal
-+ appdata/sonarr/config/sonarr.db
-- appdata/sonarr/config/sonarr.db-shm
-+ appdata/sonarr/config/sonarr.db-wal
-- appdata/sonarr/config/sonarr.pid
+! /home/<USER>/docker/appdata/sonarr/config/.config
+! /home/<USER>/docker/appdata/sonarr/config/asp
++ /home/<USER>/docker/appdata/sonarr/config/Backups
++ /home/<USER>/docker/appdata/sonarr/config/logs
+! /home/<USER>/docker/appdata/sonarr/config/MediaCover
+! /home/<USER>/docker/appdata/sonarr/config/Sentry
++ /home/<USER>/docker/appdata/sonarr/config/config.xml
++ /home/<USER>/docker/appdata/sonarr/config/logs.db
+- /home/<USER>/docker/appdata/sonarr/config/logs.db-shm
++ /home/<USER>/docker/appdata/sonarr/config/logs.db-wal
++ /home/<USER>/docker/appdata/sonarr/config/sonarr.db
+- /home/<USER>/docker/appdata/sonarr/config/sonarr.db-shm
++ /home/<USER>/docker/appdata/sonarr/config/sonarr.db-wal
+- /home/<USER>/docker/appdata/sonarr/config/sonarr.pid
 
-- appdata/sonarr/**
+- /home/<USER>/docker/appdata/sonarr/**
 
 ## Sonarr-4k ###########################
 ########################################
-! appdata/sonarr-4k/config/.config
-! appdata/sonarr-4k/config/asp
-+ appdata/sonarr-4k/config/Backups
-+ appdata/sonarr-4k/config/logs
-! appdata/sonarr-4k/config/MediaCover
-! appdata/sonarr-4k/config/Sentry
-+ appdata/sonarr-4k/config/config.xml
-+ appdata/sonarr-4k/config/logs.db
-- appdata/sonarr-4k/config/logs.db-shm
-+ appdata/sonarr-4k/config/logs.db-wal
-+ appdata/sonarr-4k/config/sonarr.db
-- appdata/sonarr-4k/config/sonarr.db-shm
-+ appdata/sonarr-4k/config/sonarr.db-wal
-- appdata/sonarr-4k/config/sonarr.pid
+! /home/<USER>/docker/appdata/sonarr-4k/config/.config
+! /home/<USER>/docker/appdata/sonarr-4k/config/asp
++ /home/<USER>/docker/appdata/sonarr-4k/config/Backups
++ /home/<USER>/docker/appdata/sonarr-4k/config/logs
+! /home/<USER>/docker/appdata/sonarr-4k/config/MediaCover
+! /home/<USER>/docker/appdata/sonarr-4k/config/Sentry
++ /home/<USER>/docker/appdata/sonarr-4k/config/config.xml
++ /home/<USER>/docker/appdata/sonarr-4k/config/logs.db
+- /home/<USER>/docker/appdata/sonarr-4k/config/logs.db-shm
++ /home/<USER>/docker/appdata/sonarr-4k/config/logs.db-wal
++ /home/<USER>/docker/appdata/sonarr-4k/config/sonarr.db
+- /home/<USER>/docker/appdata/sonarr-4k/config/sonarr.db-shm
++ /home/<USER>/docker/appdata/sonarr-4k/config/sonarr.db-wal
+- /home/<USER>/docker/appdata/sonarr-4k/config/sonarr.pid
 
-- appdata/sonarr-4k/**
+- /home/<USER>/docker/appdata/sonarr-4k/**
 
 ## Tdarr ###############################
 ########################################
-+ appdata/tdarr/config/configs
-+ appdata/tdarr/config/logs
-+ appdata/tdarr/config/scripts
-+ appdata/tdarr/config/server
-+ appdata/tdarr/config/server/Tdarr/Backups
-+ appdata/tdarr/config/server/Tdarr/Data
-- appdata/tdarr/config/server/Tdarr/DB2/F2FOutputJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/FileJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/FlowsJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/JobReportsJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/LibrarySettingsJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/NodeJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/ResJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/SettingsGlobalJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/StagedJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/StatisticsJSONDB
-+ appdata/tdarr/config/server/Tdarr/DB2/VariablesJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/WorkerHistoryJSONDB
-- appdata/tdarr/config/server/Tdarr/DB2/WorkerVerdictHistoryJSONDB
-+ appdata/tdarr/config/server/Tdarr/Logs
-- appdata/tdarr/config/server/Tdarr/Plugins/Community
-- appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/CommunityFlowPlugins
-- appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/CommunityFlowTemplates
-- appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/FlowHelpers
-+ appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/LocalFlowPlugins
-+ appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/LocalFlowTemplates
-+ appdata/tdarr/config/server/Tdarr/Plugins/Local
-- appdata/tdarr/config/server/Tdarr/Plugins/methods
-- appdata/tdarr/config/server/Tdarr/Plugins/node_modules
-- appdata/tdarr/config/server/Tdarr/Plugins/gotCommit.txt
-- appdata/tdarr/config/server/Tdarr/Plugins/package-lock.json
-- appdata/tdarr/config/server/Tdarr/Samples
-- appdata/tdarr/config/server/Tdarr/nodePlugins.Zip
-- appdata/tdarr/config/server/pgid
-- appdata/tdarr/config/server/puid
++ /home/<USER>/docker/appdata/tdarr/config/configs
++ /home/<USER>/docker/appdata/tdarr/config/logs
++ /home/<USER>/docker/appdata/tdarr/config/scripts
++ /home/<USER>/docker/appdata/tdarr/config/server
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Backups
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Data
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/F2FOutputJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/FileJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/FlowsJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/JobReportsJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/LibrarySettingsJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/NodeJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/ResJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/SettingsGlobalJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/StagedJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/StatisticsJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/VariablesJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/WorkerHistoryJSONDB
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/DB2/WorkerVerdictHistoryJSONDB
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Logs
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/Community
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/CommunityFlowPlugins
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/CommunityFlowTemplates
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/FlowHelpers
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/LocalFlowPlugins
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/FlowPlugins/LocalFlowTemplates
++ /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/Local
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/methods
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/node_modules
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/gotCommit.txt
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Plugins/package-lock.json
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/Samples
+- /home/<USER>/docker/appdata/tdarr/config/server/Tdarr/nodePlugins.Zip
+- /home/<USER>/docker/appdata/tdarr/config/server/pgid
+- /home/<USER>/docker/appdata/tdarr/config/server/puid
 
-- appdata/tdarr/**
+- /home/<USER>/docker/appdata/tdarr/**
 
 ## Traefik #############################
 ########################################
 # `acme` can be readily pulled anew from Let's Encrypt
-! appdata/traefik/acme
-+ appdata/traefik/rules
-+ appdata/traefik/traefik.log
+! /home/<USER>/docker/appdata/traefik/acme
++ /home/<USER>/docker/appdata/traefik/rules
++ /home/<USER>/docker/appdata/traefik/traefik.log
 
-- appdata/traefik/**
+- /home/<USER>/docker/appdata/traefik/**
 
 ## Unblound ############################
 ########################################
 # All unbound data can be readily pulled from GitHub
-- appdata/unbound/**
+- /home/<USER>/docker/appdata/unbound/**
 
 ## Vaultwarden #########################
 ########################################
-+ appdata/vaultwarden/data/attachments
-- appdata/vaultwarden/data/icon_cache
-- appdata/vaultwarden/data/sends
-- appdata/vaultwarden/data/tmp
-+ appdata/vaultwarden/data/config.json
-+ appdata/vaultwarden/data/rsa_key.pem
-+ appdata/vaultwarden/data/rsa_key.pub.pem
++ /home/<USER>/docker/appdata/vaultwarden/data/attachments
+- /home/<USER>/docker/appdata/vaultwarden/data/icon_cache
+- /home/<USER>/docker/appdata/vaultwarden/data/sends
+- /home/<USER>/docker/appdata/vaultwarden/data/tmp
++ /home/<USER>/docker/appdata/vaultwarden/data/config.json
++ /home/<USER>/docker/appdata/vaultwarden/data/rsa_key.pem
++ /home/<USER>/docker/appdata/vaultwarden/data/rsa_key.pub.pem
 
-- appdata/vaultwarden/**
+- /home/<USER>/docker/appdata/vaultwarden/**
 
 ## VS Code #############################
 ########################################
 # Can resync vscode profile with GitHub / Microsoft
-- appdata/vscode/**
+- /home/<USER>/docker/appdata/vscode/**
 
 ## Wireguard ###########################
 ########################################
-- appdata/wireguard/config/coredns
-+ appdata/wireguard/config/peer*/**
-+ appdata/wireguard/config/server
-- appdata/wireguard/config/templates
-+ appdata/wireguard/config/wg_confs
-+ appdata/wireguard/config/.donoteditthisfile
+- /home/<USER>/docker/appdata/wireguard/config/coredns
++ /home/<USER>/docker/appdata/wireguard/config/peer*/**
++ /home/<USER>/docker/appdata/wireguard/config/server
+- /home/<USER>/docker/appdata/wireguard/config/templates
++ /home/<USER>/docker/appdata/wireguard/config/wg_confs
++ /home/<USER>/docker/appdata/wireguard/config/.donoteditthisfile
 
-- appdata/wireguard/**
+- /home/<USER>/docker/appdata/wireguard/**
 
 ## appdata #############################
 ########################################
 # Exclude everything else by default
-- appdata/**
+- /home/<USER>/docker/appdata/**
 
 ############################################################
 ## backup-scripts ##########################################
 ############################################################
-+ backup-scripts
++ /home/<USER>/docker/backup-scripts
+- /home/<USER>/docker/backup-scripts/borg-patternfile.example.lst
 
 ############################################################
 ## backups #################################################
 ############################################################
-+ backups
++ /home/<USER>/docker/backups
 
 ############################################################
 ## secrets #################################################
 ############################################################
-+ secrets
++ /home/<USER>/docker/secrets
 
 ############################################################
 ## shared ##################################################
 ############################################################
-+ shared
++ /home/<USER>/docker/shared
 
 ############################################################
 ## Project root ############################################
 ############################################################
 # Exclude all other files and directories that are not
 # specifically included earlier.
+- /home/<USER>/docker/**
 - **

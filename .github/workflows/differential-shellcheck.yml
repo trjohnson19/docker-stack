@@ -20,13 +20,13 @@ jobs:
     steps:
       - name: Repository checkout
         # yamllint disable-line rule:line-length
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b  # @v4.1.5
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29  # @v4.1.6
         with:
           fetch-depth: 0
 
       - name: Differential ShellCheck
         # yamllint disable-line rule:line-length
-        uses: redhat-plumbers-in-action/differential-shellcheck@227e1622ed4ea0cb0ec188f1db0a8cfe9c87e8df  #@v5.2.0
+        uses: redhat-plumbers-in-action/differential-shellcheck@60c9f2b924a9c5a2ddbb25e7b23e8e11b56faab9  #@v5.3.0
         with:
           severity: warning
           token: ${{ secrets.GITHUB_TOKEN }}

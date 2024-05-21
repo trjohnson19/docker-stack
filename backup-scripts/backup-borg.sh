@@ -61,7 +61,6 @@ borg create \
 	--compression auto,zstd,9 \
 	--exclude-caches \
 	--patterns-from "${borg_patternfile}" \
-	--dry-run \
 	\
 	::'{hostname}-{now}' \
 	"${borg_backup_dir}"
@@ -81,8 +80,7 @@ borg prune \
 	--show-rc \
 	--keep-daily 7 \
 	--keep-weekly 4 \
-	--keep-monthly 6 \
-	--dry-run
+	--keep-monthly 6
 
 prune_exit=$?
 

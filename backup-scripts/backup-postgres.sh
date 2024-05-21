@@ -33,7 +33,7 @@ backup_filename="${backup_filename:-dump.sql}"
 postgres_dump_params=(
 	--username="${postgres_root_user}"
 	--no-password
-	--verbose
+	# --verbose
 )
 
 /usr/bin/docker exec --user root postgres /usr/bin/pg_dumpall \

@@ -36,7 +36,7 @@ mariadb_dump_params=(
 	--user="${mariadb_root_user}"
 	--all-databases
 	--lock-all-tables
-	--verbose
+	# --verbose
 )
 
 if [[ -v mariadb_root_password ]]; then

@@ -35,7 +35,9 @@ export BORG_REPO="${borg_repo}"
 
 # Setting this to ensure appropriate ssh key is used:
 if [[ -n $borg_ssh_id_key ]]; then
-	export BORG_RSH="ssh -i ${borg_ssh_id_key}"
+	export BORG_RSH="ssh -i ${borg_ssh_id_key} -oBatchMode=yes"
+else
+	export BORG_RSH="ssh -oBatchMode=yes"
 fi
 
 # See the section "Passphrase notes" for more infos.

@@ -308,7 +308,9 @@ R /home/<USER>/docker
 ## Postgres ############################
 ########################################
 + /home/<USER>/docker/appdata/postgres/config
-+ /home/<USER>/docker/appdata/postgres/data
+
+# Backed up via pg_dumpall
+! /home/<USER>/docker/appdata/postgres/data
 
 - /home/<USER>/docker/appdata/postgres/**
 

@@ -798,11 +798,17 @@ services:
   ##     CREATE USER <username> WITH PASSWORD '<password>';
   ##     CREATE DATABASE <dbname> OWNER <username>;
   ##     GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <username>;
+  ##
+  ## Steps for restoring from a backup:
+  ## 1. Place the output of pg_dump in a convenient location, e.g., "${DOCKERDIR}/backup/postgres_dump.sql"
+  ## 2. Start `postgres` with a clean data directory
+  ## 3. Run the following command to recreate the database as specified in the postgres_dump.sql file
+  ##     sudo docker exec -i --user=postgres postgres psql --dbname=postgres < ./backup/postgres_dump.sql
   postgres:
     <<: *common-keys-core
     container_name: postgres
     image: postgres:16
-    # user: "${PUID}:${PGID}"
+    user: "${PUID}:${PGID}"
     networks:
       t2_proxy:
         ipv4_address: $POSTGRES_IPV4
@@ -816,7 +822,7 @@ services:
       timeout: 5s
     volumes:
       - $APPDIR/postgres/config:/config
-      - $DATADIR/postgres/data:/var/lib/postgresql/data
+      - $APPDIR/postgres/data:/var/lib/postgresql/data
     environment:
       <<: *default-tz-puid-pgid
       POSTGRES_USER_FILE: /run/secrets/postgres_user

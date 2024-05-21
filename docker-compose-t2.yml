@@ -2658,7 +2658,7 @@ services:
     # ports:
     #   - "$TAUTULLI_PORT:8181"
     volumes:
-      - $DATADIR/docker/plex/tautulli:/config
+      - $APPDIR/tautulli/config:/config
       - "$DATADIR/docker/plex/Library/Application Support/Plex Media Server/Logs:/plexlogs:ro"  # Give read-only access to Plex logs for monitoring via Tautulli
     environment:
       <<: *default-tz-puid-pgid

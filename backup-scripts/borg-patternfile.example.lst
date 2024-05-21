@@ -102,7 +102,9 @@ R /home/<USER>/docker
 + /home/<USER>/docker/appdata/bazarr/config/backup
 ! /home/<USER>/docker/appdata/bazarr/config/cache
 + /home/<USER>/docker/appdata/bazarr/config/config
-+ /home/<USER>/docker/appdata/bazarr/config/db
++ /home/<USER>/docker/appdata/bazarr/config/db/bazarr.db
+- /home/<USER>/docker/appdata/bazarr/config/db/bazarr.db-shm
++ /home/<USER>/docker/appdata/bazarr/config/db/bazarr.db-wal
 + /home/<USER>/docker/appdata/bazarr/config/log
 + /home/<USER>/docker/appdata/bazarr/config/restore
 
@@ -229,6 +231,9 @@ R /home/<USER>/docker
 + /home/<USER>/docker/appdata/lidarr/config/Backups
 + /home/<USER>/docker/appdata/lidarr/config/logs
 ! /home/<USER>/docker/appdata/lidarr/config/MediaCover
++ /home/<USER>/docker/appdata/lidarr/config/lidarr.db
+- /home/<USER>/docker/appdata/lidarr/config/lidarr.db-shm
++ /home/<USER>/docker/appdata/lidarr/config/lidarr.db-wal
 - /home/<USER>/docker/appdata/lidarr/config/lidarr.pid
 
 + /home/<USER>/docker/appdata/lidarr/config

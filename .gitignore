@@ -179,6 +179,16 @@ appdata/unbound/config/*
 !appdata/unbound/config/root.hints.example.cron
 !appdata/unbound/config/unbound.conf
 
+!backup-scripts
+backup-scripts/*
+!backup-scripts/.passwords.example.env
+!backup-scripts/backup-*.sh
+!backup-scripts/borg-patternfile.example.lst
+!backup-scripts/cron.sh
+
+!backups
+backups/*
+
 # Include the .github directory
 !.github
 !.github/*

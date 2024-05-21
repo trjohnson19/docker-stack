@@ -54,6 +54,8 @@ postgres_root_user="${POSTGRES_ROOT_USER:-postgres}"
 borg_repo="${BORG_REPO:-}"
 borg_ssh_id_key="${BORG_SSH_ID_KEY:-}"
 borg_passphrase="${BORG_PASSPHRASE:-}"
+borg_patternfile="${BORG_PATTERNFILE:-}"
+borg_backup_dir="${BORG_BACKUP_DIR:-}"
 
 # Full, absolute path to `backup-scripts` dir
 backup_scripts_dir="${DOCKERDIR}/backup-scripts"
@@ -115,6 +117,8 @@ backup_borg_opts=(
 	-r "${borg_repo}"
 	-i "${borg_ssh_id_key}"
 	-p "${borg_passphrase}"
+	-f "${borg_patternfile}"
+	-d "${borg_backup_dir}"
 )
 
 "${borg_backup_script}" "${backup_borg_opts[@]}"

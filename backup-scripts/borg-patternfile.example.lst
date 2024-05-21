@@ -479,6 +479,23 @@ R /home/<USER>/docker
 
 - /home/<USER>/docker/appdata/sonarr-4k/**
 
+## Tautulli ############################
+########################################
++ /home/<USER>/docker/appdata/tautulli/backups
+! /home/<USER>/docker/appdata/tautulli/cache
++ /home/<USER>/docker/appdata/tautulli/exports
++ /home/<USER>/docker/appdata/tautulli/logs
++ /home/<USER>/docker/appdata/tautulli/newsletters
++ /home/<USER>/docker/appdata/tautulli/templates
++ /home/<USER>/docker/appdata/tautulli/config.ini
++ /home/<USER>/docker/appdata/tautulli/release.lock
++ /home/<USER>/docker/appdata/tautulli/tautulli.db
+- /home/<USER>/docker/appdata/tautulli/tautulli.db-shm
++ /home/<USER>/docker/appdata/tautulli/tautulli.db-wal
++ /home/<USER>/docker/appdata/tautulli/version.lock
+
+- /home/<USER>/docker/appdata/tautulli/**
+
 ## Tdarr ###############################
 ########################################
 + /home/<USER>/docker/appdata/tdarr/config/configs

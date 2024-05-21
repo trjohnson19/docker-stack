@@ -239,7 +239,9 @@ R /home/<USER>/docker
 ## MariaDB #############################
 ########################################
 + /home/<USER>/docker/appdata/mariadb/config
-+ /home/<USER>/docker/appdata/mariadb/data
+
+# Backed up via `mariadb-dump`
+! /home/<USER>/docker/appdata/mariadb/data
 
 - /home/<USER>/docker/appdata/mariadb/**
 

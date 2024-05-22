@@ -183,6 +183,7 @@ appdata/unbound/config/*
 backup-scripts/*
 !backup-scripts/.passwords.example.env
 !backup-scripts/backup-*.sh
+!backup-scripts/backup.example.cron
 !backup-scripts/borg-patternfile.example.lst
 !backup-scripts/cron.sh
 

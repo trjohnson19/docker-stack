@@ -1,2 +1,2 @@
 ## Run docker backup script (including borg) daily at 1:13 AM
-1    13   *    *    *    /usr/bin/env --ignore-environment /home/<USER>/docker/backup-scripts/cron.sh -e /home/<USER>/docker/.env -p /home/<USER>/docker/backup-scripts/.passwords.env
+13   1    *    *    *    /usr/bin/env --ignore-environment /home/<USER>/docker/backup-scripts/cron.sh -e /home/<USER>/docker/.env -p /home/<USER>/docker/backup-scripts/.passwords.env

@@ -68,7 +68,7 @@ secrets:
     file: $SECRETSDIR/authentik_token_ldap
   cloudflare_api_key:
     file: $SECRETSDIR/cloudflare_api_key
-  cloudflare_ddns_api_token:
+  cloudflare_ddns_api_token:  # Currently unsupported
     file: $SECRETSDIR/cloudflare_ddns_api_token
   cloudflare_email:
     file: $SECRETSDIR/cloudflare_email
@@ -951,14 +951,27 @@ services:
 
   ## Cloudflare DDNS - Dynamic DNS service to update Cloudflare DNS records
   cf-ddns:
-    <<: *common-keys-core
+    # <<: *common-keys-core  # Must set network mode manually
     container_name: cf-ddns
-    image: joshava/cloudflare-ddns  # oznu/docker-cloudflare-ddns out of date
+    image: favonia/cloudflare-ddns:latest
+    network_mode: host  # To make IPv6 easier
+    restart: always
+    cap_add:
+      - SETUID  # PUID
+      - SETGID  # PGID
+    cap_drop:
+      - all
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     volumes:
-      - $APPDIR/cf-ddns/config/config.yaml:/app/config.yaml:ro
+      - $APPDIR/cf-ddns/config/cloudflare_ddns_api_token:/cloudflare_ddns_api_token:ro
     environment:  # Environmental variables deprecated
       <<: *default-tz-puid-pgid
-      CRON: "@daily"
+      CF_API_TOKEN_FILE: /cloudflare_ddns_api_token
+      DOMAINS: $DOMAINNAME0
+      PROXIED: "true"
+      UPDATE_CRON: "*/5 * * * *"
 
   ## DuckDNS - Dynamic DNS service provided by duckdns.org
   duckdns:

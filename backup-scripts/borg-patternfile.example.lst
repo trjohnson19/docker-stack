@@ -126,7 +126,7 @@ R /home/<USER>/docker
 
 ## cf-ddns #############################
 ########################################
-+ /home/<USER>/docker/appdata/cf-ddns/config
++ /home/mint/docker/appdata/cf-ddns/config/cloudflare_ddns_api_token
 
 - /home/<USER>/docker/appdata/cf-ddns/**
 

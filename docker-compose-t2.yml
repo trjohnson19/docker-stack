@@ -2586,7 +2586,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.2
+    image: lscr.io/linuxserver/qbittorrent:4.6.5
     container_name: qbit-private
     security_opt:
       - no-new-privileges:true
@@ -2627,7 +2627,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.2
+    image: lscr.io/linuxserver/qbittorrent:4.6.5
     container_name: qbit-temp
     security_opt:
       - no-new-privileges:true

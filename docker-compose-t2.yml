@@ -213,8 +213,9 @@ services:
   traefik:
     <<: *common-keys-core
     container_name: traefik
-    image: traefik:saintmarcelin  # beaufort=3.0.x; saintmarcelin=2.10.x
+    image: traefik:comte  # comte=3.1.x
     command:  # CLI arguments
+      - --core.defaultRuleSyntax=v2  # Used for transition to Traefik v3
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.http.address=:80
@@ -259,7 +260,6 @@ services:
       # - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1
       # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1
       - --providers.docker.network=t2_proxy
-      - --providers.docker.swarmMode=false
       ## Load dynamic configuration from one or more .toml or .yml files in a
       ## directory
       - --providers.file.directory=/rules
@@ -1183,7 +1183,6 @@ services:
       ## Middlewares
       - "traefik.http.routers.guacamole-rtr.middlewares=chain-authelia@file,guacamole-remove-bypass-cache,add-guacamole"
       - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
-      - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.forceSlash=false"
       - "traefik.http.middlewares.add-guacamole.addPrefix.prefix=/guacamole"
       ## HTTP Services
       - "traefik.http.routers.guacamole-rtr.service=guacamole-svc"
@@ -1675,7 +1674,6 @@ services:
       #- "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.nextcloud-rtr.middlewares=chain-nextcloud@file,nextcloud-remove-bypass-cache"
       - "traefik.http.middlewares.nextcloud-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
-      - "traefik.http.middlewares.nextcloud-remove-bypass-cache.stripprefix.forceSlash=false"
       ## HTTP Services
       - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
@@ -2396,7 +2394,6 @@ services:
   #   #   ## Middlewares
   #   #   - "traefik.http.routers.minecraft-rtr.middlewares=chain-no-auth@file,minecraft-remove-bypass-cache"
   #   #   - "traefik.http.middlewares.minecraft-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
-  #   #   - "traefik.http.middlewares.minecraft-remove-bypass-cache.stripprefix.forceSlash=false"
   #   #   ## HTTP Services
   #   #   - "traefik.http.routers.minecraft-rtr.service=minecraft-svc"
   #   #   - "traefik.http.services.minecraft-svc.loadbalancer.server.port=$MINECRAFT_PORT"
@@ -3088,7 +3085,6 @@ services:
       ## Middlewares
       - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia@file,jellyfin-remove-bypass-cache"
       - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
-      - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.forceSlash=false"
       # - "traefik.http.middlewares.jellyfin-add-slash.addPrefix.prefix=/"
       ## HTTP Services
       - "traefik.http.routers.jellyfin-rtr.service=jellyfin-svc"
@@ -3134,7 +3130,6 @@ services:
   #     ## Middlewares
   #     - "traefik.http.routers.plex-rtr.middlewares=chain-authelia@file,plex-remove-bypass-cache"
   #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
-  #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.forceSlash=false"
   #     ## HTTP Services
   #     - "traefik.http.routers.plex-rtr.service=plex-svc"
   #     - "traefik.http.services.plex-svc.loadbalancer.server.port=32400"

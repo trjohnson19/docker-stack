@@ -215,7 +215,6 @@ services:
     container_name: traefik
     image: traefik:comte  # comte=3.1.x
     command:  # CLI arguments
-      - --core.defaultRuleSyntax=v2  # Used for transition to Traefik v3
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.http.address=:80
@@ -2713,7 +2712,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers API Auth Bypass
       - "traefik.http.routers.prowlarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.prowlarr-rtr-bypass.rule=Host(`prowlarr.$DOMAINNAME0`) && ( Headers(`X-Api-Key`, `$PROWLARR_API_KEY`) || Query(`apikey`, `$PROWLARR_API_KEY`) )"
+      - "traefik.http.routers.prowlarr-rtr-bypass.rule=Host(`prowlarr.$DOMAINNAME0`) && ( Header(`X-Api-Key`, `$PROWLARR_API_KEY`) || Query(`apikey`, `$PROWLARR_API_KEY`) )"
       - "traefik.http.routers.prowlarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.prowlarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2774,7 +2773,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers API Auth Bypass
       - "traefik.http.routers.radarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.radarr-rtr-bypass.rule=Host(`radarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
+      - "traefik.http.routers.radarr-rtr-bypass.rule=Host(`radarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
       - "traefik.http.routers.radarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.radarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2813,7 +2812,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers API Auth Bypass
       - "traefik.http.routers.radarr-4k-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.radarr-4k-rtr-bypass.rule=Host(`radarr-4k.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
+      - "traefik.http.routers.radarr-4k-rtr-bypass.rule=Host(`radarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
       - "traefik.http.routers.radarr-4k-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.radarr-4k-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2852,7 +2851,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
       - "traefik.http.routers.sonarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.sonarr-rtr-bypass.rule=Host(`sonarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
+      - "traefik.http.routers.sonarr-rtr-bypass.rule=Host(`sonarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
       - "traefik.http.routers.sonarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.sonarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2891,7 +2890,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
       - "traefik.http.routers.sonarr-4k-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.rule=Host(`sonarr-4k.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.rule=Host(`sonarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.sonarr-4k-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2927,7 +2926,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
       - "traefik.http.routers.readarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$READARR_API_KEY`) || Query(`apikey`, `$READARR_API_KEY`))"
+      - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$READARR_API_KEY`) || Query(`apikey`, `$READARR_API_KEY`))"
       - "traefik.http.routers.readarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.readarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -2964,7 +2963,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
       - "traefik.http.routers.lidarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.lidarr-rtr-bypass.rule=Host(`lidarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$LIDARR_API_KEY`) || Query(`apikey`, `$LIDARR_API_KEY`))"
+      - "traefik.http.routers.lidarr-rtr-bypass.rule=Host(`lidarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$LIDARR_API_KEY`) || Query(`apikey`, `$LIDARR_API_KEY`))"
       - "traefik.http.routers.lidarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.lidarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
@@ -3247,7 +3246,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers API Auth Bypass
       - "traefik.http.routers.bazarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.bazarr-rtr-bypass.rule=Host(`bazarr.$DOMAINNAME0`) && (Headers(`X-Api-Key`, `$BAZARR_API_KEY`) || Query(`apikey`, `$BAZARR_API_KEY`))"
+      - "traefik.http.routers.bazarr-rtr-bypass.rule=Host(`bazarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$BAZARR_API_KEY`) || Query(`apikey`, `$BAZARR_API_KEY`))"
       - "traefik.http.routers.bazarr-rtr-bypass.tls.options=tls-opts@file"
       - "traefik.http.routers.bazarr-rtr-bypass.priority=100"
       ## HTTP Routers

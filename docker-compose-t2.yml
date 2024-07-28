@@ -9,29 +9,38 @@
 ## You may customize the network subnets (192.168.90.0/24, 91.0/24, 250.0/24)
 ## below as you please.
 ## Docker Compose version 3.5 or higher required to define networks this way.
+##
+## Note: to enable IPv6 on the bridge network, follow the steps at
+## https://docs.docker.com/config/daemon/ipv6/#use-ipv6-for-the-default-bridge-network
 
 networks:
   t2_proxy:
     name: t2_proxy
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: $T2_PROXY_SUBNET
           gateway: $T2_PROXY_GATEWAY
+        - subnet: $T2_PROXY_IPV6_SUBNET
   socket_proxy:
     name: socket_proxy
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: $SOCKET_PROXY_SUBNET
           gateway: $SOCKET_PROXY_GATEWAY
+        - subnet: $SOCKET_PROXY_IPV6_SUBNET
   gluetun_net:
     name: gluetun_net
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: $GLUETUN_SUBNET
           gateway: $GLUETUN_GATEWAY
+        - subnet: $GLUETUN_IPV6_SUBNET
   default:
     driver: bridge
 

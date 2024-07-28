@@ -5,7 +5,6 @@ http:
       stripPrefix:
         prefixes:
           - "/bypass_cache"
-        forceSlash: false
   routers:
     plex-rtr:
       ## yamllint disable-line rule:line-length

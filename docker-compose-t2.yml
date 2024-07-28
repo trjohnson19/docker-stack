@@ -1620,7 +1620,7 @@ services:
   nextcloud:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     container_name: nextcloud
-    image: nextcloud:28
+    image: nextcloud:29
     # ports:
     #   - 443:443
     volumes:

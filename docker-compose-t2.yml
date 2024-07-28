@@ -2018,7 +2018,7 @@ services:
       # - "traefik.udp.routers.wireguard-udp.middlewares=chain-no-auth@file"
       ## UDP Services
       - "traefik.udp.routers.wireguard-udp.service=wireguard-udp-svc"
-      - "traefik.udp.services.wireguard-udp-svc.loadbalancer.server.port=$WIREGUARD_PORT"
+      - "traefik.udp.services.wireguard-udp-svc.loadbalancer.server.port=51820"
 
   ## Gluetun - VPN client in a thin Docker container
   gluetun:

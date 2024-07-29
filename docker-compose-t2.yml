@@ -961,7 +961,7 @@ services:
   cf-ddns:
     # <<: *common-keys-core  # Must set network mode manually
     container_name: cf-ddns
-    image: favonia/cloudflare-ddns:latest
+    image: favonia/cloudflare-ddns:1
     network_mode: host  # To make IPv6 easier
     restart: always
     user: "${PUID}:${PGID}"

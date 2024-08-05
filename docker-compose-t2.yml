@@ -1225,6 +1225,7 @@ services:
       ## limits logs displayed to containers with this label
       # DOZZLE_FILTER: "label=log_me"
       DOZZLE_LEVEL: info
+      DOZZLE_NO_ANALYTICS: true
     # volumes:
     #   ## Use Docker Socket Proxy instead for improved security
     #   - /var/run/docker.sock:/var/run/docker.sock

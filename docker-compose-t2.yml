@@ -2053,6 +2053,7 @@ services:
       ## See https://github.com/qdm12/gluetun/discussions/666
       OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
+      PORT_FORWARD_ONLY: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:
@@ -2103,6 +2104,7 @@ services:
       ## See https://github.com/qdm12/gluetun/discussions/666
       OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
+      PORT_FORWARD_ONLY: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_PRIVATE_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:
@@ -2153,6 +2155,7 @@ services:
       ## See https://github.com/qdm12/gluetun/discussions/666
       OPENVPN_FLAGS: "--comp-lzo"
       VPN_PORT_FORWARDING: "on"
+      PORT_FORWARD_ONLY: "on"
       VPN_PORT_FORWARDING_PROVIDER: $GLUETUN_TEMP_VPN_SERVICE_PROVIDER
       # Wireguard:
       # WIREGUARD_PRIVATE_KEY:

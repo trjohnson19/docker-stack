@@ -15,5 +15,5 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://mint.home.arpa:{{env "HOMEBRIDGE_PORT"}}'
+          - url: 'http://mint.internal:{{env "HOMEBRIDGE_PORT"}}'
 ...

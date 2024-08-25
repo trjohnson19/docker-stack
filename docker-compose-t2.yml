@@ -787,7 +787,7 @@ services:
   mariadb:
     <<: *common-keys-core
     container_name: mariadb
-    image: lscr.io/linuxserver/mariadb:10.6.10
+    image: lscr.io/linuxserver/mariadb:latest
     ports:
       - "$MARIADB_PORT:3306"
     volumes:

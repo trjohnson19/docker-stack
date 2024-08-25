@@ -2090,8 +2090,8 @@ services:
       - $GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT:$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_PRIVATE_PORT:$QBITTORRENT_PRIVATE_PORT
-    volumes:
-      - $APPDIR/gluetun:/gluetun
+    # volumes:
+    #   - $APPDIR/gluetun-private:/gluetun
     environment:
       <<: *default-tz-puid-pgid
       VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER
@@ -2140,8 +2140,8 @@ services:
       - $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT:$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_TEMP_PORT:$QBITTORRENT_TEMP_PORT
-    volumes:
-      - $APPDIR/gluetun:/gluetun
+    # volumes:
+    #   - $APPDIR/gluetun-temp:/gluetun
     environment:
       <<: *default-tz-puid-pgid
       VPN_SERVICE_PROVIDER: $GLUETUN_VPN_SERVICE_PROVIDER

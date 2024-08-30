@@ -7,10 +7,9 @@
 ## https://github.com/github/super-linter
 name: Lint Code Base
 
-permissions:
-  { }
+permissions: {}
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push: null
   pull_request: null
 jobs:
@@ -24,7 +23,7 @@ jobs:
     steps:
       - name: Checkout code
         # yamllint disable-line rule:line-length
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # @v4.1.7
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # @v4.1.7
         with:
           ## Full git history is needed to get a proper list of changed files
           ## within `super-linter`
@@ -32,7 +31,7 @@ jobs:
 
       - name: Lint Code Base
         # yamllint disable-line rule:line-length
-        uses: super-linter/super-linter@02a1172d274f021e4c70f66e23f1085eadd1064b  # @v7.0.0
+        uses: super-linter/super-linter@02a1172d274f021e4c70f66e23f1085eadd1064b # @v7.0.0
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "main"

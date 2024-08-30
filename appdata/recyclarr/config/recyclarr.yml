@@ -102,7 +102,7 @@ sonarr:
 ## Configuration specific to Radarr.
 radarr:
   radarr:
-  ## Set the URL/API Key to your actual instance
+    ## Set the URL/API Key to your actual instance
     base_url: http://radarr:7878
     api_key: !secret radarr_apikey
 
@@ -467,7 +467,7 @@ radarr:
             reset_unmatched_scores: true
 
   radarr_4k:
-  ## Set the URL/API Key to your actual instance
+    ## Set the URL/API Key to your actual instance
     base_url: http://radarr-4k:7878
     api_key: !secret radarr_4k_apikey
 
@@ -814,5 +814,4 @@ radarr:
         quality_profiles:
           - name: 0 - Own-Ultra-HD - Anime
             reset_unmatched_scores: true
-
 ## jscpd:ignore-end

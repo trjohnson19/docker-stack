@@ -9,12 +9,10 @@ http:
         usersFile: "/shared/.htpasswd"
         realm: "Traefik 2 Basic Auth"
 
-
     middlewares-rate-limit:
       rateLimit:
         average: 100
         burst: 50
-
 
     middlewares-secure-headers:
       headers:
@@ -48,12 +46,11 @@ http:
           X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
           server: ""
 
-
     ## Documentation: https://www.authelia.com/integration/proxies/traefik/
     middlewares-authelia:
       forwardAuth:
         ## yamllint disable-line rule:line-length
-        address: 'http://authelia:9091/api/authz/forward-auth'
+        address: "http://authelia:9091/api/authz/forward-auth"
         ## The following commented line is for configuring the Authelia URL in the proxy. We strongly suggest this is
         ## configured in the Session Cookies section of the Authelia configuration.
         # address: 'https://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2Fauth.{{env "DOMAINNAME0"}}%2F'
@@ -66,10 +63,9 @@ http:
           - "Remote-Email"
           - "Remote-Name"
 
-
     middlewares-keycloak:
       forwardAuth:
-        address: 'http://keycloak:9092'
+        address: "http://keycloak:9092"
         trustForwardHeader: true
         authResponseHeaders:
           - "Remote-User"
@@ -83,12 +79,11 @@ http:
           - "X-Forwarded-Port"
           - "X-Forwarded-User"
 
-
     ## yamllint disable-line rule:line-length
     ## https://github.com/goauthentik/authentik/issues/2366#issuecomment-1159442127
     middlewares-authentik:
       forwardAuth:
-        address: 'http://authentik:9000/outpost.goauthentik.io/auth/traefik'
+        address: "http://authentik:9000/outpost.goauthentik.io/auth/traefik"
         trustForwardHeader: true
         authResponseHeaders:
           - X-authentik-username
@@ -103,7 +98,6 @@ http:
           - X-authentik-meta-app
           - X-authentik-meta-version
 
-
     # middlewares-oauth:
     #   forwardAuth:
     #     ## Make sure you have the OAuth service in docker-compose.yml
@@ -111,4 +105,3 @@ http:
     #     trustForwardHeader: true
     #     authResponseHeaders:
     #       - "X-Forwarded-User"
-...

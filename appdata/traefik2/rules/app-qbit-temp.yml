@@ -15,5 +15,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://mint.home.arpa:8170'
-...
+          - url: "http://mint.home.arpa:8170"

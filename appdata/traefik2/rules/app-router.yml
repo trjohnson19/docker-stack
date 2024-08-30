@@ -15,5 +15,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://192.168.1.254'
-...
+          - url: "http://192.168.1.254"

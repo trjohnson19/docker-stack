@@ -17,4 +17,3 @@ http:
         servers:
           ## Or whatever your external host's IP:port is
           - url: 'http://hass.home.arpa:{{env "HOME_ASSISTANT_PORT"}}'
-...

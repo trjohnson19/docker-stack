@@ -16,4 +16,3 @@ http:
         servers:
           ## Or whatever your external host's IP:port is
           - url: 'http://mint.home.arpa:{{env "QBITTORRENT_PRIVATE_PORT"}}'
-...

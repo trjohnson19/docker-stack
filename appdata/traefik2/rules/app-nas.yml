@@ -22,4 +22,3 @@ http:
         servers:
           ## Or whatever your external host's IP:port is
           - url: 'http://nas.home.arpa:{{env "SYNOLOGY_PORT"}}'
-...

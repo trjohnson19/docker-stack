@@ -22,4 +22,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://nas.home.arpa:{{env "PLEX_PORT"}}'
+          - url: 'http://nas.internal:{{env "PLEX_PORT"}}'

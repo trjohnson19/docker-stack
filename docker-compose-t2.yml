@@ -3054,7 +3054,7 @@ services:
     devices:
       # - /dev/dri:/dev/dri  # AMD hardware transcoding?
       - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/dri/card0:/dev/dri/card0
+      - /dev/dri/card1:/dev/dri/card0
     group_add:
       - $RENDER_GROUP # Add render group permission to allow GPU render access
     ports:

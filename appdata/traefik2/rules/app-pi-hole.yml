@@ -20,5 +20,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://pihole.internal'
-...
+          - url: "http://pihole.internal"

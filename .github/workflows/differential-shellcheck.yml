@@ -3,7 +3,7 @@
 
 name: Differential ShellCheck
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push: null
   pull_request: null
 
@@ -20,13 +20,13 @@ jobs:
     steps:
       - name: Repository checkout
         # yamllint disable-line rule:line-length
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # @v4.1.7
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # @v4.1.7
         with:
           fetch-depth: 0
 
       - name: Differential ShellCheck
         # yamllint disable-line rule:line-length
-        uses: redhat-plumbers-in-action/differential-shellcheck@cc6721c45a8800cc666de45493545a07a638d121  #@v5.4.0
+        uses: redhat-plumbers-in-action/differential-shellcheck@cc6721c45a8800cc666de45493545a07a638d121 #@v5.4.0
         with:
           severity: warning
           token: ${{ secrets.GITHUB_TOKEN }}

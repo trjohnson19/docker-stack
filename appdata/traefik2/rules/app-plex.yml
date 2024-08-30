@@ -23,4 +23,3 @@ http:
         servers:
           ## Or whatever your external host's IP:port is
           - url: 'http://nas.internal:{{env "PLEX_PORT"}}'
-...

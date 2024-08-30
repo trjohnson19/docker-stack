@@ -4,9 +4,9 @@ http:
     nextcloud-middlewares-secure-headers:
       headers:
         # accessControlAllowMethods:
-          # - GET
-          # - OPTIONS
-          # - PUT
+        # - GET
+        # - OPTIONS
+        # - PUT
         accessControlMaxAge: 100
         # sslRedirect: true
         stsSeconds: 63072000
@@ -33,7 +33,6 @@ http:
         #   X-Robots-Tag: "none"
         #   server: ""
 
-
     ### This section redirects requests for Nextcloud calendar and contacts
     ### service discovery
     ### yamllint disable-line rule:line-length
@@ -43,4 +42,3 @@ http:
         permanent: true
         regex: "https://(.*)/.well-known/(card|cal)dav"
         replacement: "https://${1}/remote.php/dav/"
-...

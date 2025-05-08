@@ -16,4 +16,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://hass.internal:{{env "HOME_ASSISTANT_PORT"}}'
+          - url: 'http://hass.unifi.internal:{{env "HOME_ASSISTANT_PORT"}}'

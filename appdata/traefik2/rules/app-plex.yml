@@ -22,4 +22,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: 'http://nuc.unifi.internal:{{env "PLEX_PORT"}}'
+          - url: 'http://nas.unifi.internal:{{env "PLEX_PORT"}}'

@@ -2021,7 +2021,7 @@ services:
 
   ## Gluetun - VPN client in a thin Docker container
   gluetun:
-    image: ghcr.io/qdm12/gluetun:latest
+    image: ghcr.io/qdm12/gluetun:v3
     container_name: gluetun
     networks:
       gluetun_net:
@@ -2060,6 +2060,7 @@ services:
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_HTTP_CONTROL_SERVER_PORT"
       HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_VPN_DURATION_ADDITION: "120s"
       HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
@@ -2071,7 +2072,7 @@ services:
   ## Gluetun - VPN client in a thin Docker container
   ## gluetun-private is used for private trackers
   gluetun-private:
-    image: ghcr.io/qdm12/gluetun:latest
+    image: ghcr.io/qdm12/gluetun:v3
     container_name: gluetun-private
     networks:
       gluetun_net:
@@ -2111,6 +2112,7 @@ services:
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT"
       HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_VPN_DURATION_ADDITION: "120s"
       HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
@@ -2122,7 +2124,7 @@ services:
   ## Gluetun - VPN client in a thin Docker container
   ## gluetun-temp is used for temporary files
   gluetun-temp:
-    image: ghcr.io/qdm12/gluetun:latest
+    image: ghcr.io/qdm12/gluetun:v3
     container_name: gluetun-temp
     networks:
       gluetun_net:
@@ -2162,6 +2164,7 @@ services:
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT"
       HEALTH_VPN_DURATION_INITIAL: "120s"
+      HEALTH_VPN_DURATION_ADDITION: "120s"
       HEALTH_SUCCESS_WAIT_DURATION: "120s"
     secrets:
       - gluetun_openvpn_user
@@ -2584,7 +2587,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.5
+    image: lscr.io/linuxserver/qbittorrent:5.0.4
     container_name: qbit-private
     security_opt:
       - no-new-privileges:true
@@ -2625,7 +2628,7 @@ services:
     ## We do not want this to be able to communicate locally (except as
     ## specified)
     # <<: *common-keys-apps
-    image: lscr.io/linuxserver/qbittorrent:4.6.5
+    image: lscr.io/linuxserver/qbittorrent:5.0.4
     container_name: qbit-temp
     security_opt:
       - no-new-privileges:true

@@ -15,4 +15,4 @@ http:
       loadBalancer:
         servers:
           ## Or whatever your external host's IP:port is
-          - url: "http://mint.internal:8170"
+          - url: "http://nuc.unifi.internal:8170"

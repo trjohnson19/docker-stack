@@ -2911,42 +2911,6 @@ services:
       - "traefik.http.routers.sonarr-4k-rtr-bypass.service=sonarr-4k-svc"
       - "traefik.http.services.sonarr-4k-svc.loadbalancer.server.port=8989"
 
-  ## Readarr - Books management
-  ## Set url_base in readarr settings if using PathPrefix
-  readarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    # ports:
-    #   - "$READARR_PORT:8787"
-    volumes:
-      - $APPDIR/readarr/config:/config
-      - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      <<: *default-tz-puid-pgid
-      UMASK: 002
-      #ARGS: ""
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers Auth Bypass
-      - "traefik.http.routers.readarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$READARR_API_KEY`) || Query(`apikey`, `$READARR_API_KEY`))"
-      - "traefik.http.routers.readarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.readarr-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.readarr-rtr.entrypoints=https"
-      - "traefik.http.routers.readarr-rtr.rule=Host(`readarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.readarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.readarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.readarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.readarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.readarr-rtr.service=readarr-svc"
-      - "traefik.http.routers.readarr-rtr-bypass.service=readarr-svc"
-      - "traefik.http.services.readarr-svc.loadbalancer.server.port=8787"
-
   ## Lidarr - Music Management
   lidarr:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

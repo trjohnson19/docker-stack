@@ -245,50 +245,11 @@ include:
   - compose/gluetun.yml
   - compose/gluetun-private.yml
   - compose/gluetun-temp.yml
+  ## Network services
+  # - compose/pi-hole.yml
 
 ############################## SERVICES
 services:
-  ############################## NETWORK SERVICES
-
-  ## Pi-Hole - Network-wide ad blocking
-  # pihole:
-  #   ## Note: several steps must be taken to ensure compatability
-  #   ## https://www.smarthomebeginner.com/run-pihole-in-docker-on-ubuntu-with-reverse-proxy/
-  #   <<: *common-keys-apps  # See EXTENSION FIELDS at the top
-  #   image: pihole/pihole:latest
-  #   container_name: pihole
-  #   ports:
-  #     - $PIHOLE_PORT:53
-  #     - $PIHOLE_PORT:53/udp
-  #     # - $PIHOLE_WEB_PORT:80
-  #   volumes:
-  #     - $APPDIR/pihole/etc/pihole:/etc/pihole
-  #     - $APPDIR/pihole/etc/dnsmasq.d:/etc/dnsmasq.d
-  #     ## touch pihole.log first
-  #     - $APPDIR/pihole/var/log/pihole.log:/var/log/pihole.log
-  #   # cap_add:
-  #   #   - NET_ADMIN
-  #   environment:
-  #     <<: *default-tz-puid-pgid
-  #     ServerIP: $IP
-  #     PROXY_LOCATION: pihole
-  #     VIRTUAL_HOST: pihole.$DOMAINNAME0
-  #     VIRTUAL_PORT: 80
-  #     WEBPASSWORD: $PIHOLE_WEBPASSWORD
-  #     PIHOLE_DNS_: 127.0.0.1#8053;192.168.1.2
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.pihole-rtr.entrypoints=https"
-  #     - "traefik.http.routers.pihole-rtr.rule=Host(`pihole.$DOMAINNAME0`)"
-  #     - "traefik.http.routers.pihole-rtr.tls.options=tls-opts@file"
-  #     ## Middlewares
-  #     #- "traefik.http.routers.pihole-rtr.middlewares=chain-basic-auth@file"
-  #     - "traefik.http.routers.pihole-rtr.middlewares=chain-authelia@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.pihole-rtr.service=pihole-svc"
-  #     - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
-
   ## Unbound - A validating, recursive, and caching DNS resolver
   unbound:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

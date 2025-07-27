@@ -214,6 +214,7 @@ include:
   # - compose/organizr.yml
   ## Security
   - compose/authelia.yml
+  - compose/keycloak.yml
 
 
 ############################## SERVICES

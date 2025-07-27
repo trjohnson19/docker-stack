@@ -11,8 +11,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$FIREFLY_PORT:8080"
     hostname: money.$DOMAINNAME0
     volumes:
       - $APPDIR/firefly/export:/var/www/firefly-iii/storage/export
@@ -164,8 +162,6 @@ services:
     depends_on:
       - firefly
     hostname: import.$DOMAINNAME0
-    # ports:
-    #   - "8080:8080"
     environment:
       TZ: $TZ
       PUID: $PUID

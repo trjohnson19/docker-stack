@@ -23,8 +23,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: always
-    ports:
-      - "$POSTGRES_PORT:$POSTGRES_PORT"
     healthcheck:
       test:
         [

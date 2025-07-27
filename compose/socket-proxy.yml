@@ -1,0 +1,53 @@
+services:
+  ## Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
+  socket-proxy:
+    container_name: socket-proxy
+    image: tecnativa/docker-socket-proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    networks:
+      socket_proxy:
+        ipv4_address: $SOCKET_PROXY_IPV4 # You can specify a static IP
+    privileged: true
+    ports:
+      ## Port 2375 should only ever get exposed to the internal network. When
+      ## possible use this line.
+      - 127.0.0.1:2375:2375
+      # - 2375:2375
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      ## tecnativa
+      - LOG_LEVEL=warning # debug,info,notice,warning,err,crit,alert,emerg
+      ## Variables match the URL prefix (i.e. AUTH blocks access to /auth/*
+      ## parts of the API, etc.).
+      ## 0 to revoke access.
+      ## 1 to grant access.
+      ## Granted by Default
+      - EVENTS=1
+      - PING=1
+      - VERSION=1
+      ## Revoked by Default
+      ## Security critical
+      - AUTH=0 # 0
+      - SECRETS=0 # 0
+      - POST=1 # Watchtower
+      ## Not always needed
+      - BUILD=0 # 0
+      - COMMIT=0 # 0
+      - CONFIGS=0 # 0
+      - CONTAINERS=1 # Traefik, portainer, etc.
+      - DISTRIBUTION=0 # 0
+      - EXEC=0 # 0
+      - IMAGES=1 # Portainer
+      - INFO=1 # Portainer
+      - NETWORKS=1 # Portainer
+      - NODES=0 # 0
+      - PLUGINS=0 # 0
+      - SERVICES=1 # Portainer
+      - SESSION=0 # 0
+      - SWARM=0 # 0
+      - SYSTEM=0 # 0
+      - TASKS=1 # Portaienr
+      - VOLUMES=1 # Portainer

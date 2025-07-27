@@ -27,8 +27,6 @@ services:
         # ARG_KC_FIPS_MODE:
         ARG_QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
     command: ["start", "--optimized"]
-    # ports:
-    #   - "$KEYCLOAK_PORT:$KEYCLOAK_PORT"
     volumes:
       - $APPDIR/keycloak/config:/conf
       ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497

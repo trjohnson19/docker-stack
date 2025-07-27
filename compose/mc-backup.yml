@@ -5,13 +5,16 @@ services:
     <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: itzg/mc-backup:latest
     container_name: mc-backup
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
     # depends_on:
     #   - minecraft
     environment:
       RCON_HOST: minecraft
       RCON_PORT: $MINECRAFT_RCON_PORT
       RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
-      EXCLUDES: *.jar,cache,logs
+      EXCLUDES: '*.jar,cache,logs'
       BACKUP_METHOD: tar
       SRC_DIR: /data
       BACKUP_NAME: world

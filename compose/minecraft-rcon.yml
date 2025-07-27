@@ -3,9 +3,13 @@ services:
   ## Minecraft RCON
   ## Issue commands issued to the server via a "remote console", or RCON
   minecraft-rcon:
-    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: itzg/rcon:latest
     container_name: minecraft-rcon
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
     depends_on:
       - minecraft
     environment:

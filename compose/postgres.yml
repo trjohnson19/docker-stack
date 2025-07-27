@@ -1,0 +1,49 @@
+---
+services:
+  ## PostgreSQL - PostgreSQL Database
+  ## Steps for adding a new user/database:
+  ## 1. Log in to adminer.$DOMAINNAME0 with postgres root
+  ## 2. Open `SQL command` and execute the following lines:
+  ##     CREATE USER <username> WITH PASSWORD '<password>';
+  ##     CREATE DATABASE <dbname> OWNER <username>;
+  ##     GRANT ALL PRIVILEGES ON DATABASE <dbname> TO <username>;
+  ##
+  ## Steps for restoring from a backup:
+  ## 1. Place the output of pg_dump in a convenient location, e.g., "${DOCKERDIR}/backup/postgres_dump.sql"
+  ## 2. Start `postgres` with a clean data directory
+  ## 3. Run the following command to recreate the database as specified in the postgres_dump.sql file
+  ##     sudo docker exec -i --user=postgres postgres psql --dbname=postgres < ./backup/postgres_dump.sql
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    user: "${PUID}:${PGID}"
+    networks:
+      t2_proxy:
+        ipv4_address: $POSTGRES_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    ports:
+      - "$POSTGRES_PORT:$POSTGRES_PORT"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -d "$${POSTGRES_DB:-$${POSTGRES_USER:-$$(cat "$${POSTGRES_USER_FILE}")}}" -U "$${POSTGRES_USER:-$$(cat "$$POSTGRES_USER_FILE")}"',
+        ]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - $APPDIR/postgres/config:/config
+      - $APPDIR/postgres/data:/var/lib/postgresql/data
+    environment:
+      <<: *default-tz-puid-pgid
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGPORT: $POSTGRES_PORT
+      PGDATA: /var/lib/postgresql/data/pgdata
+    secrets:
+      - postgres_user
+      - postgres_password

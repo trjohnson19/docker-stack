@@ -1,7 +1,5 @@
 ---
 services:
-  ############################## UTILITIES
-
   ## VS Code - VS Code in the browser
   vscode:
     image: lscr.io/linuxserver/code-server:latest
@@ -40,7 +38,6 @@ services:
       - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME0`)"
       - "traefik.http.routers.vscode-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
       - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.vscode-rtr.service=vscode-svc"

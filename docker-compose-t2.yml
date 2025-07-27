@@ -248,31 +248,10 @@ include:
   ## Network services
   # - compose/pi-hole.yml
   - compose/unbound.yml
+  - compose/ntp.yml
 
 ############################## SERVICES
 services:
-  ## NTP - NTP server running in a Docker container (without the priviledged flag)
-  ## NTP server
-  ## Query the NTP server: ntpdate -q mint.home.arpa
-  ## Check sources: docker exec ntp chronyc sources
-  ## View source stats: docker exec ntp chronyc sourcestats
-  ## View NPT status: docker exec ntp chronyc tracking
-  ## Automatically update system time (Linux):
-  ## https://winaero.com/how-to-set-time-from-the-internet-ntp-in-linux-mint-17/
-  ## Automatically update system time (Windows):
-  ## https://winaero.com/configure-internet-time-ntp-options-in-windows-10/
-  ntp:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: cturra/ntp:latest
-    container_name: ntp
-    ports:
-      # - $NTP_PORT:123
-      - $NTP_PORT:123/udp
-    environment:
-      NTP_SERVERS: $NTP_SERVERS
-      ## 0 (info), 1 (warning), 2 (non-fatal error), and 3 (fatal error)
-      LOG_LEVEL: 1
-
   ############################## MINECRAFT
 
   ## Minecraft - Minecraft server

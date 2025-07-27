@@ -1,7 +1,7 @@
 ---
 services:
-  ## Whoami
-  ## Tiny Go webserver that prints os information and HTTP request to output
+  ## Whoami - tiny Go webserver that prints os information and HTTP request to
+  ## output
   whoami:
     container_name: whoami
     image: containous/whoami
@@ -20,18 +20,13 @@ services:
       - "traefik.http.routers.whoami-authelia-rtr.entrypoints=https"
       - "traefik.http.routers.whoami-authelia-rtr.rule=Host(`whoami-authelia.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami-authelia-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.whoami-keycloak-rtr.entrypoints=https"
-      - "traefik.http.routers.whoami-keycloak-rtr.rule=Host(`whoami-keycloak.$DOMAINNAME0`)"
-      - "traefik.http.routers.whoami-keycloak-rtr.tls.options=tls-opts@file"
       - "traefik.http.routers.whoami-authentik-rtr.entrypoints=https"
       - "traefik.http.routers.whoami-authentik-rtr.rule=Host(`whoami-authentik.$DOMAINNAME0`)"
       - "traefik.http.routers.whoami-authentik-rtr.tls.options=tls-opts@file"
       ## Middlewares
       - "traefik.http.routers.whoami-authelia-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.whoami-keycloak-rtr.middlewares=chain-keycloak@file"
       - "traefik.http.routers.whoami-authentik-rtr.middlewares=chain-authentik@file"
       ## HTTP Services
       - "traefik.http.routers.whoami-authelia-rtr.service=whoami-svc"
-      - "traefik.http.routers.whoami-keycloak-rtr.service=whoami-svc"
       - "traefik.http.routers.whoami-authentik-rtr.service=whoami-svc"
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=$WHOAMI_PORT"

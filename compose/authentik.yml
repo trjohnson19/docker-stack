@@ -3,9 +3,13 @@ services:
   ## Authentik - an open-source Identity Provider, focused on flexibility and
   ## versatility
   authentik:
-    <<: *common-keys-core
     container_name: authentik
     image: ghcr.io/goauthentik/server:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
     command: server
     # ports:
     #   - "$AUTHENTIK_PORT:$AUTHENTIK_PORT"
@@ -77,9 +81,13 @@ services:
       - "traefik.http.services.authentik-svc.loadbalancer.server.port=$AUTHENTIK_PORT"
 
   authentik-worker:
-    <<: *common-keys-core
     container_name: authentik-worker
     image: ghcr.io/goauthentik/server:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
     command: worker
     ## `user: root` and the docker socket volume are optional.
     ## See more for the docker socket integration here:

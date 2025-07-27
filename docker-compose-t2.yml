@@ -213,6 +213,7 @@ include:
   - compose/heimdall.yml
   # - compose/organizr.yml
   ## Security
+  - compose/authelia.yml
 
 
 ############################## SERVICES

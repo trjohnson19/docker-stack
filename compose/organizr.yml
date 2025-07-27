@@ -9,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #  - "$ORGANIZR_PORT:80"
     volumes:
       - $APPDIR/organizr/config:/config
     environment:
@@ -25,7 +23,7 @@ services:
       - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME0`,`www.$DOMAINNAME0`)"
       - "traefik.http.routers.organizr-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.organizr-rtr.middlewares=chain-authelia1@file"
+      - "traefik.http.routers.organizr-rtr.middlewares=chain-authelia0@file"
       ## HTTP Services
       - "traefik.http.routers.organizr-rtr.service=organizr-svc"
       - "traefik.http.services.organizr-svc.loadbalancer.server.port=80"

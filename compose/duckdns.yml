@@ -2,7 +2,6 @@
 services:
   ## DuckDNS - Dynamic DNS service provided by duckdns.org
   duckdns:
-    <<: *common-keys-core
     image: lscr.io/linuxserver/duckdns:latest
     container_name: duckdns
     networks:

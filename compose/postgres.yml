@@ -39,7 +39,9 @@ services:
       - $APPDIR/postgres/config:/config
       - $APPDIR/postgres/data:/var/lib/postgresql/data
     environment:
-      <<: *default-tz-puid-pgid
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
       POSTGRES_USER_FILE: /run/secrets/postgres_user
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       PGPORT: $POSTGRES_PORT

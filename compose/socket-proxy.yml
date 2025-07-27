@@ -1,3 +1,4 @@
+---
 services:
   ## Docker Socket Proxy - Security Enchanced Proxy for Docker Socket
   socket-proxy:

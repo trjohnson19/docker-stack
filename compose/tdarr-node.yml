@@ -15,8 +15,6 @@ services:
       - /dev/dri:/dev/dri
       # - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/dri/card0:/dev/dri/card0
-    ports:
-      - $TDARR_NODE_PORT:$TDARR_NODE_PORT # Node port
     environment:
       UMASK_SET: 02
       serverIP: tdarr
@@ -37,12 +35,3 @@ services:
         max-size: "2m"
         max-file: "3"
     # labels:  # Not needed for the node
-    #   - "traefik.enable=true"
-    #   ## HTTP Routers
-    #   - "traefik.http.routers.tdarr-node-rtr.entrypoints=https"
-    #   - "traefik.http.routers.tdarr-node-rtr.rule=Host(`tdarr-node.$DOMAINNAME0`)"
-    #   ## Middlewares
-    #   - "traefik.http.routers.tdarr-node-rtr.middlewares=chain-authelia@file"
-    #   ## HTTP Services
-    #   - "traefik.http.routers.tdarr-node-rtr.service=tdarr-node-svc"
-    #   - "traefik.http.services.tdarr-node-svc.loadbalancer.server.port=$TDARR_NODE_PORT"

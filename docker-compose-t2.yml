@@ -224,27 +224,11 @@ include:
   - compose/rediscommander.yml
   ## Services
   - compose/cf-ddns.yml
+  - compose/duckdns.yml
 
 
 ############################## SERVICES
 services:
-  ## DuckDNS - Dynamic DNS service provided by duckdns.org
-  duckdns:
-    <<: *common-keys-core
-    image: lscr.io/linuxserver/duckdns:latest
-    container_name: duckdns
-    # volumes:
-    #   - $APPDIR/duckdns/config:/config # Optional
-    environment:
-      <<: *default-tz-puid-pgid
-      SUBDOMAINS: "$DOMAINNAME_DUCKDNS0,$DOMAINNAME_DUCKDNS1,$DOMAINNAME_DUCKDNS2,$DOMAINNAME_DUCKDNS3,$DOMAINNAME_DUCKDNS4"
-      ## Note, MUST truncate EOF carriage return if present
-      ## `truncate -s -1 $SECRETSDIR/duckdns_token`
-      FILE__TOKEN: /run/secrets/duckdns_token
-      # LOG_FILE: "true"  # Optional
-    secrets:
-      - duckdns_token
-
   ## Docker-GC - Automatic Docker Garbage Collection
   ## Create docker-gc-exclude file
   docker-gc:

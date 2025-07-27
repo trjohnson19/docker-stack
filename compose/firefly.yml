@@ -1,0 +1,241 @@
+---
+services:
+  ## Firefly III - Finance Manager
+  ## Create a unique App Key which is a random 32 character string
+  ## `date +%s | sha256sum | base64 | head -c 32 ; echo`
+  firefly:
+    container_name: firefly
+    image: fireflyiii/core:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # ports:
+    #   - "$FIREFLY_PORT:8080"
+    hostname: money.$DOMAINNAME0
+    volumes:
+      - $APPDIR/firefly/export:/var/www/firefly-iii/storage/export
+      - $APPDIR/firefly/upload:/var/www/firefly-iii/storage/upload
+    environment:
+      ## https://github.com/firefly-iii/firefly-iii/blob/main/.env.example
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      APP_ENV: local # testing, local, production
+      APP_DEBUG: "false"
+      SITE_OWNER: admin@money.$DOMAINNAME0
+      APP_KEY: $FIREFLY_APP_KEY
+      DEFAULT_LANGUAGE: en_US
+      DEFAULT_LOCALE: equal
+      ## TRUSTED_PROXIES is a useful variable when using Docker and/or a
+      ## reverse proxy. Set it to ** and reverse proxies work just fine.
+      TRUSTED_PROXIES: "**"
+      ## "single" for one big fat error log (not recommended); "syslog",
+      ## "errorlog" and "stdout" which will log to the system itself; "daily",
+      ## creates 5 files that (surprise) rotate; "papertrail" for cloud
+      ## logging; "stack" will log to "daily" and to "stdout" at the same time
+      LOG_CHANNEL: stack
+      # PAPERTRAIL_HOST:
+      # PAPERTRAIL_PORT:
+      ## debug, info, notice, warning, error, critical, alert, emergency
+      APP_LOG_LEVEL: debug
+      AUDIT_LOG_LEVEL: debug # info, emergency
+      DB_CONNECTION: mysql # pgsql, mysql, sqlite
+      DB_HOST: $MARIADB_HOST
+      DB_PORT: $MARIADB_PORT
+      DB_DATABASE_FILE: /run/secrets/firefly_mysql_db_name
+      DB_USERNAME_FILE: /run/secrets/firefly_mysql_user
+      DB_PASSWORD_FILE: /run/secrets/firefly_mysql_password
+      # DB_SOCKET:
+      # MYSQL_USE_SSL:
+      # MYSQL_SSL_VERIFY_SERVER_CERT:
+      # MYSQL_SSL_CAPATH: /etc/ssl/certs/
+      # MYSQL_SSL_CA:
+      # MYSQL_SSL_CERT:
+      # MYSQL_SSL_KEY:
+      # MYSQL_SSL_CIPHER:
+      # PGSQL_SSL_MODE: prefer
+      # PGSQL_SSL_ROOT_CERT: null
+      # PGSQL_SSL_CERT: null
+      # PGSQL_SSL_KEY: null
+      # PGSQL_SSL_CRL_FILE: null
+      # PGSQL_SCHEMA:
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      REDIS_SCHEME: tcp
+      # REDIS_PATH:  # For use with "unix" REDIS_SCHEME only
+      REDIS_HOST: $REDIS_HOST
+      REDIS_PORT: $REDIS_PORT
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_DB: "0"
+      REDIS_CACHE_DB: "1"
+      # COOKIE_PATH: "/"
+      # COOKIE_DOMAIN: $DOMAINNAME0
+      # COOKIE_SECURE: false
+      # COOKIE_SAMESITE: lax
+      ## https://docs.firefly-iii.org/firefly-iii/advanced-installation/email/
+      MAIL_MAILER: smtp
+      MAIL_HOST: $EMAIL_SERVER
+      MAIL_PORT: $EMAIL_SERVER_PORT
+      MAIL_FROM: server@money.$DOMAINNAME0
+      MAIL_USERNAME: $EMAIL_SERVER_USER
+      MAIL_PASSWORD_FILE: /run/secrets/firefly_mail_server_password
+      MAIL_ENCRYPTION: ssl
+      # MAILGUN_DOMAIN:
+      # MAILGUN_SECRET:
+      # MAILGUN_ENDPOINT:
+      # MANDRILL_SECRET:
+      # SPARKPOST_SECRET:
+      SEND_REGISTRATION_MAIL: "true"
+      SEND_ERROR_MESSAGE: "true"
+      SEND_LOGIN_NEW_IP_WARNING: "true"
+      SEND_REPORT_JOURNALS: "true"
+      ENABLE_EXTERNAL_MAP: "true"
+      MAP_DEFAULT_LAT: $DEFAULT_LATITUDE
+      MAP_DEFAULT_LONG: $DEFAULT_LONGITUDE
+      # MAP_DEFAULT_ZOOM: 6
+      ## https://docs.firefly-iii.org/advanced-installation/authentication
+      AUTHENTICATION_GUARD: web
+      AUTHENTICATION_GUARD_HEADER: HTTP_REMOTE_USER
+      AUTHENTICATION_GUARD_EMAIL: HTTP_REMOTE_EMAIL
+      # CUSTOM_LOGOUT_URL:
+      # DISABLE_FRAME_HEADER: "true"
+      # DISABLE_CSP_HEADER: "true"
+      # TRACKER_SITE_ID:
+      # TRACKER_URL:
+      ALLOW_WEBHOOKS: "true" # default false
+      ## https://docs.firefly-iii.org/firefly-iii/advanced-installation/cron/
+      # STATIC_CRON_TOKEN_FILE:
+      ## Use this at your own risk. Disabling certain checks and features may
+      ## result in lost of inconsistent data.
+      # DKR_BUILD_LOCALE:
+      # DKR_CHECK_SQLITE:
+      # DKR_RUN_MIGRATION:
+      # DKR_RUN_UPGRADE:
+      # DKR_RUN_VERIFY:
+      # DKR_RUN_REPORT:
+      # DKR_RUN_PASSPORT_INSTALL:
+      ## Leave the following configuration vars as is. Unless you like to
+      ## tinker and know what you're doing.
+      # APP_NAME: FireflyIII
+      # BROADCAST_DRIVER: log
+      # QUEUE_DRIVER: sync
+      # CACHE_PREFIX: firefly
+      # PUSHER_KEY:
+      # IPINFO_TOKEN:
+      # PUSHER_SECRET:
+      # PUSHER_ID:
+      # DEMO_USERNAME:
+      # DEMO_PASSWORD:
+      # IS_HEROKU: false
+      # FIREFLY_III_LAYOUT: v1
+      APP_URL: "https://money.$DOMAINNAME0"
+    secrets:
+      - firefly_mysql_db_name
+      - firefly_mysql_user
+      - firefly_mysql_password
+      - redis_password
+      - firefly_mail_server_password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.firefly-rtr.entrypoints=https"
+      - "traefik.http.routers.firefly-rtr.rule=Host(`money.$DOMAINNAME0`)"
+      - "traefik.http.routers.firefly-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      ## Note: possible issue before using Authelia, would need to configure
+      ## /path for importer to bypass Authelia (/api/v1) - or just use
+      ## http://firefly:$FIREFLY_PORT
+      - "traefik.http.routers.firefly-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.firefly-rtr.service=firefly-svc"
+      - "traefik.http.services.firefly-svc.loadbalancer.server.port=8080"
+
+  ## Firefly III Data Importer
+  importer:
+    container_name: importer
+    image: fireflyiii/data-importer:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - firefly
+    hostname: import.$DOMAINNAME0
+    # ports:
+    #   - "8080:8080"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      # FIREFLY_III_URL: https://money.$DOMAINNAME0
+      FIREFLY_III_URL: http://firefly:$FIREFLY_PORT
+      VANITY_URL: https://money.$DOMAINNAME0
+      FIREFLY_III_ACCESS_TOKEN_FILE: /run/secrets/firefly_iii_access_token
+      # FIREFLY_III_ACCESS_TOKEN: $FIREFLY_III_ACCESS_TOKEN
+      # FIREFLY_III_CLIENT_ID: $FIREFLY_III_CLIENT_ID
+      # NORDIGEN_ID_FILE:
+      # NORDIGEN_KEY_FILE:
+      # NORDIGEN_SANDBOX: "false"
+      # SPECTRE_APP_ID_FILE:
+      # SPECTRE_SECRET_FILE:
+      # USE_CACHE: "false"
+      # IGNORE_DUPLICATE_ERRORS: "false"
+      # AUTO_IMPORT_SECRET_FILE:
+      # CAN_POST_AUTOIMPORT:
+      # CAN_POST_FILES:
+      # IMPORT_DIR_WHITELIST_FILE:
+      VERIFY_TLS_SECURITY: "false"
+      # JSON_CONFIGURATION_DIR_FILE:
+      CONNECTION_TIMEOUT: 31.41 # π*10 seconds is usually fine.
+      # APP_ENV: local  # These three are good for debugging
+      APP_DEBUG: "false"
+      # LOG_CHANNEL: stack
+      ## debug, info, notice, warning, error, critical, alert, emergency
+      LOG_LEVEL: info
+      ## TRUSTED_PROXIES is a useful variable when using Docker and/or a
+      ## reverse proxy. Set it to ** and reverse proxies work just fine.
+      TRUSTED_PROXIES: "**"
+      # ASSET_URL:
+      ENABLE_MAIL_REPORT: "true"
+      EXPECT_SECURE_URL: "true"
+      MAIL_MAILER: smtp
+      MAIL_DESTINATION: importer-admin@money.$DOMAINNAME0
+      MAIL_FROM_ADDRESS: import@money.$DOMAINNAME0
+      MAIL_HOST: $EMAIL_SERVER
+      MAIL_PORT: $EMAIL_SERVER_PORT
+      MAIL_USERNAME: $EMAIL_SERVER_USER
+      MAIL_PASSWORD_FILE: /run/secrets/firefly_mail_server_password
+      MAIL_ENCRYPTION: ssl
+      ## You probably won't need to change these settings.
+      # BROADCAST_DRIVER: log
+      # CACHE_DRIVER: redis  # Not working
+      # QUEUE_CONNECTION: sync
+      # SESSION_DRIVER: redis  # Not working
+      # SESSION_LIFETIME: 120
+      # IS_EXTERNAL: "false"
+      REDIS_HOST: $REDIS_HOST
+      REDIS_PASSWORD: $REDIS_PASSWORD
+      REDIS_PORT: $REDIS_PORT
+      REDIS_DB: "0" # always use quotes
+      REDIS_CACHE_DB: "1" # always use quotes
+      # TRACKER_SITE_ID:
+      # TRACKER_URL:
+      # APP_NAME:
+      APP_URL: "https://import.$DOMAINNAME0"
+    secrets:
+      - firefly_iii_access_token
+      - firefly_mail_server_password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.firefly-importer-rtr.entrypoints=https"
+      - "traefik.http.routers.firefly-importer-rtr.rule=Host(`import.$DOMAINNAME0`)"
+      - "traefik.http.routers.firefly-importer-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.firefly-importer-rtr.middlewares=chain-authelia@file" # Note: issue when using Authelia, default buffer size of 4096 not large enough, currently set to 8192
+      ## HTTP Services
+      - "traefik.http.routers.firefly-importer-rtr.service=firefly-importer-svc"
+      - "traefik.http.services.firefly-importer-svc.loadbalancer.server.port=8080"

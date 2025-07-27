@@ -4,7 +4,6 @@ services:
   ## After starting container for first time dexec and
   ## `mysqladmin -u root password <password>`
   mariadb:
-    <<: *common-keys-core
     container_name: mariadb
     image: lscr.io/linuxserver/mariadb:latest
     networks:
@@ -12,15 +11,13 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: always
-    ports:
-      - "$MARIADB_PORT:3306"
     volumes:
       - $APPDIR/mariadb/data:/config
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      ## Not taking this pw during initialization
+      ## https://github.com/linuxserver/docker-mariadb/issues/138
       FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password
     secrets:
       - mysql_root_password

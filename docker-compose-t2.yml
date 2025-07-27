@@ -228,51 +228,11 @@ include:
   - compose/vscode.yml
   - compose/filebrowser.yml
   - compose/guacamole.yml
+  - compose/dozzle.yml
 
 
 ############################## SERVICES
 services:
-  ## Dozzle - Real-time Docker Log Viewer
-  dozzle:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: amir20/dozzle:latest
-    container_name: dozzle
-    networks:
-      - t2_proxy
-      - socket_proxy
-    depends_on:
-      - socket-proxy
-    healthcheck:
-      test: ["CMD", "/dozzle", "healthcheck"]
-      interval: 3s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-    # ports:
-    #   - "$DOZZLE_PORT:$DOZZLE_PORT"
-    environment:
-      DOZZLE_ADDR: ":$DOZZLE_PORT"
-      DOCKER_HOST: tcp://socket-proxy:2375
-      DOZZLE_FILTER: "status=running"
-      ## limits logs displayed to containers with this label
-      # DOZZLE_FILTER: "label=log_me"
-      DOZZLE_LEVEL: info
-      DOZZLE_NO_ANALYTICS: true
-    # volumes:
-    #   ## Use Docker Socket Proxy instead for improved security
-    #   - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.dozzle-rtr.entrypoints=https"
-      - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$DOMAINNAME0`)"
-      - "traefik.http.routers.dozzle-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
-      - "traefik.http.services.dozzle-svc.loadbalancer.server.port=$DOZZLE_PORT"
-
   ## Glances - System Information
   glances:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

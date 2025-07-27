@@ -224,76 +224,11 @@ include:
   - compose/cf-ddns.yml
   - compose/duckdns.yml
   - compose/docker-gc.yml
+  - compose/watchtower.yml
 
 
 ############################## SERVICES
 services:
-  ## Watchtower - A process for automating Docker container base image updates
-  watchtower:
-    <<: *common-keys-core # See EXTENSION FIELDS at the top
-    image: containrrr/watchtower:latest
-    container_name: watchtower
-    privileged: true
-    # command: -H tcp://127.0.0.1:2375
-    command: -H tcp://socket-proxy:2375 # Set host to socket-proxy
-    networks:
-      - socket_proxy
-      - t2_proxy
-    # depends_on:
-    #   - socket-proxy
-    # volumes:
-    #   ## Use Docker Socket Proxy instead for improved security
-    #   - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      ## Watchtower Settings
-      <<: *default-tz-puid-pgid
-      WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_REMOVE_VOLUMES: "true"
-      WATCHTOWER_DEBUG: "false"
-      WATCHTOWER_TRACE: "false"
-      NO_COLOR: "false"
-      DOCKER_HOST: tcp://socket-proxy:2375
-      ## Replace with Socket Proxy if possible
-      # DOCKER_HOST: unix:///var/run/docker.sock
-      DOCKER_API_VERSION: "1.40"
-      WATCHTOWER_INCLUDE_RESTARTING: "false"
-      WATCHTOWER_INCLUDE_STOPPED: "true"
-      WATCHTOWER_REVIVE_STOPPED: "false"
-      ## In seconds; can use either INTERVAL or SCHEDULE
-      # WATCHTOWER_POLL_INTERVAL: 86400
-      # WATCHTOWER_LABEL_ENABLE: "false"
-      WATCHTOWER_MONITOR_ONLY: "false"
-      WATCHTOWER_NO_RESTART: "false"
-      WATCHTOWER_NO_PULL: "false"
-      WATCHTOWER_NO_STARTUP_MESSAGE: "false"
-      WATCHTOWER_RUN_ONCE: "false"
-      # WATCHTOWER_HTTP_API_UPDATE: "false"
-      # WATCHTOWER_HTTP_API_TOKEN: ""
-      # WATCHTOWER_HTTP_API_PERIODIC_POLLS: "false"
-      # WATCHTOWER_SCOPE: ""
-      # WATCHTOWER_HTTP_API_METRICS: "false"
-      ## 12:30 AM daily; "sec min hr day mon yr"; can use either INTERVAL or
-      ## SCHEDULE
-      WATCHTOWER_SCHEDULE: "0 30 0 * * 6"
-      WATCHTOWER_ROLLING_RESTART: "false"
-      WATCHTOWER_TIMEOUT: 30s # Default 10s
-      # DOCKER_TLS_VERIFY: "false"
-      # WATCHTOWER_WARN_ON_HEAD_FAILURE: auto
-      ## Email Settings
-      WATCHTOWER_NOTIFICATIONS: email
-      WATCHTOWER_NOTIFICATIONS_LEVEL: info
-      WATCHTOWER_NOTIFICATION_EMAIL_FROM: server@watchtower.$DOMAINNAME0
-      WATCHTOWER_NOTIFICATION_EMAIL_TO: admin@$DOMAINNAME0
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: $EMAIL_SERVER
-      # WATCHTOWER_NOTIFICATION_EMAIL_SERVER_TLS_SKIP_VERIFY: "false"
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: $EMAIL_SERVER_PORT
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: $EMAIL_SERVER_USER
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: /run/secrets/watchtower_notification_email_server_password
-      WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 90
-      # WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG:
-    secrets:
-      - watchtower_notification_email_server_password
-
   ############################## UTILITIES
 
   ## VS Code - VS Code in the browser

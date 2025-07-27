@@ -1,0 +1,29 @@
+---
+services:
+  ## Heimdall - Application Dashboard
+  heimdall:
+    image: lscr.io/linuxserver/heimdall
+    container_name: heimdall
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    # ports:
+    #  - "$HEIMDALL_PORT:80"
+    volumes:
+      - $APPDIR/heimdall/config:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.heimdall-rtr.entrypoints=https"
+      - "traefik.http.routers.heimdall-rtr.rule=Host(`dash.$DOMAINNAME0`) || Host(`heimdall.$DOMAINNAME0`)"
+      - "traefik.http.routers.heimdall-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.heimdall-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
+      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"

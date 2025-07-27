@@ -12,6 +12,9 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
+    volumes:
+      - $APPDIR/wireguard/config:/config
+      - /lib/modules:/lib/modules
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -19,14 +22,8 @@ services:
       SERVERURL: vpn.$DOMAINNAME0
       SERVERPORT: $WIREGUARD_PORT
       PEERS: $WIREGUARD_PEERS
-      PEERDNS: 192.168.1.2
+      PEERDNS: auto
       INTERNAL_SUBNET: 10.13.13.0
-    volumes:
-      - $APPDIR/wireguard/config:/config
-      - /usr/src:/usr/src
-      - /lib/modules:/lib/modules
-    # ports:
-    #   - $WIREGUARD_PORT:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv6.conf.all.disable_ipv6=0

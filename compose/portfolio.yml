@@ -6,7 +6,6 @@ services:
   ## Need to change the startapp.sh to reference something other than
   ## /workspace because /opt/portfolio exists
   portfolio:
-    <<: *common-keys-apps
     image: ghcr.io/devben-io/docker-portfolio/docker-portfolio:latest
     container_name: portfolio
     networks:
@@ -15,14 +14,9 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
     hostname: portfolio.$DOMAINNAME0
-    # ports:
-    #   - "$PORTFOLIO_PORT:5800"
     environment:
       TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
       APP_NAME: "Portfolio Performance"
-      # VERSION: "0.46.6"  # Default is "latest"
       LOCALE: en_us
       # APP_ICON_URL: https://www.portfolio-performance.info/images/logo.png
       KEEP_APP_RUNNING: 1

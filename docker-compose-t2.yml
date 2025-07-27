@@ -219,34 +219,11 @@ include:
   - compose/mariadb.yml
   - compose/postgres.yml
   - compose/phpmyadmin.yml
+  - compose/adminer.yml
 
 
 ############################## SERVICES
 services:
-  ## Adminer - Database management in a single PHP file.
-  adminer:
-    <<: *common-keys-core
-    container_name: adminer
-    image: adminer:latest
-    # ports:
-    #   - 8080:8080
-    environment:
-      ## https://github.com/vrana/adminer/tree/master/designs
-      # ADMINER_DESIGN: 'nette'
-      ADMINER_DEFAULT_SERVER: postgres
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.adminer-rtr.entrypoints=https"
-      - "traefik.http.routers.adminer-rtr.rule=Host(`adminer.$DOMAINNAME0`)"
-      - "traefik.http.routers.adminer-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      # - "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.adminer-rtr.service=adminer-svc"
-      - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
-
   ## Redis - Key-value Store
   redis:
     <<: *common-keys-core

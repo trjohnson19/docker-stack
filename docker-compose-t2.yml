@@ -236,70 +236,10 @@ include:
   - compose/gotify.yml
   ## Web
   - compose/vaultwarden.yml
+  - compose/nextcloud.yml
 
 ############################## SERVICES
 services:
-  ## Nextcloud - A safe home for all your data
-  nextcloud:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    container_name: nextcloud
-    image: nextcloud:29
-    # ports:
-    #   - 443:443
-    volumes:
-      - $APPDIR/nextcloud:/var/www/html
-      - $APPDIR/nextcloud/custom_apps:/var/www/html/custom_apps
-      - $APPDIR/nextcloud/config:/var/www/html/config
-      - $DATADIR/nextcloud:/var/www/html/data
-    environment:
-      <<: *default-tz-puid-pgid
-      NEXTCLOUD_UPDATE: 1
-      NEXTCLOUD_ADMIN_USER_FILE: /run/secrets/nextcloud_admin_user
-      NEXTCLOUD_ADMIN_PASSWORD_FILE: /run/secrets/nextcloud_admin_password
-      SERVERNAME: drive.$DOMAINNAME0
-      MYSQL_USER_FILE: /run/secrets/nextcloud_mysql_user
-      MYSQL_PASSWORD_FILE: /run/secrets/nextcloud_mysql_password
-      MYSQL_DATABASE: nextcloud
-      MYSQL_HOST: $MARIADB_HOST
-      ## Have to set manually in the config.php for whatever reason, setting
-      ## this with environmental variables messes things up
-      # REDIS_HOST: redis
-      REDIS_HOST_PORT: $REDIS_PORT
-      REDIS_HOST_PASSWORD_FILE: /run/secrets/redis_password
-      SMTP_HOST: $EMAIL_SERVER
-      SMTP_SECURE: ssl
-      SMTP_PORT: $EMAIL_SERVER_PORT
-      SMTP_AUTHTYPE: PLAIN
-      ## Currently unsupported
-      # SMTP_NAME_FILE: /run/secrets/nextcloud_smtp_name
-      SMTP_NAME: $EMAIL_SERVER_USER
-      SMTP_PASSWORD_FILE: /run/secrets/nextcloud_smtp_password
-      MAIL_FROM_ADDRESS: admin@drive.$DOMAINNAME0
-      # MAIL_DOMAIN:
-      NEXTCLOUD_TRUSTED_DOMAINS: drive.$DOMAINNAME0
-      TRUSTED_PROXIES: $T2_PROXY_SUBNET
-    secrets:
-      - nextcloud_admin_user
-      - nextcloud_admin_password
-      - nextcloud_mysql_user
-      - nextcloud_mysql_password
-      - nextcloud_smtp_name
-      - nextcloud_smtp_password
-      - redis_password
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.nextcloud-rtr.entrypoints=https"
-      - "traefik.http.routers.nextcloud-rtr.rule=Host(`drive.$DOMAINNAME0`)"
-      - "traefik.http.routers.nextcloud-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      #- "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file"
-      - "traefik.http.routers.nextcloud-rtr.middlewares=chain-nextcloud@file,nextcloud-remove-bypass-cache"
-      - "traefik.http.middlewares.nextcloud-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
-      ## HTTP Services
-      - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
-      - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
-
   ## Firefly III - Finance Manager
   ## Create a unique App Key which is a random 32 character string
   ## `date +%s | sha256sum | base64 | head -c 32 ; echo`

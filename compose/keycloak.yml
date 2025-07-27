@@ -2,7 +2,6 @@
 services:
   ## Keycloak - Open Source Identity and Access Management
   keycloak:
-    <<: *common-keys-core
     container_name: keycloak
     networks:
       - t2_proxy

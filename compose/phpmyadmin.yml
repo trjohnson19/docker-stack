@@ -4,7 +4,6 @@ services:
   ## Create a new user with admin privileges. Cannot login as MySQL root for
   ## some reason.
   phpmyadmin:
-    <<: *common-keys-apps
     image: phpmyadmin:latest
     container_name: phpmyadmin
     networks:

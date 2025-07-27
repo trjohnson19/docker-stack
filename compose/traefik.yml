@@ -7,7 +7,6 @@ services:
   ## chmod 600 $APPDIR/traefik2/acme/acme.json
   ## touch $APPDIR/traefik2/traefik.log
   traefik:
-    # <<: *common-keys-core
     container_name: traefik
     image: traefik:comte # comte=3.1.x
     security_opt:

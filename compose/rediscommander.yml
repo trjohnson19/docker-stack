@@ -11,8 +11,6 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-    # ports:
-    #   - "$REDISCOMMANDER_PORT:$REDISCOMMANDER_PORT"
     environment:
       REDIS_HOST: $REDIS_HOST
       REDIS_PORT: $REDIS_PORT

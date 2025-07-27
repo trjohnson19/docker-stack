@@ -216,6 +216,7 @@ include:
   - compose/authelia.yml
   # - compose/keycloak.yml
   - compose/authentik.yml
+  - compose/mariadb.yml
 
 
 ############################## SERVICES

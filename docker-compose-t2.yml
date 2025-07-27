@@ -230,45 +230,11 @@ include:
   - compose/guacamole.yml
   - compose/dozzle.yml
   - compose/glances.yml
+  - compose/dupeguru.yml
 
 
 ############################## SERVICES
 services:
-  ## DupeGuru - Duplicate File/Folder Remover
-  dupeguru:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: jlesage/dupeguru:latest
-    container_name: dupeguru
-    # ports:
-    #   - "$DUPEGURU_PORT:5800"
-    volumes:
-      - $DATADIR:/storage:rw
-      - $USERDIR:/data/home:ro
-      - $APPDIR/dupeguru/config:/config:rw
-    environment:
-      <<: *default-tz-puid-pgid
-      USER_ID: $PUID
-      GROUP_ID: $PGID
-      UMASK: 002
-      KEEP_APP_RUNNING: 1
-      CLEAN_TMP_DIR: 1
-      DISPLAY_WIDTH: 1600
-      DISPLAY_HEIGHT: 960
-      VNC_PASSWORD: $DUPEGURU_VNC_PASSWD
-      WEB_LISTENING_PORT: $DUPEGURU_PORT
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.dupeguru-rtr.entrypoints=https"
-      - "traefik.http.routers.dupeguru-rtr.rule=Host(`dupe.$DOMAINNAME0`)"
-      - "traefik.http.routers.dupeguru-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.dupeguru-rtr.middlewares=chain-authelia@file,dupeguru-remove-bypass-cache"
-      - "traefik.http.middlewares.dupeguru-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
-      ## HTTP Services
-      - "traefik.http.routers.dupeguru-rtr.service=dupeguru-svc"
-      - "traefik.http.services.dupeguru-svc.loadbalancer.server.port=$DUPEGURU_PORT"
-
   ## Tdarr - Distributed transcode automation
   tdarr:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

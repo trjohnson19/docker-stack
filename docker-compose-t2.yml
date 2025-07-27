@@ -225,50 +225,11 @@ include:
   - compose/duckdns.yml
   - compose/docker-gc.yml
   - compose/watchtower.yml
+  - compose/vscode.yml
 
 
 ############################## SERVICES
 services:
-  ############################## UTILITIES
-
-  ## VS Code - VS Code in the browser
-  vscode:
-    <<: *common-keys-core # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/code-server:latest
-    container_name: vscode
-    volumes:
-      - $DOCKERDIR:/data/docker
-      - $DATADIR:/data/data
-      - $APPDIR/vscode/config:/config
-      ## Ensure the user's GitHub ssh keys are added to be able to use VS Code
-      ## git features
-      - $APPDIR/vscode/config/.ssh:/config/ssh
-    environment:
-      <<: *default-tz-puid-pgid
-      ## Note: passwords can be set via hash if desired
-      ## https://github.com/coder/code-server/blob/main/docs/FAQ.md#can-i-store-my-password-hashed
-      ## Note: must remove trailing \n using `truncate -s -1 file_name`
-      FILE__PASSWORD: /run/secrets/vscode_password
-      ## Note: must remove trailing \n using `truncate -s -1 file_name`
-      FILE__SUDO_PASSWORD: /run/secrets/vscode_sudo_password
-      PROXY_DOMAIN: code.$DOMAINNAME0
-      DEFAULT_WORKSPACE: /data/docker
-    secrets:
-      - vscode_password
-      - vscode_sudo_password
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.vscode-rtr.entrypoints=https"
-      - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME0`)"
-      - "traefik.http.routers.vscode-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
-      - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.vscode-rtr.service=vscode-svc"
-      - "traefik.http.services.vscode-svc.loadbalancer.server.port=8443"
-
   ## File Browser - Explorer
   filebrowser:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

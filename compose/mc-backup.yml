@@ -1,0 +1,25 @@
+---
+services:
+  ## Minecraft Backup - Backup Minecraft worlds
+  mc-backup:
+    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
+    image: itzg/mc-backup:latest
+    container_name: mc-backup
+    # depends_on:
+    #   - minecraft
+    environment:
+      RCON_HOST: minecraft
+      RCON_PORT: $MINECRAFT_RCON_PORT
+      RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
+      EXCLUDES: *.jar,cache,logs
+      BACKUP_METHOD: tar
+      SRC_DIR: /data
+      BACKUP_NAME: world
+      INITIAL_DELAY: 15m
+      BACKUP_INTERVAL: 2h
+      PRUNE_BACKUPS_DAYS: 7
+      PRUNE_RESTIC_RETENTION: "--keep-daily 7 --keep-weekly 5 --keep-monthly 3"
+      LINK_LATEST: true
+    volumes:
+      - $APPDIR/minecraft/technic/data:/data:ro
+      - $APPDIR/minecraft/mc-backups:/backups

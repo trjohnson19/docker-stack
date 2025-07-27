@@ -1,0 +1,149 @@
+---
+services:
+  ## Minecraft - Minecraft server
+  minecraft:
+    image: itzg/minecraft-server:java8
+    container_name: minecraft
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    tty: true
+    ports:
+      - $MINECRAFT_PORT:25565
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    networks:
+      - default
+    volumes:
+      - $APPDIR/minecraft/technic/data:/data
+      ## Mount as read-only to ensure integrity
+      - $APPDIR/minecraft/technic/worlds:/worlds:ro
+      ## Ensure you specify different volumes for different worlds:
+      ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#data-directory
+    environment:
+      # UID: $PUID
+      # GID: $PGID
+      TZ: $TZ
+      EULA: TRUE
+      # MEMORY: 6G
+      INIT_MEMORY: 1G  # Independently sets the initial heap size
+      MAX_MEMORY: 6G  # Independently sets the max heap size
+      VERSION: 1.12.2  # LATEST, SNAPSHOT, <SPECIFIC VERSION #>
+      TYPE: FORGE
+      FORGEVERSION: 14.23.5.2855
+      # OVERRIDE_SERVER_PROPERTIES: true
+      ## Will overwrite the world on server start
+      # FORCE_WORLD_COPY: TRUE
+      ## Read the world from the folder my_world
+      # WORLD: /worlds/backups/world_backup
+      ## Read the world from a URL
+      # WORLD: http://www.example.com/worlds/MySave.zip
+      SERVER_NAME: NUC_Server
+      ## Dangerous to change if you don't know what you're doing
+      # SERVER_PORT: $MINECRAFT_PORT
+      DIFFICULTY: 1  # peaceful, easy, normal, hard
+      WHITELIST: $MINECRAFT_USER_LIST  # Allow-listed players
+      OPS: $MINECRAFT_USER_LIST  # Op/Administrator players
+      # ICON: https://oldschool.runescape.wiki/images/c/ce/Gnome_child_chathead.png  # Set the server icon
+      # OVERRIDE_ICON: TRUE  # Override the icon on server startup
+      MAX_PLAYERS: 10  # Default :  20
+      # MAX_WORLD_SIZE: 10000  # Max world radius in chunks
+      # ALLOW_NETHER: true
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: true
+      ENABLE_COMMAND_BLOCK: false
+      # FORCE_GAMEMODE: false
+      GENERATE_STRUCTURES: true
+      ## If set to true, players will be set to spectator mode if they die
+      HARDCORE: false
+      ## If set to false, the server will not send data to snoop.minecraft.net
+      ## server.
+      SNOOPER_ENABLED: false
+      ## Terrain may still naturally generate above a low height limit
+      MAX_BUILD_HEIGHT: 256
+      ## In milliseconds, -1 to disable. Should be max 50 (0.05s). Considering
+      ## it to be crashed, server will forcibly shutdown.
+      MAX_TICK_TIME: -1
+      SPAWN_ANIMALS: true
+      SPAWN_MONSTERS: true
+      SPAWN_NPCS: true
+      SPAWN_PROTECTION: 50
+      ## Sets the amount of world data the server sends the client, measured in
+      ## chunks in each direction of the player (radius, not diameter). It
+      ## determines the server-side viewing distance.
+      VIEW_DISTANCE: 10
+      SEED: "-9075357542416790126"  # Ensure quotes are used if negative
+      # MODE: survival  # creative, survival, adventure. Default: survival
+      MOTD: "The §c§lspiceest§r Minecraft server"
+      PVP: true
+      ## DEFAULT, FLAT, LARGEBIOMES, AMPLIFIED, CUSTOMIZED, BUFFET
+      LEVEL_TYPE: BIOMESOP
+      ## Can be paired with GENERATOR_SETTINGS for further customization
+      # GENERATOR_SETTINGS: '3;minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;2;'
+      ## NOTE: : and :  must be escaped using \. The checksum is plain-text
+      ## hexadecimal
+      # RESOURCE_PACK: 'http\://link.com/to/pack.zip?\: 1'
+      # RESOURCE_PACK_SHA1: 'd5db29cd03a2ed055086cef9c31c252b4587d6d0'
+      ## Use the LEVEL option to specify multiple worlds. NOTE: if running
+      ## multiple containers be sure to specify a different -v host directory
+      ## for each LEVEL
+      ## Default: world. You can either switch between world saves or run
+      ## multiple containers with different saves by using the LEVEL option,
+      ## where the default is "world"
+      LEVEL: world
+      ONLINE_MODE: TRUE
+      ALLOW_FLIGHT: TRUE
+      ## Set RCON settings
+      ENABLE_RCON: true
+      RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
+      RCON_PORT: $MINECRAFT_RCON_PORT
+      ## Other server settings
+      PLAYER_IDLE_TIMEOUT: 0
+      # BROADCAST_CONSOLE_TO_OPS:
+      # BROADCAST_RCON_TO_OPS:
+      # ENABLE_JMX:
+      USE_AIKAR_FLAGS: true
+      # SYNC_CHUNK_WRITES:
+      # ENABLE_STATUS:
+      # ENTITY_BROADCAST_RANGE_PERCENTAGE:
+      # FUNCTION_PERMISSION_LEVEL:
+      NETWORK_COMPRESSION_THRESHOLD: 256
+      OP_PERMISSION_LEVEL: 4
+      # PREVENT_PROXY_CONNECTIONS:
+      # USE_NATIVE_TRANSPORT:
+      # ENFORCE_WHITELIST:
+      # ENABLE_WHITELIST:
+      # STOP_SERVER_ANNOUNCE_DELAY: 30
+      ENABLE_ROLLING_LOGS: true
+      ## Set up autopause for server usage optimization
+      ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#autopause
+      ## MAX_TICK_TIME must be set to an arbitrarily large number or disabled
+      ## (-1) to allow for autopause
+      ENABLE_AUTOPAUSE: TRUE
+      ## Default: 3600. Time between the last client disconnect and the pausing
+      ## of the process
+      # AUTOPAUSE_TIMEOUT_EST: 3600
+      ## Default: 600. Time between server start and the pausing of the
+      ## process, when no client connects inbetween
+      # AUTOPAUSE_TIMEOUT_INIT: 600
+      ## Default: 120. Time between knocking of the port (e.g. by the main menu
+      # ping) and the pausing of the process, when no client connects inbetween
+      # AUTOPAUSE_TIMEOUT_KN: 120
+      ## Default: 10. Period of the daemonized state machine, that handles the
+      ## pausing of the process (resuming is done independently)
+      # AUTOPAUSE_PERIOD: 10
+      ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#enabling-autopause
+      # AUTOPAUSE_KNOCK_INTERFACE: eth0
+      ## enp4s0, eth0, lo, eno1, docker0, br-ab276aa20945, br-4d480c1adff5, t2_proxy
+    # labels:
+    #   - "traefik.enable=true"
+    #   ## HTTP Routers
+    #   - "traefik.http.routers.minecraft-rtr.entrypoints=minecraft"
+    #   - "traefik.http.routers.minecraft-rtr.rule=Host(`vanilla.mc.$DOMAINNAME0`)"
+    #   ## Middlewares
+    #   - "traefik.http.routers.minecraft-rtr.middlewares=chain-no-auth@file,minecraft-remove-bypass-cache"
+    #   - "traefik.http.middlewares.minecraft-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
+    #   ## HTTP Services
+    #   - "traefik.http.routers.minecraft-rtr.service=minecraft-svc"
+    #   - "traefik.http.services.minecraft-svc.loadbalancer.server.port=$MINECRAFT_PORT"

@@ -1,0 +1,53 @@
+services:
+  ## Tdarr - Distributed transcode automation
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagitgat/tdarr:latest
+    privileged: true
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # devices:
+    #   ## AMD hardware transcoding?
+    #   - /dev/dri:/dev/dri
+    #   - /dev/dri/renderD128:/dev/dri/renderD128
+    #   - /dev/dri/card0:/dev/dri/card0
+    ports:
+      # - $TDARR_WEBUI_PORT:$TDARR_WEBUI_PORT  # WebUI port
+      - $TDARR_SERVER_PORT:$TDARR_SERVER_PORT # Server port
+      # - 8267:8267  # Internal node port
+      # - 8268:8268  # Example extra node port
+    environment:
+      UMASK_SET: 002
+      serverIP: tdarr
+      serverPort: $TDARR_SERVER_PORT
+      webUIPort: $TDARR_WEBUI_PORT
+      internalNode: "false"
+      # nodeID: MyInternalNode
+    volumes:
+      - $APPDIR/tdarr/server:/app/server
+      - $APPDIR/tdarr/configs:/app/configs
+      - $APPDIR/tdarr/logs:/app/logs
+      - $APPDIR/tdarr/scripts:/home/Tdarr/scripts
+      ## Map single folder for `/data` and use `/data/media` and
+      ## `/data/temp/transcode` to allow for move operation instead of copy
+      - $DATADIR:/data
+      # - $DATADIR/temp/transcode:/data/temp/transcode
+      # - /dev/shm:/temp  # Perform transcoding in RAM
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.tdarr-rtr.entrypoints=https"
+      - "traefik.http.routers.tdarr-rtr.rule=Host(`tdarr.$DOMAINNAME0`)"
+      - "traefik.http.routers.tdarr-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.tdarr-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.tdarr-rtr.service=tdarr-svc"
+      - "traefik.http.services.tdarr-svc.loadbalancer.server.port=$TDARR_WEBUI_PORT"

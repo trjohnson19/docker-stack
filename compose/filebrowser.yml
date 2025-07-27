@@ -9,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$FILEBROWSER_PORT:80"
     volumes:
       - $DOCKERDIR/appdata/filebrowser/config/settings.json:/config/settings.json
       - $DOCKERDIR/appdata/filebrowser/db/filebrowser.db:/database/filebrowser.db

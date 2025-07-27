@@ -223,36 +223,11 @@ include:
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
+  - compose/docker-gc.yml
 
 
 ############################## SERVICES
 services:
-  ## Docker-GC - Automatic Docker Garbage Collection
-  ## Create docker-gc-exclude file
-  docker-gc:
-    <<: *common-keys-apps
-    image: clockworksoul/docker-gc-cron:latest
-    container_name: docker-gc
-    networks:
-      - socket_proxy
-    depends_on:
-      - socket-proxy
-    volumes:
-      ## Use Docker Socket Proxy instead for improved security
-      # - /var/run/docker.sock:/var/run/docker.sock
-      ## Must create this folder
-      - $APPDIR/docker-gc/config/docker-gc-exclude:/etc/docker-gc-exclude
-    environment:
-      <<: *default-tz-puid-pgid
-      CRON: "0 0 0 * * ?" # Everyday at midnight. Previously "0 0 * * *"
-      FORCE_IMAGE_REMOVAL: 1
-      FORCE_CONTAINER_REMOVAL: 0
-      GRACE_PERIOD_SECONDS: 604800
-      DRY_RUN: 0
-      CLEAN_UP_VOLUMES: 1
-      TZ: $TZ
-      DOCKER_HOST: tcp://socket-proxy:2375
-
   ## Watchtower - A process for automating Docker container base image updates
   watchtower:
     <<: *common-keys-core # See EXTENSION FIELDS at the top

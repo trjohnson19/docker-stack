@@ -14,15 +14,15 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
-    # ports:
-    #   - "$PHPMYADMIN_PORT:80"
     # volumes:
-    #    - $APPDIR/phpmyadmin:/etc/phpmyadmin
+    #   - $APPDIR/phpmyadmin/config:/etc/phpmyadmin/conf.d:ro
+    #   - $APPDIR/phpmyadmin/sessions:/sessions:rw
     environment:
       PMA_HOST: $MARIADB_HOST
       PMA_PORT: $MARIADB_PORT
       # PMA_ARBITRARY: 1
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      PMA_ABSOLUTE_URI: pma.$DOMAINNAME0
       # PMA_USER: pma
       # PMA_PASSWORD_FILE: /run/secrets/pma_password
     secrets:

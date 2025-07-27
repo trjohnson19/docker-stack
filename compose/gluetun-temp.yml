@@ -1,7 +1,8 @@
 ---
 services:
   ## Gluetun - VPN client in a thin Docker container
-  ## gluetun-temp is used for temporary files
+  ## gluetun-temp is used for temporary files, because nothing is more
+  ## permanent than a temporary solution
   gluetun-temp:
     image: ghcr.io/qdm12/gluetun:v3
     container_name: gluetun-temp
@@ -20,8 +21,6 @@ services:
       - $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT:$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_TEMP_PORT:$QBITTORRENT_TEMP_PORT
-    # volumes:
-    #   - $APPDIR/gluetun-temp:/gluetun
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -54,5 +53,6 @@ services:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
     labels:
-      ## Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      ## Connectivity issue when restarted with Watchtower
+      ## See https://github.com/qdm12/gluetun/issues/641
       - "com.centurylinklabs.watchtower.enable=false"

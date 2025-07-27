@@ -20,8 +20,6 @@ services:
       - $GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT:$GLUETUN_PRIVATE_HTTP_CONTROL_SERVER_PORT
       ## qBittorrent web UI
       - $QBITTORRENT_PRIVATE_PORT:$QBITTORRENT_PRIVATE_PORT
-    # volumes:
-    #   - $APPDIR/gluetun-private:/gluetun
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -54,5 +52,6 @@ services:
       - gluetun_openvpn_user
       - gluetun_openvpn_password
     labels:
-      ## Connectivity issue when restarted with Watchtower. See https://github.com/qdm12/gluetun/issues/641
+      ## Connectivity issue when restarted with Watchtower
+      ## See https://github.com/qdm12/gluetun/issues/641
       - "com.centurylinklabs.watchtower.enable=false"

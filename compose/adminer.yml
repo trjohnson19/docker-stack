@@ -2,7 +2,6 @@
 services:
   ## Adminer - Database management in a single PHP file.
   adminer:
-    <<: *common-keys-core
     container_name: adminer
     image: adminer:latest
     networks:
@@ -10,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - 8080:8080
     environment:
       ## https://github.com/vrana/adminer/tree/master/designs
       # ADMINER_DESIGN: 'nette'
@@ -23,7 +20,6 @@ services:
       - "traefik.http.routers.adminer-rtr.rule=Host(`adminer.$DOMAINNAME0`)"
       - "traefik.http.routers.adminer-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      # - "traefik.http.routers.adminer-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.routers.adminer-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.adminer-rtr.service=adminer-svc"

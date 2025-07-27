@@ -130,9 +130,6 @@ services:
       - $APPDIR/traefik2/traefik.log:/traefik.log
       - $DOCKERDIR/shared:/shared
     environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
       CF_API_EMAIL_FILE: /run/secrets/cloudflare_email
       CF_API_KEY_FILE: /run/secrets/cloudflare_api_key
       ## HTPASSWD_FILE can be whatever as it is not used/called anywhere.

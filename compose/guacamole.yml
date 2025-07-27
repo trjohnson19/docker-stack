@@ -1,0 +1,52 @@
+---
+services:
+  ## Guacamole - Remote desktop, SSH, on Telnet on any HTML5 Browser
+  ## Create all databases and tables first
+  ## https://guacamole.apache.org/doc/1.4.0/gug/guacamole-docker.html?highlight=mysql#mysql-authentication
+  guacamole:
+    image: guacamole/guacamole:latest
+    container_name: guacamole
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    depends_on:
+      - guacd
+    # ports:
+    #   - "$GUACAMOLE_PORT:8080"
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: $MARIADB_HOST
+      MYSQL_PORT: $MARIADB_PORT
+      ## Secrets do not work with 600 secrets, must chmod 644
+      MYSQL_DATABASE_FILE: /run/secrets/guac_db_name
+      MYSQL_USER_FILE: /run/secrets/guac_mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/guac_mysql_password
+    secrets:
+      - guac_db_name
+      - guac_mysql_user
+      - guac_mysql_password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.guacamole-rtr.entrypoints=https"
+      - "traefik.http.routers.guacamole-rtr.rule=Host(`guac.$DOMAINNAME0`)"
+      - "traefik.http.routers.guacamole-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.guacamole-rtr.middlewares=chain-authelia@file,guacamole-remove-bypass-cache,add-guacamole"
+      - "traefik.http.middlewares.guacamole-remove-bypass-cache.stripprefix.prefixes=/bypass_cache"
+      - "traefik.http.middlewares.add-guacamole.addPrefix.prefix=/guacamole"
+      ## HTTP Services
+      - "traefik.http.routers.guacamole-rtr.service=guacamole-svc"
+      - "traefik.http.services.guacamole-svc.loadbalancer.server.port=8080"
+
+  ## Guacamole Daemon - Needed for Guacamole
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always

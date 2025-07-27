@@ -2,7 +2,6 @@
 services:
   ## Dozzle - Real-time Docker Log Viewer
   dozzle:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
     image: amir20/dozzle:latest
     container_name: dozzle
     networks:
@@ -19,8 +18,9 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
-    # ports:
-    #   - "$DOZZLE_PORT:$DOZZLE_PORT"
+    # volumes:
+    #   ## Use Docker Socket Proxy instead for improved security
+    #   - /var/run/docker.sock:/var/run/docker.sock
     environment:
       DOZZLE_ADDR: ":$DOZZLE_PORT"
       DOCKER_HOST: tcp://socket-proxy:2375
@@ -29,9 +29,6 @@ services:
       # DOZZLE_FILTER: "label=log_me"
       DOZZLE_LEVEL: info
       DOZZLE_NO_ANALYTICS: true
-    # volumes:
-    #   ## Use Docker Socket Proxy instead for improved security
-    #   - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

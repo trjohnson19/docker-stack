@@ -1,3 +1,4 @@
+---
 services:
   ## Tdarr - Distributed transcode automation
   tdarr:
@@ -14,11 +15,6 @@ services:
     #   - /dev/dri:/dev/dri
     #   - /dev/dri/renderD128:/dev/dri/renderD128
     #   - /dev/dri/card0:/dev/dri/card0
-    ports:
-      # - $TDARR_WEBUI_PORT:$TDARR_WEBUI_PORT  # WebUI port
-      - $TDARR_SERVER_PORT:$TDARR_SERVER_PORT # Server port
-      # - 8267:8267  # Internal node port
-      # - 8268:8268  # Example extra node port
     environment:
       UMASK_SET: 002
       serverIP: tdarr

@@ -1,0 +1,72 @@
+---
+services:
+  ## Gotify - A simple server for sending and receiving messages
+  gotify:
+    container_name: gotify
+    image: gotify/server:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # ports:
+    #   - $GOTIFY_PORT:9267  # Node port
+    volumes:
+      - $APPDIR/gotify/app:/app/data
+      ## Allows passing the hijacked entrypoint.sh
+      - $APPDIR/gotify/config:/config:ro
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      GOTIFY_SERVER_PORT: $GOTIFY_SERVER_PORT
+      # GOTIFY_SERVER_KEEPALIVEPERIODSECONDS: 0
+      # GOTIFY_SERVER_LISTENADDR:
+      GOTIFY_SERVER_SSL_ENABLED: "false"
+      # GOTIFY_SERVER_SSL_REDIRECTTOHTTPS: true
+      # GOTIFY_SERVER_SSL_LISTENADDR:
+      # GOTIFY_SERVER_SSL_PORT: 443
+      # GOTIFY_SERVER_SSL_CERTFILE:
+      # GOTIFY_SERVER_SSL_CERTKEY:
+      # GOTIFY_SERVER_SSL_LETSENCRYPT_ENABLED: false
+      # GOTIFY_SERVER_SSL_LETSENCRYPT_ACCEPTTOS: false
+      # GOTIFY_SERVER_SSL_LETSENCRYPT_CACHE: certs
+      # lists are a little weird but do-able (:
+      # GOTIFY_SERVER_SSL_LETSENCRYPT_HOSTS: - mydomain.tld\n- myotherdomain.tld
+      # GOTIFY_SERVER_RESPONSEHEADERS: "X-Custom-Header: \"custom value\""
+      # GOTIFY_SERVER_CORS_ALLOWORIGINS: "- \".+.example.com\"\n- \"otherdomain.com\""
+      # GOTIFY_SERVER_CORS_ALLOWMETHODS: "- \"GET\"\n- \"POST\""
+      # GOTIFY_SERVER_CORS_ALLOWHEADERS: "- \"Authorization\"\n- \"content-type\""
+      # GOTIFY_SERVER_STREAM_ALLOWEDORIGINS: "- \".+.example.com\"\n- \"otherdomain.com\""
+      # GOTIFY_SERVER_STREAM_PINGPERIODSECONDS: 45
+      GOTIFY_DATABASE_DIALECT: mysql
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DATABASE_CONNECTION__FILE: /run/secrets/gotify_database_connection
+      # GOTIFY_DATABASE_CONNECTION: data/gotify.db
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DEFAULTUSER_NAME__FILE: /run/secrets/gotify_defaultuser_name
+      # GOTIFY_DEFAULTUSER_NAME: admin
+      ## Hijack default entrypoint to pass in Docker secrets
+      GOTIFY_DEFAULTUSER_PASS__FILE: /run/secrets/gotify_defaultuser_pass
+      # GOTIFY_DEFAULTUSER_PASS: admin
+      GOTIFY_PASSSTRENGTH: 10
+      GOTIFY_UPLOADEDIMAGESDIR: data/images
+      GOTIFY_PLUGINSDIR: data/plugins
+      # GOTIFY_REGISTRATION: false
+    secrets:
+      - gotify_database_connection
+      - gotify_defaultuser_name
+      - gotify_defaultuser_pass
+    entrypoint:
+      - /config/entrypoint.sh
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.gotify-rtr.entrypoints=https"
+      - "traefik.http.routers.gotify-rtr.rule=Host(`gotify.$DOMAINNAME0`)"
+      - "traefik.http.routers.gotify-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.gotify-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.gotify-rtr.service=gotify-svc"
+      - "traefik.http.services.gotify-svc.loadbalancer.server.port=$GOTIFY_SERVER_PORT"

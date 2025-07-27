@@ -3022,7 +3022,7 @@ services:
       API_PORT: 3001
       UI_PORT: 6246
     labels:
-      - "traefik.enable": "true",
+      - "traefik.enable": "true"
       ## HTTP Routers
       - "traefik.http.routers.maintainerr-rtr.entrypoints": "https"
       - "traefik.http.routers.maintainerr-rtr.rule": "Host(`maintainerr.$DOMAINNAME0`)"

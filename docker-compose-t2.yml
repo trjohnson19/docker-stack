@@ -221,6 +221,7 @@ include:
   - compose/phpmyadmin.yml
   - compose/adminer.yml
   - compose/redis.yml
+  - compose/rediscommander.yml
 
 
 ############################## SERVICES

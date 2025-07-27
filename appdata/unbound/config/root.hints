@@ -9,10 +9,12 @@
 ;           on server           FTP.INTERNIC.NET
 ;       -OR-                    RS.INTERNIC.NET
 ;
-;       last update:     March 26, 2025
-;       related version of root zone:     2025032601
+;       last update:     June 26, 2025
+;       related version of root zone:     2025062601
 ; 
 ; FORMERLY NS.INTERNIC.NET 
+;
+; This file updated automatically with wget from https://www.internic.net/domain/named.root via mint's crontab
 ;
 ; This file updated automatically with wget from https://www.internic.net/domain/named.root via mint's crontab
 ;

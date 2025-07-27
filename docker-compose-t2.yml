@@ -222,36 +222,12 @@ include:
   - compose/adminer.yml
   - compose/redis.yml
   - compose/rediscommander.yml
+  ## Services
+  - compose/cf-ddns.yml
 
 
 ############################## SERVICES
 services:
-  ############################## MAINTENANCE
-
-  ## Cloudflare DDNS - Dynamic DNS service to update Cloudflare DNS records
-  cf-ddns:
-    # <<: *common-keys-core  # Must set network mode manually
-    container_name: cf-ddns
-    image: favonia/cloudflare-ddns:1
-    network_mode: host # To make IPv6 easier
-    restart: always
-    user: "${PUID}:${PGID}"
-    cap_drop:
-      - all
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - $APPDIR/cf-ddns/config/cloudflare_ddns_api_token:/cloudflare_ddns_api_token:ro
-    environment: # Environmental variables deprecated
-      <<: *default-tz-puid-pgid
-      CF_API_TOKEN_FILE: /cloudflare_ddns_api_token
-      DOMAINS: $DOMAINNAME0
-      PROXIED: "true"
-      UPDATE_CRON: "*/5 * * * *"
-      RECORD_COMMENT: "Updated with cloudflare-ddns"
-      # SHOUTRRR:  # TODO
-
   ## DuckDNS - Dynamic DNS service provided by duckdns.org
   duckdns:
     <<: *common-keys-core

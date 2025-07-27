@@ -5,7 +5,6 @@ services:
     # <<: *common-keys-core  # Must set network mode manually
     container_name: cf-ddns
     image: favonia/cloudflare-ddns:1
-    network_mode: host # To make IPv6 easier
     restart: always
     user: "${PUID}:${PGID}"
     cap_drop:
@@ -17,9 +16,7 @@ services:
       - $APPDIR/cf-ddns/config/cloudflare_ddns_api_token:/cloudflare_ddns_api_token:ro
     environment: # Environmental variables deprecated
       TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      CF_API_TOKEN_FILE: /cloudflare_ddns_api_token
+      CLOUDFLARE_API_TOKEN_FILE: /cloudflare_ddns_api_token
       DOMAINS: $DOMAINNAME0
       PROXIED: "true"
       UPDATE_CRON: "*/5 * * * *"

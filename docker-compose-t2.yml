@@ -3011,9 +3011,30 @@ services:
     volumes:
       - $APPDIR/recyclarr/config:/config
 
-  ############################# MEDIA
+  ## Maintainerr
+  maintainerr:
+    <<: *common-keys-apps
+    image: ghcr.io/jorenn92/maintainerr:latest
+    container_name: maintainerr
+    volumes:
+      - $APPDIR/maintainerr/config:/opt/data
+    environement:
+      API_PORT: 3001
+      UI_PORT: 6246
+    labels:
+      - "traefik.enable": "true"
+      ## HTTP Routers
+      - "traefik.http.routers.maintainerr-rtr.entrypoints": "https"
+      - "traefik.http.routers.maintainerr-rtr.rule": "Host(`maintainerr.$DOMAINNAME0`)"
+      - "traefik.http.routers.maintainerr-rtr.tls.options": "tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.maintainerr-rtr.middlewares": "chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.maintainerr-rtr.service": "maintainerr-svc"
+      - "traefik.http.services.maintainerr-svc.loadbalancer.server.port": "6246"
 
-  # Jellyfin - Free Software Media System
+  ############################# MEDIA
+  ## Jellyfin - Free Software Media System
   jellyfin:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top
     image: jellyfin/jellyfin:latest # Issues with hardware transcoding with linuxserver.io image

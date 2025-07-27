@@ -4,8 +4,6 @@ services:
   unbound:
     image: klutchell/unbound:latest
     container_name: unbound
-    networks:
-      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -13,9 +11,9 @@ services:
       - $UNBOUND_PORT:53
       - $UNBOUND_PORT:53/udp
     volumes:
-      - $APPDIR/unbound/config:/opt/unbound/etc/unbound/
       ## Update $APPDIR/unbound/config/root.hints (from $DOCKERDIR) using
       ## `wget https://www.internic.net/domain/named.cache -O ./appdata/unbound/config/root.hints`
+      - $APPDIR/unbound/config:/opt/unbound/etc/unbound/
     healthcheck:
       test: ["CMD", "dig", "ietf.org", "@127.0.0.1", "-p", "53"]
       interval: 30s

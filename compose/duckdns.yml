@@ -1,4 +1,7 @@
 ---
+secrets:
+  duckdns_token:
+    file: $SECRETSDIR/duckdns_token
 services:
   ## DuckDNS - Dynamic DNS service provided by duckdns.org
   duckdns:

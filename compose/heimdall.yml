@@ -8,6 +8,7 @@ services:
       - t2_proxy
     security_opt:
       - no-new-privileges:true
+    restart: unless-stopped
     # ports:
     #  - "$HEIMDALL_PORT:80"
     volumes:

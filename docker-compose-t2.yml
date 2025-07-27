@@ -220,26 +220,6 @@ include:
 
 ############################## SERVICES
 services:
-  ############################## DATABASE
-
-  ## MariaDB - MySQL Database
-  ## After starting container for first time dexec and
-  ## `mysqladmin -u root password <password>`
-  mariadb:
-    <<: *common-keys-core
-    container_name: mariadb
-    image: lscr.io/linuxserver/mariadb:latest
-    ports:
-      - "$MARIADB_PORT:3306"
-    volumes:
-      - $APPDIR/mariadb/data:/config
-    environment:
-      <<: *default-tz-puid-pgid
-      ## Not taking this pw during initialization
-      FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password
-    secrets:
-      - mysql_root_password
-
   ## PostgreSQL - PostgreSQL Database
   ## Steps for adding a new user/database:
   ## 1. Log in to adminer.$DOMAINNAME0 with postgres root

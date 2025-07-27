@@ -1,7 +1,5 @@
 ---
 services:
-  ############################## WEB
-
   ## Vaultwarden - Unofficial Bitwarden compatible server written in Rust
   vaultwarden:
     container_name: vaultwarden
@@ -14,11 +12,8 @@ services:
     ## Run Vaultwarden as non-root user; Currently doesn't work with docker
     ## secrets
     # user: $PUID:$PGID
-    # ports:
-    #   - $VAULTWARDEN_PORT:$VAULTWARDEN_PORT
-    #   - $VAULTWARDEN_WEBSOCKET_PORT:$VAULTWARDEN_WEBSOCKET_PORT
-    # depends_on:
-    #   - mariadb
+    depends_on:
+      - mariadb
     environment:
       ## Note: can append '_FILE' to any env variable to read from a file
       ## (including /run/secrets/my_secret)

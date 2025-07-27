@@ -9,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - $GOTIFY_PORT:9267  # Node port
     volumes:
       - $APPDIR/gotify/app:/app/data
       ## Allows passing the hijacked entrypoint.sh

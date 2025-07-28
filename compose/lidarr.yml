@@ -5,13 +5,10 @@ services:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
     networks:
-      t2_proxy:
-        ipv4_address: $LIDARR_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$LIDARR_PORT:8686"
     volumes:
       - $APPDIR/lidarr/config:/config
       - $DATADIR:/data
@@ -19,8 +16,6 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      UMASK: 002
-      #ARGS: ""
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass

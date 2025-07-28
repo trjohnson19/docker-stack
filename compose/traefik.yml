@@ -1,4 +1,11 @@
 ---
+secrets:
+  cloudflare_api_key:
+    file: $SECRETSDIR/cloudflare_api_key
+  cloudflare_email:
+    file: $SECRETSDIR/cloudflare_email
+  htpasswd:
+    file: $SECRETSDIR/htpasswd
 services:
   ## Traefik 2 - Reverse Proxy
   ## Touch (create empty files) traefik.log and acme/acme.json.

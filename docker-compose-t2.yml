@@ -237,6 +237,7 @@ include:
   - compose/sonarr.yml
   - compose/sonarr-4k.yml
   - compose/recyclarr.yml
+  - compose/maintainerr.yml
   - compose/lidarr.yml
   ### Requests
   - compose/overseerr.yml
@@ -279,28 +280,6 @@ include:
 
 ############################## SERVICES
 services:
-  ## Maintainerr
-  maintainerr:
-    <<: *common-keys-apps
-    image: ghcr.io/jorenn92/maintainerr:latest
-    container_name: maintainerr
-    volumes:
-      - $APPDIR/maintainerr/config:/opt/data
-    environment:
-      API_PORT: 3001
-      UI_PORT: 6246
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.maintainerr-rtr.entrypoints=https"
-      - "traefik.http.routers.maintainerr-rtr.rule=Host(`maintainerr.$DOMAINNAME0`)"
-      - "traefik.http.routers.maintainerr-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.maintainerr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.maintainerr-rtr.service=maintainerr-svc"
-      - "traefik.http.services.maintainerr-svc.loadbalancer.server.port=6246"
-
   ############################# MEDIA
   ## Jellyfin - Free Software Media System
   jellyfin:

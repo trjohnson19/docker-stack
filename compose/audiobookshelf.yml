@@ -2,16 +2,19 @@
 services:
   # audiobookshelf - Self-hosted audiobook and podcast server
   audiobookshelf:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
     image: ghcr.io/advplyr/audiobookshelf:latest
     container_name: audiobookshelf
-    # ports:
-    #   - $AUDIOBOOKSHELF_PORT:13378
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
     volumes:
       - $APPDIR/audiobookshelf/config:/config
       - $DATADIR/media/audiobooks:/audiobooks
       - $DATADIR/media/podcasts:/podcasts
-      - $APPDIR/audiobookshelf/metadata:/metadata # Could be in $DATADIR to minimize storage usage on host
+      ## Could be in $DATADIR to minimize storage usage on host
+      - $APPDIR/audiobookshelf/metadata:/metadata
     environment:
       # HOST: 127.0.0.1
       PORT: $AUDIOBOOKSHELF_PORT

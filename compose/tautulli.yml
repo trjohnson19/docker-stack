@@ -5,16 +5,14 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     networks:
-      t2_proxy:
-        ipv4_address: $TAUTULLI_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$TAUTULLI_PORT:8181"
     volumes:
       - $APPDIR/tautulli/config:/config
-      - "$DATADIR/docker/plex/Library/Application Support/Plex Media Server/Logs:/plexlogs:ro" # Give read-only access to Plex logs for monitoring via Tautulli
+      ## Give read-only access to Plex logs for monitoring via Tautulli
+      - "$DATADIR/docker/plex/Library/Application Support/Plex Media Server/Logs:/plexlogs:ro"
     environment:
       TZ: $TZ
       PUID: $PUID

@@ -236,6 +236,7 @@ include:
   - compose/radarr-4k.yml
   - compose/sonarr.yml
   - compose/sonarr-4k.yml
+  - compose/recyclarr.yml
   - compose/lidarr.yml
   ## Services
   - compose/cf-ddns.yml
@@ -325,18 +326,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
-
-  ## Recyclarr - A (dockerized) command-line application that will automatically synchronize recommended settings from TRaSH guides to your Sonarr/Radarr instances.
-  ## https://trash-guides.info/Misc/trash-sync/
-  recyclarr:
-    <<: *common-keys-apps
-    image: recyclarr/recyclarr:latest
-    container_name: recyclarr
-    environment:
-      <<: *default-tz-puid-pgid
-      CRON_SCHEDULE: "0 12 * * 1" # Optional - Default "@daily" - https://cron.help/
-    volumes:
-      - $APPDIR/recyclarr/config:/config
 
   ## Maintainerr
   maintainerr:

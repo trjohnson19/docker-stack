@@ -1,0 +1,19 @@
+---
+services:
+  ## Recyclarr - A (dockerized) command-line application that will
+  ## automatically synchronize recommended settings from TRaSH guides to your
+  ## Sonarr / Radarr instances.
+  ## https://trash-guides.info/Misc/trash-sync/
+  recyclarr:
+    image: recyclarr/recyclarr:latest
+    container_name: recyclarr
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      CRON_SCHEDULE: "0 12 * * 1" # Optional - Default "@daily" - https://cron.help/
+    volumes:
+      - $APPDIR/recyclarr/config:/config

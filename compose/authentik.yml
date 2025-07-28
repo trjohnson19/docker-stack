@@ -1,4 +1,19 @@
 ---
+secrets:
+  authentik_email__password:
+    file: $SECRETSDIR/authentik_email__password
+  authentik_postgresql__name:
+    file: $SECRETSDIR/authentik_postgresql__name
+  authentik_postgresql__user:
+    file: $SECRETSDIR/authentik_postgresql__user
+  authentik_postgresql__password:
+    file: $SECRETSDIR/authentik_postgresql__password
+  authentik_redis__password:
+    file: $SECRETSDIR/authentik_redis__password
+  authentik_secret_key:
+    file: $SECRETSDIR/authentik_secret_key
+  authentik_token_ldap:
+    file: $SECRETSDIR/authentik_token_ldap
 services:
   ## Authentik - an open-source Identity Provider, focused on flexibility and
   ## versatility

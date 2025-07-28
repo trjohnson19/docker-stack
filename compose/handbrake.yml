@@ -1,6 +1,6 @@
 ---
 services:
-  # Handbrake - Video Conversion (Transcoding and compression)
+  # Handbrake - Video Conversion (transcoding and compression)
   handbrake:
     image: jlesage/handbrake:latest
     container_name: handbrake
@@ -9,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$HANDBRAKE_PORT:$HANDBRAKE_PORT"
     volumes:
       - $DATADIR:/data
       - $APPDIR/handbrake/config:/config

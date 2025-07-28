@@ -2,19 +2,15 @@
 services:
   # Radarr - Movie management
   radarr-4k:
-    image: lscr.io/linuxserver/radarr:latest # latest was causing "Error parsing column 45"
+    image: lscr.io/linuxserver/radarr:latest
     container_name: radarr-4k
     networks:
-      t2_proxy:
-        ipv4_address: $RADARR_4K_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$RADARR_PORT:7878"
     volumes:
       - $APPDIR/radarr-4k/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
       - "/etc/localtime:/etc/localtime:ro"

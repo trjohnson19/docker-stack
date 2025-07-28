@@ -1,0 +1,23 @@
+---
+services:
+  # FlareSolverr - Proxy server to bypass Cloudflare protection
+  # Not sure if I need this or not. Just testing.
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    networks:
+      t2_proxy:
+        ipv4_address: $FLARESOLVERR_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      LOG_LEVEL: info
+      LOG_HTML: "false"
+      CAPTCHA_SOLVER: none
+      # TEST_URL: "www.eff.org"
+    ports:
+      - "$FLARESOLVERR_PORT:8191"

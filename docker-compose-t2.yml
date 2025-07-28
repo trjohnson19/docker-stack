@@ -55,18 +55,6 @@ secrets:
     file: $SECRETSDIR/htpasswd
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
-  nextcloud_admin_user:
-    file: $SECRETSDIR/nextcloud_admin_user
-  nextcloud_admin_password:
-    file: $SECRETSDIR/nextcloud_admin_password
-  nextcloud_mysql_user:
-    file: $SECRETSDIR/nextcloud_mysql_user
-  nextcloud_mysql_password:
-    file: $SECRETSDIR/nextcloud_mysql_password
-  nextcloud_smtp_name: # Currently unsupported
-    file: $SECRETSDIR/nextcloud_smtp_name
-  nextcloud_smtp_password: # Currently unsupported
-    file: $SECRETSDIR/nextcloud_smtp_password
   plex_claim:
     file: $SECRETSDIR/plex_claim
   postgres_user:

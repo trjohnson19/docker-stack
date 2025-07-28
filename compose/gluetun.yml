@@ -1,4 +1,9 @@
 ---
+secrets:
+  gluetun_openvpn_user:
+    file: $SECRETSDIR/gluetun_openvpn_user
+  gluetun_openvpn_password:
+    file: $SECRETSDIR/gluetun_openvpn_password
 services:
   ## Gluetun - VPN client in a thin Docker container
   gluetun:

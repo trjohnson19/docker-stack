@@ -9,8 +9,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - $OVERSEERR_PORT:5055
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -18,7 +16,12 @@ services:
     volumes:
       - $APPDIR/overseerr/config:/config
     healthcheck:
-      test: wget "http://localhost:$OVERSEERR_PORT/api/v1/status" -qO /dev/null || exit 1 # https://github.com/sct/overseerr/issues/411#issuecomment-755083037
+      # https://github.com/sct/overseerr/issues/411#issuecomment-755083037
+      start_period: 10s
+      test: wget --spider "http://localhost:$OVERSEERR_PORT/api/v1/status" -qO /dev/null || exit 1
+      interval: 30s
+      timeout: 20s
+      retries: 3
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

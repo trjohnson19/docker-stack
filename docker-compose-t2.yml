@@ -55,8 +55,6 @@ secrets:
     file: $SECRETSDIR/htpasswd
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
-  plex_claim:
-    file: $SECRETSDIR/plex_claim
   postgres_user:
     file: $SECRETSDIR/postgres_user
   postgres_password:

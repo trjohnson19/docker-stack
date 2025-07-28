@@ -1,4 +1,7 @@
 ---
+secrets:
+  plex_claim:
+    file: $SECRETSDIR/plex_claim
 services:
   ## Plex - Media Server
   plex:

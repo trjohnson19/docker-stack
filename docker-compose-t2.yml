@@ -236,6 +236,7 @@ include:
   - compose/radarr-4k.yml
   - compose/sonarr.yml
   - compose/sonarr-4k.yml
+  - compose/lidarr.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -274,43 +275,6 @@ include:
 
 ############################## SERVICES
 services:
-  ## Lidarr - Music Management
-  lidarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    networks:
-      t2_proxy:
-        ipv4_address: $LIDARR_IPV4
-    # ports:
-    #   - "$LIDARR_PORT:8686"
-    volumes:
-      - $APPDIR/lidarr/config:/config
-      - $DATADIR:/data
-    environment:
-      <<: *default-tz-puid-pgid
-      UMASK: 002
-      #ARGS: ""
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers Auth Bypass
-      - "traefik.http.routers.lidarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.lidarr-rtr-bypass.rule=Host(`lidarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$LIDARR_API_KEY`) || Query(`apikey`, `$LIDARR_API_KEY`))"
-      - "traefik.http.routers.lidarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.lidarr-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.lidarr-rtr.entrypoints=https"
-      - "traefik.http.routers.lidarr-rtr.rule=Host(`lidarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.lidarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.lidarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.lidarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.lidarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
-      - "traefik.http.routers.lidarr-rtr-bypass.service=lidarr-svc"
-      - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
-
   ## Overseerr - Request Management System (Plex Only)
   overseerr:
     <<: *common-keys-apps

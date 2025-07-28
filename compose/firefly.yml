@@ -1,4 +1,15 @@
 ---
+secrets:
+  firefly_iii_access_token:
+    file: $SECRETSDIR/firefly_iii_access_token
+  firefly_mail_server_password:
+    file: $SECRETSDIR/firefly_mail_server_password
+  firefly_mysql_db_name:
+    file: $SECRETSDIR/firefly_mysql_db_name
+  firefly_mysql_user:
+    file: $SECRETSDIR/firefly_mysql_user
+  firefly_mysql_password:
+    file: $SECRETSDIR/firefly_mysql_password
 services:
   ## Firefly III - Finance Manager
   ## Create a unique App Key which is a random 32 character string

@@ -244,6 +244,7 @@ include:
   - compose/ombi.yml
   ### Servers
   - compose/jellyfin.yml
+  # - compose/plex.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -282,50 +283,6 @@ include:
 
 ############################## SERVICES
 services:
-  # Plex - Media Server
-  # Moved to Synology hosted (Intel QuickSync)
-  # plex:
-  #   <<: *common-keys-apps # See EXTENSION FIELDS at the top
-  #   image: lscr.io/linuxserver/plex:latest
-  #   container_name: plex
-  #   ports:
-  #     # - "$PLEX_PORT:32400/tcp"  # Web host proxied via Traefik
-  #     # - "1900:1900/udp"  # DLNA - Conflicts with Jellyfin, xTeVe, and Synology default ports
-  #     - "3005:3005/tcp"
-  #     # - "5353:5353/udp"
-  #     - "8324:8324/tcp"
-  #     - "32410:32410/udp"
-  #     - "32412:32412/udp"
-  #     - "32413:32413/udp"
-  #     - "32414:32414/udp"
-  #     - "32469:32469/tcp"
-  #     # - "33400:33400" # If you use Plex Web Tools
-  #   devices:
-  #     - /dev/dri:/dev/dri  # AMD hardware transcoding?
-  #     - /dev/dri/renderD128:/dev/dri/renderD128
-  #     - /dev/dri/card0:/dev/dri/card0
-  #   volumes:
-  #     - $DOCKERDIR/appdata/plex:/config
-  #     - $DATADIR/media:/media
-  #     - /dev/shm:/transcode  # Perform transcoding in RAM
-  #   environment:
-  #     <<: *default-tz-puid-pgid
-  #     PLEX_CLAIM: /run/secrets/plex_claim
-  #     VERSION: docker
-  #   secrets:
-  #     - plex_claim
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.plex-rtr.entrypoints=https"
-  #     - "traefik.http.routers.plex-rtr.rule=Host(`plex.$DOMAINNAME0`)"
-  #     ## Middlewares
-  #     - "traefik.http.routers.plex-rtr.middlewares=chain-authelia@file,plex-remove-bypass-cache"
-  #     - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.plex-rtr.service=plex-svc"
-  #     - "traefik.http.services.plex-svc.loadbalancer.server.port=32400"
-
   calibre:
     <<: *common-keys-apps
     image: lscr.io/linuxserver/calibre:latest

@@ -1,4 +1,13 @@
 ---
+secrets:
+  keycloak_admin:
+    file: $SECRETSDIR/keycloak_admin
+  keycloak_admin_password:
+    file: $SECRETSDIR/keycloak_admin_password
+  kc_db_username:
+    file: $SECRETSDIR/kc_db_username
+  kc_db_password:
+    file: $SECRETSDIR/kc_db_password
 services:
   ## Keycloak - Open Source Identity and Access Management
   keycloak:

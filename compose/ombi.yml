@@ -9,17 +9,12 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - $OMBI_PORT:3579
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      # BASE_URL: /ombi  # Optional
     volumes:
       - $APPDIR/ombi/config:/config
-      # - $DATADIR/downloads:/data/downloads
-      # - $DATADIR/media:/data/media
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

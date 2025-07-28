@@ -239,7 +239,7 @@ include:
   - compose/recyclarr.yml
   - compose/lidarr.yml
   ### Requests
-  - compose/
+  - compose/overseerr.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml

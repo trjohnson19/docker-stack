@@ -1,4 +1,11 @@
 ---
+secrets:
+  gotify_database_connection:
+    file: $SECRETSDIR/gotify_database_connection
+  gotify_defaultuser_name:
+    file: $SECRETSDIR/gotify_defaultuser_name
+  gotify_defaultuser_pass:
+    file: $SECRETSDIR/gotify_defaultuser_pass
 services:
   ## Gotify - A simple server for sending and receiving messages
   gotify:

@@ -236,6 +236,7 @@ include:
   - compose/radarr-4k.yml
   - compose/sonarr.yml
   - compose/sonarr-4k.yml
+  - compose/bazarr.yml
   - compose/recyclarr.yml
   - compose/maintainerr.yml
   - compose/audiobookshelf.yml
@@ -287,43 +288,6 @@ include:
 
 ############################## SERVICES
 services:
-  ############################# MEDIA FILE MANAGEMENT
-
-  # Bazarr - Subtitle Management
-  bazarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/bazarr
-    container_name: bazarr
-    networks:
-      t2_proxy:
-        ipv4_address: $BAZARR_IPV4
-    # ports:
-    #   - $BAZARR_PORT:6767
-    volumes:
-      - $APPDIR/bazarr/config:/config
-      - $DATADIR/media:/data/media
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers API Auth Bypass
-      - "traefik.http.routers.bazarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.bazarr-rtr-bypass.rule=Host(`bazarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$BAZARR_API_KEY`) || Query(`apikey`, `$BAZARR_API_KEY`))"
-      - "traefik.http.routers.bazarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.bazarr-rtr-bypass.priority=100"
-      ## HTTP Routers
-      - "traefik.http.routers.bazarr-rtr.entrypoints=https"
-      - "traefik.http.routers.bazarr-rtr.rule=Host(`bazarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.bazarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.bazarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.bazarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.bazarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.bazarr-rtr-bypass.service=bazarr-svc"
-      - "traefik.http.routers.bazarr-rtr.service=bazarr-svc"
-      - "traefik.http.services.bazarr-svc.loadbalancer.server.port=6767"
-
   # Handbrake - Video Conversion (Transcoding and compression)
   handbrake:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

@@ -214,12 +214,14 @@ include:
   - compose/authelia.yml
   # - compose/keycloak.yml
   - compose/authentik.yml
+  ## Databases
   - compose/mariadb.yml
   - compose/postgres.yml
   - compose/phpmyadmin.yml
   - compose/adminer.yml
   - compose/redis.yml
   - compose/rediscommander.yml
+  ## Media server
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml

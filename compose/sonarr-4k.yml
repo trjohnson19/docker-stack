@@ -1,0 +1,44 @@
+---
+services:
+  # Sonarr - TV Shows management
+  # Set url_base in sonarr settings if using PathPrefix
+  sonarr-4k:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr-4k
+    networks:
+      t2_proxy:
+        ipv4_address: $SONARR_4K_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # ports:
+    #   - "$SONARR_PORT:8989"
+    volumes:
+      - $APPDIR/sonarr-4k/config:/config
+      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
+      # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
+      - $DATADIR:/data
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.rule=Host(`sonarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.sonarr-4k-rtr.entrypoints=https"
+      - "traefik.http.routers.sonarr-4k-rtr.rule=Host(`sonarr-4k.$DOMAINNAME0`)"
+      - "traefik.http.routers.sonarr-4k-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.sonarr-4k-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.sonarr-4k-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.sonarr-4k-rtr.service=sonarr-4k-svc"
+      - "traefik.http.routers.sonarr-4k-rtr-bypass.service=sonarr-4k-svc"
+      - "traefik.http.services.sonarr-4k-svc.loadbalancer.server.port=8989"

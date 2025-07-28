@@ -234,6 +234,8 @@ include:
   ### Personal media recorders
   - compose/radarr.yml
   - compose/radarr-4k.yml
+  - compose/sonarr.yml
+  - compose/sonarr-4k.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -272,84 +274,6 @@ include:
 
 ############################## SERVICES
 services:
-  # Sonarr - TV Shows management
-  # Set url_base in sonarr settings if using PathPrefix
-  sonarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/sonarr
-    container_name: sonarr
-    networks:
-      t2_proxy:
-        ipv4_address: $SONARR_IPV4
-    # ports:
-    #   - "$SONARR_PORT:8989"
-    volumes:
-      - $APPDIR/sonarr/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
-      # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
-      - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers Auth Bypass
-      - "traefik.http.routers.sonarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.sonarr-rtr-bypass.rule=Host(`sonarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
-      - "traefik.http.routers.sonarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.sonarr-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.sonarr-rtr.entrypoints=https"
-      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.sonarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.sonarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.sonarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.sonarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
-      - "traefik.http.routers.sonarr-rtr-bypass.service=sonarr-svc"
-      - "traefik.http.services.sonarr-svc.loadbalancer.server.port=8989"
-
-  # Sonarr - TV Shows management
-  # Set url_base in sonarr settings if using PathPrefix
-  sonarr-4k:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/sonarr
-    container_name: sonarr-4k
-    networks:
-      t2_proxy:
-        ipv4_address: $SONARR_4K_IPV4
-    # ports:
-    #   - "$SONARR_PORT:8989"
-    volumes:
-      - $APPDIR/sonarr-4k/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
-      # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
-      - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers Auth Bypass
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.rule=Host(`sonarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.sonarr-4k-rtr.entrypoints=https"
-      - "traefik.http.routers.sonarr-4k-rtr.rule=Host(`sonarr-4k.$DOMAINNAME0`)"
-      - "traefik.http.routers.sonarr-4k-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.sonarr-4k-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.sonarr-4k-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.sonarr-4k-rtr.service=sonarr-4k-svc"
-      - "traefik.http.routers.sonarr-4k-rtr-bypass.service=sonarr-4k-svc"
-      - "traefik.http.services.sonarr-4k-svc.loadbalancer.server.port=8989"
-
   ## Lidarr - Music Management
   lidarr:
     <<: *common-keys-apps # See EXTENSION FIELDS at the top

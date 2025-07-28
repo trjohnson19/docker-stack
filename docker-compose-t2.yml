@@ -244,6 +244,7 @@ include:
   - compose/ombi.yml
   ### Servers
   - compose/jellyfin.yml
+  ## Moved plex to Synology hosted (Intel QuickSync)
   # - compose/plex.yml
   ## Services
   - compose/cf-ddns.yml

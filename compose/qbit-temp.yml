@@ -1,4 +1,9 @@
 ---
+secrets:
+  qbittorrent_user:
+    file: $SECRETSDIR/qbittorrent_user
+  qbittorrent_pass:
+    file: $SECRETSDIR/qbittorrent_pass
 services:
   ## qBittorrent - an open-source software alternative to µTorrent
   ## qbit-private is used for private trackers

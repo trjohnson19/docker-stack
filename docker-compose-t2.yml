@@ -59,10 +59,6 @@ secrets:
     file: $SECRETSDIR/postgres_user
   postgres_password:
     file: $SECRETSDIR/postgres_password
-  qbittorrent_user:
-    file: $SECRETSDIR/qbittorrent_user
-  qbittorrent_pass:
-    file: $SECRETSDIR/qbittorrent_pass
   redis_password:
     file: $SECRETSDIR/redis_password
   vaultwarden_admin_token:

@@ -7,13 +7,12 @@ services:
     networks:
       - t2_proxy
     security_opt:
+      ## Required for some setups
+      - seccomp:unconfined
       - no-new-privileges:true
     restart: unless-stopped
     devices:
       - /dev/dri:/dev/dri
-    security_opt:
-      ## Required for some setups
-      - seccomp:unconfined
     environment:
       TZ: $TZ
       PUID: $PUID

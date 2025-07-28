@@ -226,6 +226,8 @@ include:
   - compose/qbit.yml
   - compose/qbit-private.yml
   - compose/qbit-temp.yml
+  ### Monitoring
+  - compose/tautulli.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -264,41 +266,6 @@ include:
 
 ############################## SERVICES
 services:
-  ## Tautulli - Plex Media Server monitoring, analytics, and notifications
-  tautulli:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
-    networks:
-      t2_proxy:
-        ipv4_address: $TAUTULLI_IPV4
-    # ports:
-    #   - "$TAUTULLI_PORT:8181"
-    volumes:
-      - $APPDIR/tautulli/config:/config
-      - "$DATADIR/docker/plex/Library/Application Support/Plex Media Server/Logs:/plexlogs:ro" # Give read-only access to Plex logs for monitoring via Tautulli
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Bypass Routers
-      - "traefik.http.routers.tautulli-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.tautulli-rtr-bypass.rule=Host(`tautulli.$DOMAINNAME0`) && Query(`apikey`, `$TAUTULLI_API_KEY`)"
-      - "traefik.http.routers.tautulli-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.tautulli-rtr-bypass.priority=100"
-      ## HTTP Routers
-      - "traefik.http.routers.tautulli-rtr.entrypoints=https"
-      - "traefik.http.routers.tautulli-rtr.rule=Host(`tautulli.$DOMAINNAME0`)"
-      - "traefik.http.routers.tautulli-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.tautulli-rtr-bypass.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.tautulli-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.tautulli-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.tautulli-rtr-bypass.service=tautulli-svc"
-      - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
-      - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"
-
   ############################# INDEXERS
 
   # Prowlarr - Torrent proxy

@@ -1,0 +1,40 @@
+---
+services:
+  ## Tautulli - Plex Media Server monitoring, analytics, and notifications
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    networks:
+      t2_proxy:
+        ipv4_address: $TAUTULLI_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # ports:
+    #   - "$TAUTULLI_PORT:8181"
+    volumes:
+      - $APPDIR/tautulli/config:/config
+      - "$DATADIR/docker/plex/Library/Application Support/Plex Media Server/Logs:/plexlogs:ro" # Give read-only access to Plex logs for monitoring via Tautulli
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Bypass Routers
+      - "traefik.http.routers.tautulli-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.tautulli-rtr-bypass.rule=Host(`tautulli.$DOMAINNAME0`) && Query(`apikey`, `$TAUTULLI_API_KEY`)"
+      - "traefik.http.routers.tautulli-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.tautulli-rtr-bypass.priority=100"
+      ## HTTP Routers
+      - "traefik.http.routers.tautulli-rtr.entrypoints=https"
+      - "traefik.http.routers.tautulli-rtr.rule=Host(`tautulli.$DOMAINNAME0`)"
+      - "traefik.http.routers.tautulli-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.tautulli-rtr-bypass.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.tautulli-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.tautulli-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.tautulli-rtr-bypass.service=tautulli-svc"
+      - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
+      - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"

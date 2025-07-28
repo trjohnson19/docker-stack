@@ -1,8 +1,10 @@
 ---
+secrets:
+  cloudflare_ddns_api_token:
+    file: $SECRETSDIR/cloudflare_ddns_api_token
 services:
   ## Cloudflare DDNS - Dynamic DNS service to update Cloudflare DNS records
   cf-ddns:
-    # <<: *common-keys-core  # Must set network mode manually
     container_name: cf-ddns
     image: favonia/cloudflare-ddns:1
     restart: always
@@ -12,13 +14,14 @@ services:
     read_only: true
     security_opt:
       - no-new-privileges:true
-    volumes:
-      - $APPDIR/cf-ddns/config/cloudflare_ddns_api_token:/cloudflare_ddns_api_token:ro
-    environment: # Environmental variables deprecated
+    ## Environmental variables deprecated
+    environment:
       TZ: $TZ
-      CLOUDFLARE_API_TOKEN_FILE: /cloudflare_ddns_api_token
+      CLOUDFLARE_API_TOKEN_FILE: /run/secrets/cloudflare_ddns_api_token
       DOMAINS: $DOMAINNAME0
       PROXIED: "true"
       UPDATE_CRON: "*/5 * * * *"
-      RECORD_COMMENT: "Updated with cloudflare-ddns"
+      RECORD_COMMENT: "Updated with cf-ddns"
       # SHOUTRRR:  # TODO
+    secrets:
+      - cloudflare_ddns_api_token

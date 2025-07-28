@@ -45,8 +45,6 @@ networks:
 
 ############################## SECRETS
 secrets:
-  cloudflare_ddns_api_token: # Currently unsupported
-    file: $SECRETSDIR/cloudflare_ddns_api_token
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
   postgres_user:

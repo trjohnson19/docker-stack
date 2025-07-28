@@ -45,20 +45,6 @@ networks:
 
 ############################## SECRETS
 secrets:
-  authelia_duo_api_secret_key:
-    file: $SECRETSDIR/authelia_duo_api_secret_key
-  authelia_identity_validation_reset_password_jwt_secret_file: # https://www.grc.com/passwords.htm
-    file: $SECRETSDIR/authelia_identity_validation_reset_password_jwt_secret_file
-  authelia_notifier_smtp_password:
-    file: $SECRETSDIR/authelia_notifier_smtp_password
-  authelia_session_redis_password:
-    file: $SECRETSDIR/authelia_session_redis_password
-  authelia_session_secret:
-    file: $SECRETSDIR/authelia_session_secret
-  authelia_storage_encryption_key:
-    file: $SECRETSDIR/authelia_storage_encryption_key
-  authelia_storage_mysql_password:
-    file: $SECRETSDIR/authelia_storage_mysql_password
   authentik_email__password:
     file: $SECRETSDIR/authentik_email__password
   authentik_postgresql__name:

@@ -226,6 +226,8 @@ include:
   - compose/qbit.yml
   - compose/qbit-private.yml
   - compose/qbit-temp.yml
+  ### Indexers
+  - compose/prowlarr.yml
   ### Monitoring
   - compose/tautulli.yml
   ## Services
@@ -266,42 +268,6 @@ include:
 
 ############################## SERVICES
 services:
-  ############################# INDEXERS
-
-  # Prowlarr - Torrent proxy
-  prowlarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr
-    networks:
-      t2_proxy:
-        ipv4_address: $PROWLARR_IPV4
-    # ports:
-    #   - "$PROWLARR_PORT:9696"
-    volumes:
-      - $APPDIR/prowlarr/config:/config
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers API Auth Bypass
-      - "traefik.http.routers.prowlarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.prowlarr-rtr-bypass.rule=Host(`prowlarr.$DOMAINNAME0`) && ( Header(`X-Api-Key`, `$PROWLARR_API_KEY`) || Query(`apikey`, `$PROWLARR_API_KEY`) )"
-      - "traefik.http.routers.prowlarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.prowlarr-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.prowlarr-rtr.entrypoints=https"
-      - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.prowlarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.prowlarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.prowlarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.prowlarr-rtr-bypass.service=prowlarr-svc"
-      - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
-      - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696"
-
   # FlareSolverr - Proxy server to bypass Cloudflare protection
   # Not sure if I need this or not. Just testing.
   # flaresolverr:

@@ -8,9 +8,11 @@ secrets:
     file: $SECRETSDIR/nextcloud_mysql_user
   nextcloud_mysql_password:
     file: $SECRETSDIR/nextcloud_mysql_password
-  nextcloud_smtp_name: # Currently unsupported
+  nextcloud_smtp_name:
+    ## Currently unsupported
     file: $SECRETSDIR/nextcloud_smtp_name
-  nextcloud_smtp_password: # Currently unsupported
+  nextcloud_smtp_password:
+    ## Currently unsupported
     file: $SECRETSDIR/nextcloud_smtp_password
 services:
   ## Nextcloud - A safe home for all your data

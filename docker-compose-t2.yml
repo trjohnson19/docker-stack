@@ -231,6 +231,9 @@ include:
   # - compose/flaresolverr.yml
   ### Monitoring
   - compose/tautulli.yml
+  ### Personal media recorders
+  - compose/radarr.yml
+  - compose/radarr-4k.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -269,86 +272,6 @@ include:
 
 ############################## SERVICES
 services:
-  ############################# PVRS
-
-  # Radarr - Movie management
-  # Set url_base in radarr settings if using PathPrefix
-  radarr:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/radarr:latest # latest was causing "Error parsing column 45"
-    container_name: radarr
-    networks:
-      t2_proxy:
-        ipv4_address: $RADARR_IPV4
-    # ports:
-    #   - "$RADARR_PORT:7878"
-    volumes:
-      - $APPDIR/radarr/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
-      # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
-      - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers API Auth Bypass
-      - "traefik.http.routers.radarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.radarr-rtr-bypass.rule=Host(`radarr.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
-      - "traefik.http.routers.radarr-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.radarr-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.radarr-rtr.entrypoints=https"
-      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$DOMAINNAME0`)"
-      - "traefik.http.routers.radarr-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.radarr-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
-      - "traefik.http.routers.radarr-rtr.service=radarr-svc"
-      - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
-
-  # Radarr - Movie management
-  # Set url_base in radarr settings if using PathPrefix
-  radarr-4k:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: lscr.io/linuxserver/radarr:latest # latest was causing "Error parsing column 45"
-    container_name: radarr-4k
-    networks:
-      t2_proxy:
-        ipv4_address: $RADARR_4K_IPV4
-    # ports:
-    #   - "$RADARR_PORT:7878"
-    volumes:
-      - $APPDIR/radarr-4k/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
-      # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
-      - $DATADIR:/data
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      <<: *default-tz-puid-pgid
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers API Auth Bypass
-      - "traefik.http.routers.radarr-4k-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.radarr-4k-rtr-bypass.rule=Host(`radarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
-      - "traefik.http.routers.radarr-4k-rtr-bypass.tls.options=tls-opts@file"
-      - "traefik.http.routers.radarr-4k-rtr-bypass.priority=100"
-      ## HTTP Routers Auth
-      - "traefik.http.routers.radarr-4k-rtr.entrypoints=https"
-      - "traefik.http.routers.radarr-4k-rtr.rule=Host(`radarr-4k.$DOMAINNAME0`)"
-      - "traefik.http.routers.radarr-4k-rtr.tls.options=tls-opts@file"
-      - "traefik.http.routers.radarr-4k-rtr.priority=99"
-      ## Middlewares
-      - "traefik.http.routers.radarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.radarr-4k-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.radarr-4k-rtr-bypass.service=radarr-4k-svc"
-      - "traefik.http.routers.radarr-4k-rtr.service=radarr-4k-svc"
-      - "traefik.http.services.radarr-4k-svc.loadbalancer.server.port=7878"
-
   # Sonarr - TV Shows management
   # Set url_base in sonarr settings if using PathPrefix
   sonarr:

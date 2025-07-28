@@ -1,0 +1,43 @@
+---
+services:
+  # Radarr - Movie management
+  radarr-4k:
+    image: lscr.io/linuxserver/radarr:latest # latest was causing "Error parsing column 45"
+    container_name: radarr-4k
+    networks:
+      t2_proxy:
+        ipv4_address: $RADARR_4K_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # ports:
+    #   - "$RADARR_PORT:7878"
+    volumes:
+      - $APPDIR/radarr-4k/config:/config
+      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
+      # - $DATADIR/temp/appdata/radarr/MediaCover:/config/MediaCover
+      - $DATADIR:/data
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers API Auth Bypass
+      - "traefik.http.routers.radarr-4k-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.radarr-4k-rtr-bypass.rule=Host(`radarr-4k.$DOMAINNAME0`) && (Header(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
+      - "traefik.http.routers.radarr-4k-rtr-bypass.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-4k-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.radarr-4k-rtr.entrypoints=https"
+      - "traefik.http.routers.radarr-4k-rtr.rule=Host(`radarr-4k.$DOMAINNAME0`)"
+      - "traefik.http.routers.radarr-4k-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.radarr-4k-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.radarr-4k-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.radarr-4k-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.radarr-4k-rtr-bypass.service=radarr-4k-svc"
+      - "traefik.http.routers.radarr-4k-rtr.service=radarr-4k-svc"
+      - "traefik.http.services.radarr-4k-svc.loadbalancer.server.port=7878"

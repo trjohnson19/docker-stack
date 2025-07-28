@@ -242,6 +242,8 @@ include:
   ### Requests
   - compose/overseerr.yml
   - compose/ombi.yml
+  ### Servers
+  - compose/jellyfin.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -280,49 +282,6 @@ include:
 
 ############################## SERVICES
 services:
-  ############################# MEDIA
-  ## Jellyfin - Free Software Media System
-  jellyfin:
-    <<: *common-keys-apps # See EXTENSION FIELDS at the top
-    image: jellyfin/jellyfin:latest # Issues with hardware transcoding with linuxserver.io image
-    container_name: jellyfin
-    devices:
-      # - /dev/dri:/dev/dri  # AMD hardware transcoding?
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/dri/card1:/dev/dri/card0
-    group_add:
-      - $RENDER_GROUP # Add render group permission to allow GPU render access
-    ports:
-      - $JELLYFIN_PORT:8096
-      # - 8920:8920  # optional - HTTPS WebUI
-      - 7359:7359/udp # optional - Allows clients to discover Jellyfin on the local network
-      - 1900:1900/udp # optional - Service discovery used by DNLA and clients
-    volumes:
-      - $APPDIR/jellyfin/config:/config
-      - $APPDIR/jellyfin/config/web-config.json:/jellyfin/jellyfin-web/config.json
-      - $DATADIR/temp/appdata/jellyfin/metadata:/config/metadata
-      - $DATADIR/downloads:/data/downloads
-      - $DATADIR/media:/data/media
-      # - /dev/shm:/data/transcode  # Perform transcoding in RAM
-      - /$APPDIR/jellyfin/transcodes:/data/transcode # Perform transcoding on SSD
-    environment:
-      <<: *default-tz-puid-pgid
-      UMASK: 022
-      # JELLYFIN_PublishedServerUrl: "https://$DOMAINNAME0"  # optional
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.jellyfin-rtr.entrypoints=https"
-      - "traefik.http.routers.jellyfin-rtr.rule=Host(`jellyfin.$DOMAINNAME0`)"
-      - "traefik.http.routers.jellyfin-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia@file,jellyfin-remove-bypass-cache"
-      - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
-      # - "traefik.http.middlewares.jellyfin-add-slash.addPrefix.prefix=/"
-      ## HTTP Services
-      - "traefik.http.routers.jellyfin-rtr.service=jellyfin-svc"
-      - "traefik.http.services.jellyfin-svc.loadbalancer.server.port=8096"
-
   # Plex - Media Server
   # Moved to Synology hosted (Intel QuickSync)
   # plex:

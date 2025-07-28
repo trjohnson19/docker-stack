@@ -4,13 +4,10 @@ services:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
     networks:
-      t2_proxy:
-        ipv4_address: $PROWLARR_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$PROWLARR_PORT:9696"
     volumes:
       - $APPDIR/prowlarr/config:/config
     environment:

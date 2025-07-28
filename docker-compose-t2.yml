@@ -51,12 +51,6 @@ secrets:
     file: $SECRETSDIR/cloudflare_ddns_api_token
   cloudflare_email:
     file: $SECRETSDIR/cloudflare_email
-  guac_db_name:
-    file: $SECRETSDIR/guac_db_name
-  guac_mysql_user:
-    file: $SECRETSDIR/guac_mysql_user
-  guac_mysql_password:
-    file: $SECRETSDIR/guac_mysql_password
   htpasswd:
     file: $SECRETSDIR/htpasswd
   keycloak_admin:

@@ -1,4 +1,11 @@
 ---
+secrets:
+  guac_db_name:
+    file: $SECRETSDIR/guac_db_name
+  guac_mysql_user:
+    file: $SECRETSDIR/guac_mysql_user
+  guac_mysql_password:
+    file: $SECRETSDIR/guac_mysql_password
 services:
   ## Guacamole - Remote desktop, SSH, on Telnet on any HTML5 Browser
   ## Create all databases and tables first

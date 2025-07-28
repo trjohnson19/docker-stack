@@ -61,10 +61,6 @@ secrets:
     file: $SECRETSDIR/postgres_password
   redis_password:
     file: $SECRETSDIR/redis_password
-  vscode_password:
-    file: $SECRETSDIR/vscode_password
-  vscode_sudo_password:
-    file: $SECRETSDIR/vscode_sudo_password
   watchtower_notification_email_server_password:
     file: $SECRETSDIR/watchtower_notification_email_server_password
 

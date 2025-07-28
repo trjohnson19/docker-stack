@@ -1,4 +1,9 @@
 ---
+secrets:
+  vscode_password:
+    file: $SECRETSDIR/vscode_password
+  vscode_sudo_password:
+    file: $SECRETSDIR/vscode_sudo_password
 services:
   ## VS Code - VS Code in the browser
   vscode:

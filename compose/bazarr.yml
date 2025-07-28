@@ -5,18 +5,17 @@ services:
     image: lscr.io/linuxserver/bazarr
     container_name: bazarr
     networks:
-      t2_proxy:
-        ipv4_address: $BAZARR_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - $BAZARR_PORT:6767
     volumes:
       - $APPDIR/bazarr/config:/config
       - $DATADIR/media:/data/media
     environment:
-      <<: *default-tz-puid-pgid
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
     labels:
       - "traefik.enable=true"
       ## HTTP Routers API Auth Bypass

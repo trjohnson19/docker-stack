@@ -1,5 +1,6 @@
 ---
 services:
+  ## Calibre - A powerful and easy to use e-book manager.
   calibre:
     image: lscr.io/linuxserver/calibre:latest
     container_name: calibre
@@ -10,25 +11,24 @@ services:
     restart: unless-stopped
     devices:
       - /dev/dri:/dev/dri
-    # ports:
-    #   - $CALIBRE_PORT:$CALIBRE_PORT
-    #   - $CALIBRE_HTTPS_PORT:$CALIBRE_HTTPS_PORT
-    #   - $CALIBRE_WEB_PORT:8081
     security_opt:
-      - seccomp:unconfined # Required for some setups
+      ## Required for some setups
+      - seccomp:unconfined
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      # CLI_ARGS:  # Optional
+      # CLI_ARGS:
       CUSTOM_PORT: $CALIBRE_PORT
       # CUSTOM_HTTPS_PORT: $CALIBRE_HTTPS_PORT
       # CUSTOM_USER:
-      # PASSWORD:  # Use reverse proxy authentication instead
+      ## Use reverse proxy authentication instead
+      # PASSWORD:
       # SUBFOLDER:
       TITLE: Calibre
       FM_HOME: /import
-      START_DOCKER: # Set to FALSE to disable DinD Docker setup
+      ## Set to FALSE to disable DinD Docker setup
+      # START_DOCKER:
       DRI_NODE: /dev/dri/renderD128
     volumes:
       - $APPDIR/calibre/config:/config

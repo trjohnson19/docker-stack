@@ -238,6 +238,8 @@ include:
   - compose/sonarr-4k.yml
   - compose/recyclarr.yml
   - compose/lidarr.yml
+  ### Requests
+  - compose/
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -276,31 +278,6 @@ include:
 
 ############################## SERVICES
 services:
-  ## Overseerr - Request Management System (Plex Only)
-  overseerr:
-    <<: *common-keys-apps
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    # ports:
-    #   - $OVERSEERR_PORT:5055
-    environment:
-      <<: *default-tz-puid-pgid
-    volumes:
-      - $APPDIR/overseerr/config:/config
-    healthcheck:
-      test: wget "http://localhost:$OVERSEERR_PORT/api/v1/status" -qO /dev/null || exit 1 # https://github.com/sct/overseerr/issues/411#issuecomment-755083037
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.overseerr-rtr.entrypoints=https"
-      - "traefik.http.routers.overseerr-rtr.rule=Host(`overseerr.$DOMAINNAME0`) || Host(`request.$DOMAINNAME0`)"
-      - "traefik.http.routers.overseerr-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
-      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"
-
   ## Ombi - Request Management System
   ombi:
     <<: *common-keys-apps

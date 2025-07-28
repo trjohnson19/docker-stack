@@ -47,7 +47,6 @@ services:
       SERVER_COUNTRIES: $GLUETUN_TEMP_SERVER_COUNTRIES
       SERVER_CITIES: $GLUETUN_TEMP_SERVER_CITIES
       SERVER_HOSTNAMES: $GLUETUN_TEMP_SERVER_HOSTNAMES
-      TZ: $TZ
       ## See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       UPDATER_PERIOD: "24h"
       HTTP_CONTROL_SERVER_ADDRESS: ":$GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT"

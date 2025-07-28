@@ -2,7 +2,8 @@
 secrets:
   authelia_duo_api_secret_key:
     file: $SECRETSDIR/authelia_duo_api_secret_key
-  authelia_identity_validation_reset_password_jwt_secret_file: # https://www.grc.com/passwords.htm
+  authelia_identity_validation_reset_password_jwt_secret_file:
+    ## https://www.grc.com/passwords.htm
     file: $SECRETSDIR/authelia_identity_validation_reset_password_jwt_secret_file
   authelia_notifier_smtp_password:
     file: $SECRETSDIR/authelia_notifier_smtp_password

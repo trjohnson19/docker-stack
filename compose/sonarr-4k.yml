@@ -1,21 +1,16 @@
 ---
 services:
   # Sonarr - TV Shows management
-  # Set url_base in sonarr settings if using PathPrefix
   sonarr-4k:
     image: lscr.io/linuxserver/sonarr
     container_name: sonarr-4k
     networks:
-      t2_proxy:
-        ipv4_address: $SONARR_4K_IPV4
+      - t2_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - "$SONARR_PORT:8989"
     volumes:
       - $APPDIR/sonarr-4k/config:/config
-      # Optional. See why MediaCover is mounted as volume https://github.com/htpcBeginner/docker-traefik/discussions/147
       # - $DATADIR/temp/appdata/sonarr/MediaCover:/config/MediaCover
       - $DATADIR:/data
       - "/etc/localtime:/etc/localtime:ro"

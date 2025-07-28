@@ -240,6 +240,7 @@ include:
   - compose/lidarr.yml
   ### Requests
   - compose/overseerr.yml
+  - compose/ombi.yml
   ## Services
   - compose/cf-ddns.yml
   - compose/duckdns.yml
@@ -278,32 +279,6 @@ include:
 
 ############################## SERVICES
 services:
-  ## Ombi - Request Management System
-  ombi:
-    <<: *common-keys-apps
-    image: lscr.io/linuxserver/ombi:latest
-    container_name: ombi
-    # ports:
-    #   - $OMBI_PORT:3579
-    environment:
-      <<: *default-tz-puid-pgid
-      # BASE_URL: /ombi  # Optional
-    volumes:
-      - $APPDIR/ombi/config:/config
-      # - $DATADIR/downloads:/data/downloads
-      # - $DATADIR/media:/data/media
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.ombi-rtr.entrypoints=https"
-      - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME0`)"
-      - "traefik.http.routers.ombi-rtr.tls.options=tls-opts@file"
-      ## Middlewares
-      - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.ombi-rtr.service=ombi-svc"
-      - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
-
   ## Maintainerr
   maintainerr:
     <<: *common-keys-apps

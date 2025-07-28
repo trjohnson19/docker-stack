@@ -1,6 +1,7 @@
 ---
 services:
-  ## Calibre-Web - A web app that offers a clean and intuitive interface for browsing, reading, and downloading eBooks using a valid Calibre database
+  ## Calibre-Web - A web app that offers a clean and intuitive interface for
+  ## browsing, reading, and downloading eBooks using a valid Calibre database.
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
     container_name: calibre-web
@@ -9,8 +10,6 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # ports:
-    #   - $CALIBRE_WEB_PORT:8083
     environment:
       TZ: $TZ
       PUID: $PUID

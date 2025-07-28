@@ -253,87 +253,11 @@ include:
   # - compose/minecraft.yml
   # - compoase/mc-backup.yml
   # - compose/minecraft-rcon.yml
+  ## Miscellaneous
+  # - compose/bluebubbles.yml
 
 ############################## SERVICES
 services:
-  ## BlueBubbles - Bringing iMessage to Windows, Linux, and Android
-  ## Stopped due to issues with keeping the container alive and usable
-  # bluebubbles-setup:
-  #   <<: *common-keys-apps
-  #   security_opt:
-  #     - no-new-privileges:false
-  #   image: sickcodes/docker-osx:ventura
-  #   container_name: bluebubbles-setup
-  #   # privileged: true
-  #   # network_mode: "host"
-  #   # cap_add:
-  #   #   - ALL
-  #   user: "${PUID}:${PGID}"
-  #   devices:
-  #     - /dev/kvm
-  #   ports:
-  #     - $BLUEBUBBLES_VNC_PORT:5999
-  #   # dns:
-  #   #   - 1.1.1.1
-  #   environment:
-  #     IMAGE_PATH: /image
-  #     EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
-  #     DISPLAY: ":99"
-  #     WIDTH: 1920
-  #     HEIGHT: 1080
-  #     GENERATE_UNIQUE: true
-  #   volumes:
-  #     - /tmp/.X11-unix:/tmp/.X11-unix
-  #     - $DATADIR/docker/bluebubbles/maindisk.qcow2:/image
-
-  ## BlueBubbles - Bringing iMessage to Windows, Linux, and Android
-  ## Stopped due to issues with keeping the container alive and usable
-  # bluebubbles:
-  #   <<: *common-keys-apps
-  #   security_opt:
-  #     - no-new-privileges:false
-  #   image: sickcodes/docker-osx:naked
-  #   container_name: bluebubbles
-  #   # privileged: true
-  #   # network_mode: "host"
-  #   # cap_add:
-  #   #   - ALL
-  #   user: "${PUID}:${PGID}"
-  #   devices:
-  #     - /dev/kvm
-  #   ports:
-  #     ## Must connect to the server via VPN to have access to VNC
-  #     - $BLUEBUBBLES_VNC_PORT:$BLUEBUBBLES_VNC_PORT
-  #     - $BLUEBUBBLES_SERVER_PORT:$BLUEBUBBLES_SERVER_PORT
-  #     - 50922:10022
-  #   # dns:
-  #   #   - 1.1.1.1
-  #   environment:
-  #     DISPLAY: ${DISPLAY:-:0.0}
-  #     IMAGE_PATH: /image
-  #     BOOTDISK: /bootdisk
-  #     EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
-  #     ADDITIONAL_PORTS: "hostfwd=tcp::$BLUEBUBBLES_SERVER_PORT-:$BLUEBUBBLES_SERVER_PORT,"
-  #     DISPLAY: ":99"
-  #     WIDTH: 1920
-  #     HEIGHT: 1080
-  #     NOPICKER: true
-  #   volumes:
-  #     - /tmp/.X11-unix:/tmp/.X11-unix
-  #     - $DATADIR/docker/bluebubbles/maindisk.qcow2:/image
-  #     - $DATADIR/docker/bluebubbles/bootdisk.qcow2:/bootdisk
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.bluebubbles-rtr.entrypoints=https"
-  #     - "traefik.http.routers.bluebubbles-rtr.rule=Host(`bluebubbles.$DOMAINNAME0`)"
-  #     ## Middlewares
-  #     #- "traefik.http.routers.bluebubbles-rtr.middlewares=chain-basic-auth@file"
-  #     - "traefik.http.routers.bluebubbles-rtr.middlewares=chain-no-auth@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.bluebubbles-rtr.service=bluebubbles-svc"
-  #     - "traefik.http.services.bluebubbles-svc.loadbalancer.server.port=$BLUEBUBBLES_SERVER_PORT"
-
   ############################## MEDIA SERVER
 
   ## qBittorrent - an open-source software alternative to µTorrent

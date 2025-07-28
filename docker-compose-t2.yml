@@ -61,22 +61,6 @@ secrets:
     file: $SECRETSDIR/postgres_password
   redis_password:
     file: $SECRETSDIR/redis_password
-  vaultwarden_admin_token:
-    file: $SECRETSDIR/vaultwarden_admin_token
-  vaultwarden_duo_host:
-    file: $SECRETSDIR/vaultwarden_duo_host
-  vaultwarden_duo_ikey:
-    file: $SECRETSDIR/vaultwarden_duo_ikey
-  vaultwarden_duo_skey:
-    file: $SECRETSDIR/vaultwarden_duo_skey
-  vaultwarden_mysql_url:
-    file: $SECRETSDIR/vaultwarden_mysql_url
-  vaultwarden_smtp_password:
-    file: $SECRETSDIR/vaultwarden_smtp_password
-  vaultwarden_yubico_client_id:
-    file: $SECRETSDIR/vaultwarden_yubico_client_id
-  vaultwarden_yubico_secret_key:
-    file: $SECRETSDIR/vaultwarden_yubico_secret_key
   vscode_password:
     file: $SECRETSDIR/vscode_password
   vscode_sudo_password:

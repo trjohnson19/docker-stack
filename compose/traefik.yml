@@ -1,11 +1,11 @@
 ---
 secrets:
-  cloudflare_api_key:
-    file: $SECRETSDIR/cloudflare_api_key
-  cloudflare_email:
-    file: $SECRETSDIR/cloudflare_email
-  htpasswd:
-    file: $SECRETSDIR/htpasswd
+  traefik_cf_api_key:
+    file: $SECRETSDIR/traefik_cf_api_key
+  traefik_cf_email:
+    file: $SECRETSDIR/traefik_cf_email
+  traefik_htpasswd:
+    file: $SECRETSDIR/traefik_htpasswd
 services:
   ## Traefik 2 - Reverse Proxy
   ## Touch (create empty files) traefik.log and acme/acme.json.
@@ -136,10 +136,10 @@ services:
       - $APPDIR/traefik2/traefik.log:/traefik.log
       - $DOCKERDIR/shared:/shared
     environment:
-      CF_API_EMAIL_FILE: /run/secrets/cloudflare_email
-      CF_API_KEY_FILE: /run/secrets/cloudflare_api_key
+      CF_API_EMAIL_FILE: /run/secrets/traefik_cf_email
+      CF_API_KEY_FILE: /run/secrets/traefik_cf_api_key
       ## HTPASSWD_FILE can be whatever as it is not used/called anywhere.
-      HTPASSWD_FILE: /run/secrets/htpassword
+      HTPASSWD_FILE: /run/secrets/traefik_htpassword
       ## Include vars so they can be used in Traefik rules
       DOMAINNAME0: $DOMAINNAME0
       # DOMAINNAME1: $DOMAINNAME1
@@ -151,9 +151,9 @@ services:
       QBITTORRENT_PORT: $QBITTORRENT_PORT
       QBITTORRENT_PRIVATE_PORT: $QBITTORRENT_PRIVATE_PORT
     secrets:
-      - cloudflare_email
-      - cloudflare_api_key
-      - htpasswd
+      - traefik_cf_email
+      - traefik_cf_api_key
+      - traefik_htpasswd
     labels:
       # - "autoheal=true"
       - "traefik.enable=true"

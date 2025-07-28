@@ -121,7 +121,7 @@ include:
   - compose/nextcloud.yml
   - compose/firefly.yml
   # - compose/portfolio.yml
-  - whoami.yml
+  - compose/whoami.yml
   ## VPN
   - compose/wireguard.yml
   - compose/gluetun.yml

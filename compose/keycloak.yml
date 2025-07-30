@@ -1,0 +1,107 @@
+---
+secrets:
+  keycloak_admin:
+    file: $SECRETSDIR/keycloak_admin
+  keycloak_admin_password:
+    file: $SECRETSDIR/keycloak_admin_password
+  kc_db_username:
+    file: $SECRETSDIR/kc_db_username
+  kc_db_password:
+    file: $SECRETSDIR/kc_db_password
+services:
+  ## Keycloak - Open Source Identity and Access Management
+  keycloak:
+    container_name: keycloak
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    build:
+      context: .
+      dockerfile: $APPDIR/keycloak/build/keycloak.Dockerfile
+      args:
+        ARG_KC_CACHE: "local"
+        # ARG_KC_CACHE_CONFIG_FILE:
+        # ARG_KC_CACHE_STACK:
+        ARG_KC_DB: "mariadb"
+        ARG_KC_TRANSACTION_XA_ENABLED: "true"
+        ## yamllint disable-line rule:line-length
+        ARG_KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
+        # ARG_KC_HTTP_RELATIVE_PATH:
+        ARG_KC_HEALTH_ENABLED: "true"
+        ARG_KC_METRICS_ENABLED: "true"
+        # ARG_KC_VAULT:
+        # ARG_KC_FIPS_MODE:
+        ARG_QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
+    command: ["start", "--optimized"]
+    volumes:
+      - $APPDIR/keycloak/config:/conf
+      ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      - $APPDIR/keycloak/ObjectStore:/ObjectStore
+      # Remember to `chmod +x` for all .sh scripts
+      ## Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/docker_secrets.sh:/build/docker_secrets.sh:ro
+      ## Workaround to enable docker secrets
+      - $APPDIR/keycloak/build/entrypoint.sh:/build/entrypoint.sh:ro
+      ## Workaround to use healthcheck without `curl`
+      - $APPDIR/keycloak/build/healthcheck.sh:/build/healthcheck.sh:ro
+    environment:
+      # KC_CACHE: local
+      FILE__KEYCLOAK_ADMIN: /run/secrets/keycloak_admin
+      FILE__KEYCLOAK_ADMIN_PASSWORD: /run/secrets/keycloak_admin_password
+      # KC_DB: postgres
+      KC_DB: mariadb
+      FILE__KC_DB_PASSWORD: /run/secrets/kc_db_password
+      # KC_DB_URL: "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/keycloak"
+      # KC_DB_URL: "jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/keycloak"
+      KC_DB_URL_DATABASE: keycloak
+      # KC_DB_URL_HOST: $POSTGRES_HOST
+      # KC_DB_URL_PORT: $POSTGRES_PORT
+      KC_DB_URL_HOST: $MARIADB_HOST
+      KC_DB_URL_PORT: $MARIADB_PORT
+      FILE__KC_DB_USERNAME: /run/secrets/kc_db_username
+      # KC_FEATURES: "docker,declarative-user-profile,recovery-codes,update-email"
+      # KC_HOSTNAME: "key.${DOMAINNAME0}"
+      # KC_HOSTNAME_ADMIN: "key.${DOMAINNAME0}"
+      KC_HOSTNAME_ADMIN_URL: "https://key.${DOMAINNAME0}"
+      KC_HOSTNAME_DEBUG: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_URL: "https://key.${DOMAINNAME0}"
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_PORT: $KEYCLOAK_PORT
+      # KC_HEALTH_ENABLED: "true"
+      # KC_METRICS_ENABLED: "true"
+      KC_PROXY: edge
+      ## https://github.com/keycloak/keycloak/issues/15255#issuecomment-1446166497
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: "true"
+    secrets:
+      - keycloak_admin
+      - keycloak_admin_password
+      - kc_db_password
+      - kc_db_username
+    labels:
+      - "traefik.enable=true"
+      #### Authentication routers and middlewares
+      ## HTTP Routers
+      - "traefik.http.routers.keycloak-rtr.entrypoints=https"
+      ## https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
+      - "traefik.http.routers.keycloak-rtr.rule=Host(`key.$DOMAINNAME0`) && (Path(`/`) || PathPrefix(`/realms`) || PathPrefix(`/resources`))"
+      - "traefik.http.routers.keycloak-rtr.tls.options=tls-opts@file"
+      - "traefik.http.routers.keycloak-rtr-bypass.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.keycloak-rtr.middlewares=chain-keycloak@file"
+      #### Administration routers and middlewares
+      ## HTTP Routers
+      - "traefik.http.routers.keycloak-admin-rtr.entrypoints=https"
+      # https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
+      - "traefik.http.routers.keycloak-admin-rtr.rule=Host(`key.$DOMAINNAME0`) && ClientIP(`$LAN_NETWORK`)" # Only allow admin paths on local network (or VPN)
+      - "traefik.http.routers.keycloak-admin-rtr.tls.options=tls-opts@file"
+      ## Give priority to bypass rule if matched
+      - "traefik.http.routers.keycloak-admin-rtr-bypass.priority=100"
+      ## Middlewares
+      - "traefik.http.routers.keycloak-admin-rtr.middlewares=chain-keycloak@file"
+      #### Combined services
+      ## HTTP Services
+      - "traefik.http.routers.keycloak-admin-rtr.service=keycloak-admin-svc"
+      - "traefik.http.services.keycloak-admin-svc.loadbalancer.server.port=$KEYCLOAK_PORT"

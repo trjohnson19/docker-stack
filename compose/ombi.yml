@@ -1,0 +1,28 @@
+---
+services:
+  ## Ombi - Request Management System
+  ombi:
+    image: lscr.io/linuxserver/ombi:latest
+    container_name: ombi
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    volumes:
+      - $APPDIR/ombi/config:/config
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.ombi-rtr.entrypoints=https"
+      - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME0`)"
+      - "traefik.http.routers.ombi-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.ombi-rtr.service=ombi-svc"
+      - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"

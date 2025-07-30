@@ -190,6 +190,10 @@ backup-scripts/*
 !backups
 backups/*
 
+# Include the compose directory
+!compose
+!compose/*
+
 # Include the .github directory
 !.github
 !.github/*

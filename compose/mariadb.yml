@@ -1,0 +1,26 @@
+---
+secrets:
+  mysql_root_password:
+    file: $SECRETSDIR/mysql_root_password
+services:
+  ## MariaDB - MySQL Database
+  ## After starting container for first time dexec and
+  ## `mysqladmin -u root password <password>`
+  mariadb:
+    container_name: mariadb
+    image: lscr.io/linuxserver/mariadb:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    volumes:
+      - $APPDIR/mariadb/data:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      ## https://github.com/linuxserver/docker-mariadb/issues/138
+      FILE__MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_root_password

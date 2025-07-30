@@ -1,0 +1,39 @@
+---
+services:
+  ## Minecraft RCON
+  ## Issue commands issued to the server via a "remote console", or RCON
+  minecraft-rcon:
+    image: itzg/rcon:latest
+    container_name: minecraft-rcon
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - minecraft
+    environment:
+      RWA_USERNAME: $MINECRAFT_RWA_USERNAME
+      RWA_PASSWORD: $MINECRAFT_RWA_PASSWORD
+      RWA_ADMIN: "TRUE"
+      # is referring to the hostname of 'mc' compose service above
+      RWA_RCON_HOST: minecraft
+      # needs to match the password configured for the container, which is 'minecraft' by default
+      RWA_RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
+    # ports:
+    #   - $MINECRAFT_RCON_PORT:4326
+    #   - $MINECRAFT_RCON_WEBSOCKET_PORT:4327
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.minecraft-rcon-rtr.entrypoints=https"
+      - "traefik.http.routers.minecraft-rcon-websocket-rtr.entrypoints=minecraft-rcon-websocket"
+      - "traefik.http.routers.minecraft-rcon-rtr.rule=Host(`vanilla-rcon.mc.$DOMAINNAME0`)"
+      ## Middlewares
+      - "traefik.http.routers.minecraft-rcon-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.minecraft-rcon-websocket-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.minecraft-rcon-rtr.service=minecraft-rcon-svc"
+      - "traefik.http.services.minecraft-rcon-svc.loadbalancer.server.port=4326"
+      - "traefik.http.routers.minecraft-rcon-websocket-rtr.service=minecraft-rcon-websocket-svc"
+      - "traefik.http.services.minecraft-rcon-websocket-svc.loadbalancer.server.port=4327"

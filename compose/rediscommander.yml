@@ -1,0 +1,38 @@
+---
+secrets:
+  rediscommander_redis_password:
+    ## Should be symlinked to `redis_password`
+    ## ln -s ./redis_password rediscommander_redis_password
+    file: $SECRETSDIR/rediscommander_redis_password
+services:
+  ## Redis Commander - Redis Management Tool
+  rediscommander:
+    container_name: rediscommander
+    image: ghcr.io/joeferner/redis-commander:latest
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: $REDIS_HOST
+      REDIS_PORT: $REDIS_PORT
+      ## Not currently working
+      # REDIS_PASSWORD_FILE: /run/secrets/rediscommander_redis_password
+      REDIS_PASSWORD: $REDIS_PASSWORD
+      PORT: $REDISCOMMANDER_PORT
+    secrets:
+      - rediscommander_redis_password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.rediscommander-rtr.entrypoints=https"
+      - "traefik.http.routers.rediscommander-rtr.rule=Host(`rediscom.$DOMAINNAME0`)"
+      - "traefik.http.routers.rediscommander-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.rediscommander-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.rediscommander-rtr.service=rediscommander-svc"
+      - "traefik.http.services.rediscommander-svc.loadbalancer.server.port=$REDISCOMMANDER_PORT"

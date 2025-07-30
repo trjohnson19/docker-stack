@@ -1,0 +1,45 @@
+---
+secrets:
+  plex_claim:
+    file: $SECRETSDIR/plex_claim
+services:
+  ## Plex - Media Server
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    devices:
+      ## AMD hardware transcoding?
+      - /dev/dri:/dev/dri
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card0:/dev/dri/card0
+    volumes:
+      - $DOCKERDIR/appdata/plex:/config
+      - $DATADIR/media:/media
+      ## Perform transcoding in RAM
+      - /dev/shm:/transcode
+      ## Perform transcoding on SSD
+      - /$APPDIR/plex/transcodes:/data/transcode
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      PLEX_CLAIM: /run/secrets/plex_claim
+      VERSION: docker
+    secrets:
+      - plex_claim
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.plex-rtr.entrypoints=https"
+      - "traefik.http.routers.plex-rtr.rule=Host(`plex.$DOMAINNAME0`)"
+      ## Middlewares
+      - "traefik.http.routers.plex-rtr.middlewares=chain-authelia@file,plex-remove-bypass-cache"
+      - "traefik.http.middlewares.plex-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
+      ## HTTP Services
+      - "traefik.http.routers.plex-rtr.service=plex-svc"
+      - "traefik.http.services.plex-svc.loadbalancer.server.port=32400"

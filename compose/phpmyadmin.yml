@@ -1,0 +1,46 @@
+---
+secrets:
+  phpmyadmin_mysql_root_password:
+    ## Should be symlinked to `mysql_root_password`
+    ## ln -s ./mysql_root_password phpmyadmin_mysql_root_password
+    file: $SECRETSDIR/phpmyadmin_mysql_root_password
+services:
+  ## phpMyAdmin - Database management
+  ## Create a new user with admin privileges. Cannot login as MySQL root for
+  ## some reason.
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    # volumes:
+    #   - $APPDIR/phpmyadmin/config:/etc/phpmyadmin/conf.d:ro
+    #   - $APPDIR/phpmyadmin/sessions:/sessions:rw
+    environment:
+      PMA_HOST: $MARIADB_HOST
+      PMA_PORT: $MARIADB_PORT
+      # PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/phpmyadmin_mysql_root_password
+      PMA_ABSOLUTE_URI: pma.$DOMAINNAME0
+      # PMA_USER: pma
+      # PMA_PASSWORD_FILE: /run/secrets/pma_password
+    secrets:
+      - phpmyadmin_mysql_root_password
+      # - pma_password
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.phpmyadmin-rtr.entrypoints=https"
+      - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME0`)"
+      - "traefik.http.routers.phpmyadmin-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
+      - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"

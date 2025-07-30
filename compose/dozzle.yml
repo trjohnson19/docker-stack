@@ -1,0 +1,42 @@
+---
+services:
+  ## Dozzle - Real-time Docker Log Viewer
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    networks:
+      - t2_proxy
+      - socket_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - socket-proxy
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    # volumes:
+    #   ## Use Docker Socket Proxy instead for improved security
+    #   - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOZZLE_ADDR: ":$DOZZLE_PORT"
+      DOCKER_HOST: tcp://socket-proxy:2375
+      DOZZLE_FILTER: "status=running"
+      ## limits logs displayed to containers with this label
+      # DOZZLE_FILTER: "label=log_me"
+      DOZZLE_LEVEL: info
+      DOZZLE_NO_ANALYTICS: true
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.dozzle-rtr.entrypoints=https"
+      - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$DOMAINNAME0`)"
+      - "traefik.http.routers.dozzle-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.dozzle-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
+      - "traefik.http.services.dozzle-svc.loadbalancer.server.port=$DOZZLE_PORT"

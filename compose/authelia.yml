@@ -1,0 +1,68 @@
+---
+secrets:
+  authelia_duo_api_secret_key:
+    file: $SECRETSDIR/authelia_duo_api_secret_key
+  authelia_identity_validation_reset_password_jwt_secret_file:
+    ## https://www.grc.com/passwords.htm
+    file: $SECRETSDIR/authelia_identity_validation_reset_password_jwt_secret_file
+  authelia_notifier_smtp_password:
+    file: $SECRETSDIR/authelia_notifier_smtp_password
+  authelia_session_redis_password:
+    file: $SECRETSDIR/authelia_session_redis_password
+  authelia_session_secret:
+    file: $SECRETSDIR/authelia_session_secret
+  authelia_storage_encryption_key:
+    file: $SECRETSDIR/authelia_storage_encryption_key
+  authelia_storage_mysql_password:
+    file: $SECRETSDIR/authelia_storage_mysql_password
+services:
+  ## Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  ## For configuration file template see
+  ## https://github.com/authelia/authelia/blob/master/config.template.yml
+  authelia:
+    container_name: authelia
+    ## Check this before upgrading:
+    ## https://github.com/authelia/authelia#breaking-changes
+    image: ghcr.io/authelia/authelia:4.38
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    ## Allow for separate configuration and acl configuration files
+    ## See https://www.authelia.com/configuration/methods/files/#docker-compose
+    volumes:
+      - $APPDIR/authelia/config/configuration.yml:/config/configuration.yml
+      - $APPDIR/authelia/config/configuration.acl.yml:/config/configuration.acl.yml
+      - $APPDIR/authelia/config/users_database.yml:/config/users_database.yml
+    environment:
+      ## Using PUID:PGID causes container to be unable to read secrets
+      # <<: *default-tz-puid-pgid
+      TZ: $TZ
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      X_AUTHELIA_CONFIG: /config/configuration.yml,/config/configuration.acl.yml
+      AUTHELIA_DUO_API_SECRET_KEY_FILE: /run/secrets/authelia_duo_api_secret_key
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/secrets/authelia_identity_validation_reset_password_jwt_secret_file
+      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
+      AUTHELIA_SESSION_REDIS_PASSWORD_FILE: /run/secrets/authelia_session_redis_password
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+      AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE: /run/secrets/authelia_storage_mysql_password
+    secrets:
+      - authelia_identity_validation_reset_password_jwt_secret_file
+      - authelia_session_secret
+      - authelia_session_redis_password
+      - authelia_storage_mysql_password
+      - authelia_notifier_smtp_password
+      - authelia_duo_api_secret_key
+      - authelia_storage_encryption_key
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.authelia-rtr.entrypoints=https"
+      - "traefik.http.routers.authelia-rtr.rule=Host(`auth.$DOMAINNAME0`)"
+      - "traefik.http.routers.authelia-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.authelia-rtr.service=authelia-svc"
+      - "traefik.http.services.authelia-svc.loadbalancer.server.port=$AUTHELIA_PORT"

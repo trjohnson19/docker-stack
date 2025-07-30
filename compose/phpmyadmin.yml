@@ -1,4 +1,9 @@
 ---
+secrets:
+  phpmyadmin_mysql_root_password:
+    ## Should be symlinked to `mysql_root_password`
+    ## ln -s ./mysql_root_password phpmyadmin_mysql_root_password
+    file: $SECRETSDIR/phpmyadmin_mysql_root_password
 services:
   ## phpMyAdmin - Database management
   ## Create a new user with admin privileges. Cannot login as MySQL root for
@@ -20,12 +25,12 @@ services:
       PMA_HOST: $MARIADB_HOST
       PMA_PORT: $MARIADB_PORT
       # PMA_ARBITRARY: 1
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/phpmyadmin_mysql_root_password
       PMA_ABSOLUTE_URI: pma.$DOMAINNAME0
       # PMA_USER: pma
       # PMA_PASSWORD_FILE: /run/secrets/pma_password
     secrets:
-      - mysql_root_password
+      - phpmyadmin_mysql_root_password
       # - pma_password
     labels:
       - "traefik.enable=true"

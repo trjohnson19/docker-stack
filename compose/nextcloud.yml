@@ -8,6 +8,10 @@ secrets:
     file: $SECRETSDIR/nextcloud_mysql_user
   nextcloud_mysql_password:
     file: $SECRETSDIR/nextcloud_mysql_password
+  nextcloud_redis_password:
+    ## Should be symlinked to `redis_password`
+    ## ln -s ./redis_password nextcloud_redis_password
+    file: $SECRETSDIR/nextcloud_redis_password
   nextcloud_smtp_name:
     ## Currently unsupported
     file: $SECRETSDIR/nextcloud_smtp_name
@@ -45,7 +49,7 @@ services:
       ## this with environmental variables messes things up
       # REDIS_HOST: redis
       REDIS_HOST_PORT: $REDIS_PORT
-      REDIS_HOST_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_HOST_PASSWORD_FILE: /run/secrets/nextcloud_redis_password
       SMTP_HOST: $EMAIL_SERVER
       SMTP_SECURE: ssl
       SMTP_PORT: $EMAIL_SERVER_PORT
@@ -65,7 +69,7 @@ services:
       - nextcloud_mysql_password
       - nextcloud_smtp_name
       - nextcloud_smtp_password
-      - redis_password
+      - nextcloud_redis_password
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

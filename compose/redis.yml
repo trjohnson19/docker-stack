@@ -1,4 +1,8 @@
 ---
+secrets:
+  ## Not currently working
+  redis_password:
+    file: $SECRETSDIR/redis_password
 services:
   ## Redis - Key-value Store
   redis:

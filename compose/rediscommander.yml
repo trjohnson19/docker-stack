@@ -1,4 +1,9 @@
 ---
+secrets:
+  rediscommander_redis_password:
+    ## Should be symlinked to `redis_password`
+    ## ln -s ./redis_password rediscommander_redis_password
+    file: $SECRETSDIR/rediscommander_redis_password
 services:
   ## Redis Commander - Redis Management Tool
   rediscommander:
@@ -15,11 +20,11 @@ services:
       REDIS_HOST: $REDIS_HOST
       REDIS_PORT: $REDIS_PORT
       ## Not currently working
-      # REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      # REDIS_PASSWORD_FILE: /run/secrets/rediscommander_redis_password
       REDIS_PASSWORD: $REDIS_PASSWORD
       PORT: $REDISCOMMANDER_PORT
     secrets:
-      - redis_password
+      - rediscommander_redis_password
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

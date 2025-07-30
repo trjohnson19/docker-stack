@@ -10,6 +10,10 @@ secrets:
     file: $SECRETSDIR/firefly_mysql_user
   firefly_mysql_password:
     file: $SECRETSDIR/firefly_mysql_password
+  firefly_redis_password:
+    ## Should be symlinked to `redis_password`
+    ## ln -s ./redis_password firefly_redis_password
+    file: $SECRETSDIR/firefly_redis_password
 services:
   ## Firefly III - Finance Manager
   ## Create a unique App Key which is a random 32 character string
@@ -76,7 +80,7 @@ services:
       # REDIS_PATH:  # For use with "unix" REDIS_SCHEME only
       REDIS_HOST: $REDIS_HOST
       REDIS_PORT: $REDIS_PORT
-      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_PASSWORD_FILE: /run/secrets/firefly_redis_password
       REDIS_DB: "0"
       REDIS_CACHE_DB: "1"
       # COOKIE_PATH: "/"
@@ -144,7 +148,7 @@ services:
       - firefly_mysql_db_name
       - firefly_mysql_user
       - firefly_mysql_password
-      - redis_password
+      - firefly_redis_password
       - firefly_mail_server_password
     labels:
       - "traefik.enable=true"

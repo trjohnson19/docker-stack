@@ -51,8 +51,6 @@ secrets:
     file: $SECRETSDIR/postgres_user
   postgres_password:
     file: $SECRETSDIR/postgres_password
-  redis_password:
-    file: $SECRETSDIR/redis_password
 
 include:
   ############################## SERVICES

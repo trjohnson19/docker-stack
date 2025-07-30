@@ -1,4 +1,9 @@
 ---
+secrets:
+  postgres_user:
+    file: $SECRETSDIR/postgres_user
+  postgres_password:
+    file: $SECRETSDIR/postgres_password
 services:
   ## PostgreSQL - PostgreSQL Database
   ## Steps for adding a new user/database:

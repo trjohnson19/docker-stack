@@ -43,13 +43,6 @@ networks:
   default:
     driver: bridge
 
-############################## SECRETS
-secrets:
-  postgres_user:
-    file: $SECRETSDIR/postgres_user
-  postgres_password:
-    file: $SECRETSDIR/postgres_password
-
 include:
   ############################## SERVICES
   ## Frontends

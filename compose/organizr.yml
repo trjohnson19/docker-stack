@@ -5,7 +5,7 @@ services:
     image: organizr/organizr
     container_name: organizr
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

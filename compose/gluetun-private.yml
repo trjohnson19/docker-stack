@@ -13,7 +13,7 @@ services:
     networks:
       gluetun_net:
         ipv4_address: $GLUETUN_PRIVATE_IPV4
-      t2_proxy:
+      traefik_proxy:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

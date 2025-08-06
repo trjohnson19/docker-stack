@@ -5,7 +5,7 @@ services:
     image: jlesage/dupeguru:latest
     container_name: dupeguru
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

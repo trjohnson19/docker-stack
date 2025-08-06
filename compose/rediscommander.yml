@@ -10,7 +10,7 @@ services:
     container_name: rediscommander
     image: ghcr.io/joeferner/redis-commander:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

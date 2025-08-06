@@ -9,7 +9,7 @@ services:
     image: ghcr.io/devben-io/docker-portfolio/docker-portfolio:latest
     container_name: portfolio
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

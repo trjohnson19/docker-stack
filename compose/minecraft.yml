@@ -135,7 +135,7 @@ services:
       # AUTOPAUSE_PERIOD: 10
       ## See https://github.com/itzg/docker-minecraft-server/blob/master/README.md#enabling-autopause
       # AUTOPAUSE_KNOCK_INTERFACE: eth0
-      ## enp4s0, eth0, lo, eno1, docker0, br-ab276aa20945, br-4d480c1adff5, t2_proxy
+      ## enp4s0, eth0, lo, eno1, docker0, br-ab276aa20945, br-4d480c1adff5, traefik_proxy
     # labels:
     #   - "traefik.enable=true"
     #   ## HTTP Routers

@@ -6,7 +6,7 @@ services:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

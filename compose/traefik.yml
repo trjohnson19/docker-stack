@@ -63,7 +63,7 @@ services:
       ## Pulls main and wildcard cert for second domain
       # - --entrypoints.https.http.tls.domains[1].main=$DOMAINNAME1
       # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAINNAME1
-      - --providers.docker.network=t2_proxy
+      - --providers.docker.network=traefik_proxy
       ## Load dynamic configuration from one or more .toml or .yml files in a
       ## directory
       - --providers.file.directory=/rules
@@ -92,7 +92,7 @@ services:
       ## Set Authentik LDAPS entrypoint
       - --entryPoints.authentik-ldaps.address=:$AUTHENTIK_LDAPS_PORT
     networks:
-      t2_proxy:
+      traefik_proxy:
         ipv4_address: $TRAEFIK_IPV4 # You can specify a static IP
       socket_proxy:
     # depends_on:

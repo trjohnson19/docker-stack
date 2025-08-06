@@ -33,7 +33,7 @@ R /home/<USER>/docker
 + /home/<USER>/docker/.env
 - /home/<USER>/docker/.env.example
 - /home/<USER>/docker/.gitignore
-+ /home/<USER>/docker/docker-compose-t2.yml
++ /home/<USER>/docker/docker-compose.yml
 - /home/<USER>/docker/LICENSE
 - /home/<USER>/docker/README.md
 

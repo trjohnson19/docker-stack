@@ -6,7 +6,7 @@ services:
     image: sickcodes/docker-osx:ventura
     container_name: bluebubbles-setup
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:false
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
     image: sickcodes/docker-osx:naked
     container_name: bluebubbles
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:false
     restart: unless-stopped

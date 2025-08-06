@@ -12,7 +12,7 @@ services:
     command: -H tcp://socket-proxy:2375 # Set host to socket-proxy
     networks:
       - socket_proxy
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: always

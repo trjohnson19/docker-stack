@@ -5,7 +5,7 @@ services:
     image: jlesage/handbrake:latest
     container_name: handbrake
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

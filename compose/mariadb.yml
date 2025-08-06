@@ -10,7 +10,7 @@ services:
     container_name: mariadb
     image: lscr.io/linuxserver/mariadb:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: always

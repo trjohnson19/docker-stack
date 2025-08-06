@@ -21,7 +21,7 @@ services:
     container_name: authentik
     image: ghcr.io/goauthentik/server:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: always
@@ -99,7 +99,7 @@ services:
     container_name: authentik-worker
     image: ghcr.io/goauthentik/server:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: always

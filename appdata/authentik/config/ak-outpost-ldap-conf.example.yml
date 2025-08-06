@@ -20,7 +20,7 @@ docker_labels:
   traefik.http.services.ak-outpost-ldap-healthcheck-svc.loadbalancer.healthcheck.path: /outpost.goauthentik.io/ping
   traefik.http.services.ak-outpost-ldap-healthcheck-svc.loadbalancer.healthcheck.port: "<AUTHENTIK_LDAP_HEALTHCHECK_PORT>" # Likely 9300
 authentik_host: https://authentik.<DOMAINNAME0>/
-docker_network: t2_proxy
+docker_network: traefik_proxy
 container_image: null
 docker_map_ports: false
 authentik_host_browser: ""

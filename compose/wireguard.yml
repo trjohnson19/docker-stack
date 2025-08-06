@@ -5,7 +5,7 @@ services:
     container_name: wireguard
     image: lscr.io/linuxserver/wireguard:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

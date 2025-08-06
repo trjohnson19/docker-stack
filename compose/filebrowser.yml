@@ -5,7 +5,7 @@ services:
     image: filebrowser/filebrowser:s6
     container_name: filebrowser
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

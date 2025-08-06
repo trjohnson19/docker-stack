@@ -2,7 +2,6 @@
 services:
   ## Minecraft Backup - Backup Minecraft worlds
   mc-backup:
-    <<: *common-keys-apps  # See EXTENSION FIELDS at the top
     image: itzg/mc-backup:latest
     container_name: mc-backup
     security_opt:

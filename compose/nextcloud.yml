@@ -24,7 +24,7 @@ services:
     container_name: nextcloud
     image: nextcloud:29
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
       MAIL_FROM_ADDRESS: admin@drive.$DOMAINNAME0
       # MAIL_DOMAIN:
       NEXTCLOUD_TRUSTED_DOMAINS: drive.$DOMAINNAME0
-      TRUSTED_PROXIES: $T2_PROXY_SUBNET
+      TRUSTED_PROXIES: $TRAEFIK_PROXY_SUBNET
     secrets:
       - nextcloud_admin_user
       - nextcloud_admin_password

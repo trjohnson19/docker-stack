@@ -13,15 +13,15 @@
 ## https://docs.docker.com/config/daemon/ipv6/#use-ipv6-for-the-default-bridge-network
 
 networks:
-  t2_proxy:
-    name: t2_proxy
+  traefik_proxy:
+    name: traefik_proxy
     driver: bridge
     enable_ipv6: true
     ipam:
       config:
-        - subnet: $T2_PROXY_SUBNET
-          gateway: $T2_PROXY_GATEWAY
-        - subnet: $T2_PROXY_IPV6_SUBNET
+        - subnet: $TRAEFIK_PROXY_SUBNET
+          gateway: $TRAEFIK_PROXY_GATEWAY
+        - subnet: $TRAEFIK_PROXY_IPV6_SUBNET
   socket_proxy:
     name: socket_proxy
     driver: bridge

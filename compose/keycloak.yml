@@ -13,7 +13,7 @@ services:
   keycloak:
     container_name: keycloak
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: always

@@ -22,7 +22,7 @@ services:
     container_name: firefly
     image: fireflyiii/core:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -170,7 +170,7 @@ services:
     container_name: importer
     image: fireflyiii/data-importer:latest
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

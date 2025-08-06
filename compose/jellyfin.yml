@@ -6,7 +6,7 @@ services:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

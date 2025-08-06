@@ -12,7 +12,7 @@ services:
     image: phpmyadmin:latest
     container_name: phpmyadmin
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

@@ -6,7 +6,7 @@ services:
     image: itzg/rcon:latest
     container_name: minecraft-rcon
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

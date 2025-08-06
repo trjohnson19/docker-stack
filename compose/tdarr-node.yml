@@ -6,7 +6,7 @@ services:
     image: ghcr.io/haveagitgat/tdarr_node:latest
     privileged: true
     networks:
-      - t2_proxy
+      - traefik_proxy
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped

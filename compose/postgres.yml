@@ -23,7 +23,7 @@ services:
     image: postgres:16
     user: "${PUID}:${PGID}"
     networks:
-      t2_proxy:
+      traefik_proxy:
         ipv4_address: $POSTGRES_IPV4
     security_opt:
       - no-new-privileges:true

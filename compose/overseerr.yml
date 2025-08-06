@@ -1,0 +1,35 @@
+---
+services:
+  ## Overseerr - Request Management System (Plex Only)
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    volumes:
+      - $APPDIR/overseerr/config:/config
+    healthcheck:
+      # https://github.com/sct/overseerr/issues/411#issuecomment-755083037
+      start_period: 10s
+      test: wget --spider "http://localhost:$OVERSEERR_PORT/api/v1/status" -qO /dev/null || exit 1
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.overseerr-rtr.entrypoints=https"
+      - "traefik.http.routers.overseerr-rtr.rule=Host(`overseerr.$DOMAINNAME0`) || Host(`request.$DOMAINNAME0`)"
+      - "traefik.http.routers.overseerr-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.overseerr-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
+      - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"

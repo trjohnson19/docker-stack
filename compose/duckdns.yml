@@ -1,0 +1,27 @@
+---
+secrets:
+  duckdns_token:
+    file: $SECRETSDIR/duckdns_token
+services:
+  ## DuckDNS - Dynamic DNS service provided by duckdns.org
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    # volumes:
+    #   - $APPDIR/duckdns/config:/config # Optional
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      SUBDOMAINS: "$DOMAINNAME_DUCKDNS0,$DOMAINNAME_DUCKDNS1,$DOMAINNAME_DUCKDNS2,$DOMAINNAME_DUCKDNS3,$DOMAINNAME_DUCKDNS4"
+      ## Note, MUST truncate EOF carriage return if present
+      ## `truncate -s -1 $SECRETSDIR/duckdns_token`
+      FILE__TOKEN: /run/secrets/duckdns_token
+      # LOG_FILE: "true"  # Optional
+    secrets:
+      - duckdns_token

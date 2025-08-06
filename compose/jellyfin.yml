@@ -1,0 +1,46 @@
+---
+services:
+  ## Jellyfin - Free Software Media System
+  jellyfin:
+    ## Issues with hardware transcoding with linuxserver.io image
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    devices:
+      ## AMD hardware transcoding?
+      # - /dev/dri:/dev/dri
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card1:/dev/dri/card0
+    group_add:
+      ## Add render group permission to allow GPU render access
+      - $RENDER_GROUP
+    volumes:
+      - $APPDIR/jellyfin/config:/config
+      - $APPDIR/jellyfin/config/web-config.json:/jellyfin/jellyfin-web/config.json
+      - $DATADIR/temp/appdata/jellyfin/metadata:/config/metadata
+      - $DATADIR/downloads:/data/downloads
+      - $DATADIR/media:/data/media
+      ## Perform transcoding in RAM
+      # - /dev/shm:/data/transcode
+      ## Perform transcoding on SSD
+      - /$APPDIR/jellyfin/transcodes:/data/transcode
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.jellyfin-rtr.entrypoints=https"
+      - "traefik.http.routers.jellyfin-rtr.rule=Host(`jellyfin.$DOMAINNAME0`)"
+      - "traefik.http.routers.jellyfin-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.jellyfin-rtr.middlewares=chain-authelia@file,jellyfin-remove-bypass-cache"
+      - "traefik.http.middlewares.jellyfin-remove-bypass-cache.stripPrefix.prefixes=/bypass_cache"
+      ## HTTP Services
+      - "traefik.http.routers.jellyfin-rtr.service=jellyfin-svc"
+      - "traefik.http.services.jellyfin-svc.loadbalancer.server.port=8096"

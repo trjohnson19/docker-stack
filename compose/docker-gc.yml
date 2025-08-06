@@ -1,0 +1,30 @@
+---
+services:
+  ## Docker-GC - Automatic Docker Garbage Collection
+  ## Create docker-gc-exclude file
+  docker-gc:
+    image: clockworksoul/docker-gc-cron:latest
+    container_name: docker-gc
+    networks:
+      - socket_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - socket-proxy
+    volumes:
+      ## Use Docker Socket Proxy instead for improved security
+      # - /var/run/docker.sock:/var/run/docker.sock
+      ## Must create this folder
+      - $APPDIR/docker-gc/config/docker-gc-exclude:/etc/docker-gc-exclude
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      CRON: "0 0 0 * * ?" # Everyday at midnight. Previously "0 0 * * *"
+      FORCE_IMAGE_REMOVAL: 1
+      FORCE_CONTAINER_REMOVAL: 0
+      GRACE_PERIOD_SECONDS: 604800
+      DRY_RUN: 0
+      CLEAN_UP_VOLUMES: 1
+      DOCKER_HOST: tcp://socket-proxy:2375

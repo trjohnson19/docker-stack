@@ -1,0 +1,30 @@
+---
+secrets:
+  ## Not currently working
+  redis_password:
+    file: $SECRETSDIR/redis_password
+services:
+  ## Redis - Key-value Store
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      t2_proxy:
+        ipv4_address: $REDIS_IPV4
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    entrypoint: redis-server --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru --port $REDIS_PORT
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      start_period: 5s
+      interval: 5s
+      retries: 5
+      timeout: 3s
+    ports:
+      - "$REDIS_PORT:$REDIS_PORT"
+    volumes:
+      - $APPDIR/redis/data:/data
+      - $APPDIR/redis/config/healthcheck.sh:/healthcheck.sh:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro

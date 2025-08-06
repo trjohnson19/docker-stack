@@ -1,0 +1,34 @@
+---
+services:
+  ## Portfolio Performance
+  ## Issue with installation - /startapp.sh: cd: line 2: can't cd to
+  ## /opt/portfolio/workspace: No such file or directory
+  ## Need to change the startapp.sh to reference something other than
+  ## /workspace because /opt/portfolio exists
+  portfolio:
+    image: ghcr.io/devben-io/docker-portfolio/docker-portfolio:latest
+    container_name: portfolio
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    hostname: portfolio.$DOMAINNAME0
+    environment:
+      TZ: $TZ
+      APP_NAME: "Portfolio Performance"
+      LOCALE: en_us
+      # APP_ICON_URL: https://www.portfolio-performance.info/images/logo.png
+      KEEP_APP_RUNNING: 1
+      # USER_ID: $PUID
+      # GROUP_ID: $PGID
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portfolio-rtr.entrypoints=https"
+      - "traefik.http.routers.portfolio-rtr.rule=Host(`portfolio.$DOMAINNAME0`)"
+      ## Middlewares
+      - "traefik.http.routers.portfolio-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.portfolio-rtr.service=portfolio-svc"
+      - "traefik.http.services.portfolio-svc.loadbalancer.server.port=$PORTFOLIO_PORT"

@@ -1,0 +1,46 @@
+---
+services:
+  ## Calibre - A powerful and easy to use e-book manager.
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
+    networks:
+      - t2_proxy
+    security_opt:
+      ## Required for some setups
+      - seccomp:unconfined
+      - no-new-privileges:true
+    restart: unless-stopped
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      # CLI_ARGS:
+      CUSTOM_PORT: $CALIBRE_PORT
+      # CUSTOM_HTTPS_PORT: $CALIBRE_HTTPS_PORT
+      # CUSTOM_USER:
+      ## Use reverse proxy authentication instead
+      # PASSWORD:
+      # SUBFOLDER:
+      TITLE: Calibre
+      FM_HOME: /import
+      ## Set to FALSE to disable DinD Docker setup
+      # START_DOCKER:
+      DRI_NODE: /dev/dri/renderD128
+    volumes:
+      - $APPDIR/calibre/config:/config
+      - "$DATADIR/media/Calibre Library:/books"
+      - $DATADIR/torrents-private/books:/import:ro
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.calibre-rtr.entrypoints=https"
+      - "traefik.http.routers.calibre-rtr.rule=Host(`calibre.$DOMAINNAME0`)"
+      - "traefik.http.routers.calibre-rtr.tls.options=tls-opts@file"
+      ## Middlewares
+      - "traefik.http.routers.calibre-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.calibre-rtr.service=calibre-svc"
+      - "traefik.http.services.calibre-svc.loadbalancer.server.port=$CALIBRE_PORT"

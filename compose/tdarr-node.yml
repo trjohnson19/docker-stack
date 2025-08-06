@@ -1,0 +1,37 @@
+---
+services:
+  ## Tdarr - Distributed transcode automation
+  tdarr-node:
+    container_name: tdarr-node
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    privileged: true
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    devices:
+      ## AMD hardware transcoding
+      - /dev/dri:/dev/dri
+      # - /dev/dri/renderD128:/dev/dri/renderD128
+      # - /dev/dri/card0:/dev/dri/card0
+    environment:
+      UMASK_SET: 02
+      serverIP: tdarr
+      serverPort: $TDARR_SERVER_PORT
+      nodeID: NucNode
+      nodeIP: tdarr-node # Container name of the node
+      nodePort: $TDARR_NODE_PORT
+    volumes:
+      - $APPDIR/tdarr/configs:/app/configs
+      - $APPDIR/tdarr/logs:/app/logs
+      ## Map single folder for `/data` and use `/data/media` and
+      ## `/data/temp/transcode` to allow for move operation instead of copy
+      - $DATADIR:/data
+      # - $DATADIR/temp/transcode:/data/temp/transcode
+      # - /dev/shm:/temp  # Perform transcoding in RAM
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "3"
+    # labels:  # Not needed for the node

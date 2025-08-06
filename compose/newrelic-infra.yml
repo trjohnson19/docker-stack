@@ -1,0 +1,26 @@
+---
+services:
+  # New Relic - Infrastructure and container monitoring
+  # https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/linux-installation/container-infrastructure-monitoring/
+  newrelic-infra:
+    image: newrelic/infrastructure:latest
+    container_name: newrelic-infra
+    cap_add:
+      ## Allows the agent to gather data about processes running on the host
+      - SYS_PTRACE
+    ## Allows the agent to collect the network metrics about the host.
+    network_mode: host
+    ## Required to monitor host processes / performance
+    pid: host
+    ## Required to monitor host processes / performance
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      ## Allows the agent to collect process and storage metrics as well as
+      ## Inventory data from the host
+      - "/:/host:ro"
+      ## Allows the agent to connect to the Engine API via the Docker daemon
+      ## socket to collect the host's container data
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      NRIA_LICENSE_KEY: $NRIA_LICENSE_KEY

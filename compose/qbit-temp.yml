@@ -1,0 +1,49 @@
+---
+secrets:
+  qbittorrent_user:
+    file: $SECRETSDIR/qbittorrent_user
+  qbittorrent_pass:
+    file: $SECRETSDIR/qbittorrent_pass
+services:
+  ## qBittorrent - an open-source software alternative to µTorrent
+  ## qbit-private is used for private trackers
+  qbit-temp:
+    image: lscr.io/linuxserver/qbittorrent:5.0.4
+    container_name: qbit-temp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    ## We do not want this to be able to communicate locally (except as
+    ## specified)
+    network_mode: "service:gluetun-temp"
+    environment:
+      # Built-in env variables
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      WEBUI_PORT: $QBITTORRENT_TEMP_PORT
+      # Custom env variables
+      LOG_LEVEL: "WARN" # "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+      FILE__QBITTORRENT_USERNAME: /run/secrets/qbittorrent_user
+      FILE__QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_pass
+      GLUETUN_IPV4: $GLUETUN_TEMP_IPV4
+      GLUETUN_HTTP_CONTROL_SERVER_PORT: $GLUETUN_TEMP_HTTP_CONTROL_SERVER_PORT
+    volumes:
+      - $APPDIR/qbittorrent-temp/config:/config
+      ## Add scripts
+      - $APPDIR/qbittorrent-temp/scripts:/scripts:ro
+      ## Space for persistent storage
+      - $APPDIR/qbittorrent-temp/persistent:/persistent
+      ## Add init scripts
+      - $APPDIR/qbittorrent-temp/custom-cont-init.d:/custom-cont-init.d:ro
+      - $APPDIR/qbittorrent-temp/custom-services.d:/custom-services.d:ro
+      ## Final home for data
+      - $DATADIR/torrents-private:/data/torrents-private
+      ## Allows for local download before transfer
+      - $DOCKERDIR/temp-data/torrents:/temp-data/torrents
+    secrets:
+      - qbittorrent_user
+      - qbittorrent_pass
+    labels:
+      ## Ensure constant connectivity is prioritized for trackers
+      - "com.centurylinklabs.watchtower.enable=false"

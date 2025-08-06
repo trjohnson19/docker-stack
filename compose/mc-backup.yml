@@ -13,7 +13,7 @@ services:
       RCON_HOST: minecraft
       RCON_PORT: $MINECRAFT_RCON_PORT
       RCON_PASSWORD: $MINECRAFT_RCON_PASSWORD
-      EXCLUDES: '*.jar,cache,logs'
+      EXCLUDES: "*.jar,cache,logs"
       BACKUP_METHOD: tar
       SRC_DIR: /data
       BACKUP_NAME: world

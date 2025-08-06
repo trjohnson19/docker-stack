@@ -20,7 +20,7 @@ services:
     ## Environmental variables deprecated
     environment:
       TZ: $TZ
-      CLOUDFLARE_API_TOKEN_FILE: '/cloudflare_ddns_api_token'
+      CLOUDFLARE_API_TOKEN_FILE: "/cloudflare_ddns_api_token"
       DOMAINS: $DOMAINNAME0
       PROXIED: "true"
       UPDATE_CRON: "*/5 * * * *"

@@ -28,9 +28,9 @@ services:
       TZ: $TZ
       EULA: TRUE
       # MEMORY: 6G
-      INIT_MEMORY: 1G  # Independently sets the initial heap size
-      MAX_MEMORY: 6G  # Independently sets the max heap size
-      VERSION: 1.12.2  # LATEST, SNAPSHOT, <SPECIFIC VERSION #>
+      INIT_MEMORY: 1G # Independently sets the initial heap size
+      MAX_MEMORY: 6G # Independently sets the max heap size
+      VERSION: 1.12.2 # LATEST, SNAPSHOT, <SPECIFIC VERSION #>
       TYPE: FORGE
       FORGEVERSION: 14.23.5.2855
       # OVERRIDE_SERVER_PROPERTIES: true
@@ -43,12 +43,12 @@ services:
       SERVER_NAME: NUC_Server
       ## Dangerous to change if you don't know what you're doing
       # SERVER_PORT: $MINECRAFT_PORT
-      DIFFICULTY: 1  # peaceful, easy, normal, hard
-      WHITELIST: $MINECRAFT_USER_LIST  # Allow-listed players
-      OPS: $MINECRAFT_USER_LIST  # Op/Administrator players
+      DIFFICULTY: 1 # peaceful, easy, normal, hard
+      WHITELIST: $MINECRAFT_USER_LIST # Allow-listed players
+      OPS: $MINECRAFT_USER_LIST # Op/Administrator players
       # ICON: https://oldschool.runescape.wiki/images/c/ce/Gnome_child_chathead.png  # Set the server icon
       # OVERRIDE_ICON: TRUE  # Override the icon on server startup
-      MAX_PLAYERS: 10  # Default :  20
+      MAX_PLAYERS: 10 # Default :  20
       # MAX_WORLD_SIZE: 10000  # Max world radius in chunks
       # ALLOW_NETHER: true
       ANNOUNCE_PLAYER_ACHIEVEMENTS: true
@@ -73,7 +73,7 @@ services:
       ## chunks in each direction of the player (radius, not diameter). It
       ## determines the server-side viewing distance.
       VIEW_DISTANCE: 10
-      SEED: "-9075357542416790126"  # Ensure quotes are used if negative
+      SEED: "-9075357542416790126" # Ensure quotes are used if negative
       # MODE: survival  # creative, survival, adventure. Default: survival
       MOTD: "The §c§lspiceest§r Minecraft server"
       PVP: true

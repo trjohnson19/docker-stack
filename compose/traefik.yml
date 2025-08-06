@@ -10,9 +10,9 @@ services:
   ## Traefik 2 - Reverse Proxy
   ## Touch (create empty files) traefik.log and acme/acme.json.
   ## Set acme.json permissions to 600.
-  ## touch $APPDIR/traefik2/acme/acme.json
-  ## chmod 600 $APPDIR/traefik2/acme/acme.json
-  ## touch $APPDIR/traefik2/traefik.log
+  ## touch $APPDIR/traefik3/acme/acme.json
+  ## chmod 600 $APPDIR/traefik3/acme/acme.json
+  ## touch $APPDIR/traefik3/traefik.log
   traefik:
     container_name: traefik
     image: traefik:comte # comte=3.1.x
@@ -127,13 +127,13 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - $APPDIR/traefik2/rules:/rules # File provider directory
+      - $APPDIR/traefik3/rules:/rules # File provider directory
       ## Use Docker Socket Proxy instead for improved security
       # - /var/run/docker.sock:/var/run/docker.sock:ro
       ## Cert location - you must touch this file and change permissions to 600
-      - $APPDIR/traefik2/acme/acme.json:/acme.json
+      - $APPDIR/traefik3/acme/acme.json:/acme.json
       ## For fail2ban - make sure to touch file before starting container
-      - $APPDIR/traefik2/traefik.log:/traefik.log
+      - $APPDIR/traefik3/traefik.log:/traefik.log
       - $DOCKERDIR/shared:/shared
     environment:
       CF_API_EMAIL_FILE: /run/secrets/traefik_cf_email

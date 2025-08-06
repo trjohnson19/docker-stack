@@ -52,7 +52,7 @@ Thumbs.db
 !.bash_rc.example
 !CHANGELOG.md
 !.gitignore
-!docker-compose-t2.yml
+!docker-compose.yml
 !LICENSE
 !README.md
 
@@ -165,11 +165,11 @@ appdata/redis/data/*
 appdata/redis/config/*
 !appdata/redis/config/healthcheck.example.sh
 
-!appdata/traefik2
-appdata/traefik2/*
-!appdata/traefik2/rules
-!appdata/traefik2/rules/*
-appdata/traefik2/rules/app-dnd.yml
+!appdata/traefik3
+appdata/traefik3/*
+!appdata/traefik3/rules
+!appdata/traefik3/rules/*
+appdata/traefik3/rules/app-dnd.yml
 
 !appdata/unbound
 appdata/unbound/*

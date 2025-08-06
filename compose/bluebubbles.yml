@@ -58,7 +58,7 @@ services:
       BOOTDISK: /bootdisk
       EXTRA: -display none -vnc 0.0.0.0:99,password-secret=secvnc0 -object secret,id=secvnc0,data=$BLUEBUBBLES_VNC_PASSWORD
       ADDITIONAL_PORTS: "hostfwd=tcp::$BLUEBUBBLES_SERVER_PORT-:$BLUEBUBBLES_SERVER_PORT,"
-      DISPLAY: ":99"
+      # DISPLAY: ":99"
       WIDTH: 1920
       HEIGHT: 1080
       NOPICKER: true

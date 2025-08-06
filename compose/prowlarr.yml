@@ -1,3 +1,4 @@
+---
 services:
   # Prowlarr - Torrent proxy
   prowlarr:

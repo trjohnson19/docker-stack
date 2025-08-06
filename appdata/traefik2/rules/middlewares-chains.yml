@@ -48,3 +48,11 @@ http:
           - middlewares-rate-limit
           - nextcloud-middlewares-secure-headers
           - nextcloud-redirect
+
+    chain-audiobookshelf:
+      chain:
+        middlewares:
+          - middlewares-rate-limit
+          - middlewares-secure-headers-audiobookshelf
+          ## Need to use audiobookshelf authentication
+          # - middlewares-authelia

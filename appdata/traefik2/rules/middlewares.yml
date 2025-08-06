@@ -46,6 +46,39 @@ http:
           X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
           server: ""
 
+    middlewares-secure-headers-audiobookshelf:
+      headers:
+        ## Disable per https://github.com/advplyr/audiobookshelf/blob/32da0f12242602ae18b858eaf8a4faa48cffb7a9/readme.md?plain=1#L246-L254
+        # accessControlAllowMethods:
+        #   - GET
+        #   - OPTIONS
+        #   - PUT
+        # accessControlMaxAge: 100
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        # frameDeny: true  # Overwritten by customFrameOptionsValue
+        ## CSP takes care of this but may be needed for organizr.
+        customFrameOptionsValue: 'allow-from https:{{env "DOMAINNAME0"}}'
+        contentTypeNosniff: true
+        browserXssFilter: true
+        # sslForceHost: true  # Add sslHost to all of the services
+        # sslHost: "{{env "DOMAINNAME0"}}"
+        referrerPolicy: "same-origin"
+        ## Setting contentSecurityPolicy is more secure but it can break
+        ## things. Proper auth will reduce the risk. The below line also breaks
+        ## some apps due to 'none' - sonarr, radarr, etc.
+        ## yamllint disable-line rule:line-length
+        # contentSecurityPolicy: "frame-ancestors '*.{{env "DOMAINNAME0"}}:*';object-src 'none';script-src 'none';"
+        ## yamllint disable-line rule:line-length
+        permissionsPolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
+        customResponseHeaders:
+          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
+          server: ""
+
     ## Documentation: https://www.authelia.com/integration/proxies/traefik/
     middlewares-authelia:
       forwardAuth:

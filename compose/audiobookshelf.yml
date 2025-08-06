@@ -19,6 +19,7 @@ services:
       # HOST: 127.0.0.1
       PORT: $AUDIOBOOKSHELF_PORT
       SOURCE: docker
+      ALLOW_CORS: 1
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -26,7 +27,7 @@ services:
       - "traefik.http.routers.audiobookshelf-rtr.rule=Host(`abs.$DOMAINNAME0`)"
       - "traefik.http.routers.audiobookshelf-rtr.tls.options=tls-opts@file"
       ## Middlewares
-      - "traefik.http.routers.audiobookshelf-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.audiobookshelf-rtr.middlewares=chain-audiobookshelf@file"
       ## HTTP Services
       - "traefik.http.routers.audiobookshelf-rtr.service=audiobookshelf-svc"
       - "traefik.http.services.audiobookshelf-svc.loadbalancer.server.port=$AUDIOBOOKSHELF_PORT"

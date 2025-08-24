@@ -22,7 +22,10 @@ services:
   ## Nextcloud - A safe home for all your data
   nextcloud:
     container_name: nextcloud
-    image: nextcloud:29
+    ## Nextcloud version should be only upgraded 1 major version at a time.
+    ## Errors can occur if more than one major version is upgraded at a time,
+    ## so version is pinned.
+    image: nextcloud:31
     networks:
       - traefik_proxy
     security_opt:
@@ -33,6 +36,11 @@ services:
       - $APPDIR/nextcloud/custom_apps:/var/www/html/custom_apps
       - $APPDIR/nextcloud/config:/var/www/html/config
       - $DATADIR/nextcloud:/var/www/html/data
+    ## Setting `hostname` fixes the Nextcloud error
+    ##     AH00558: apache2: Could not reliably determine the server's fully
+    ##     qualified domain name, using [IP Address]. Set the 'ServerName'
+    ##     directive globally to suppress this message
+    hostname: drive.$DOMAINNAME0
     environment:
       TZ: $TZ
       PUID: $PUID

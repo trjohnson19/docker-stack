@@ -5,20 +5,25 @@
 		{
 			"name": "Apple TV",
 			"id": "appletv"
-		}, {
+		},
+		{
 			"name": "Blue Radiance",
 			"id": "blueradiance"
-		}, {
+		},
+		{
 			"name": "Dark",
 			"id": "dark",
 			"default": true
-		}, {
+		},
+		{
 			"name": "Light",
 			"id": "light"
-		}, {
+		},
+		{
 			"name": "Purple Haze",
 			"id": "purplehaze"
-		}, {
+		},
+		{
 			"name": "WMC",
 			"id": "wmc"
 		}

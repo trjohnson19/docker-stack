@@ -51,6 +51,7 @@ Thumbs.db
 !.bash_aliases.example
 !.bash_rc.example
 !CHANGELOG.md
+!.editorconfig
 !.gitignore
 !docker-compose.yml
 !LICENSE
